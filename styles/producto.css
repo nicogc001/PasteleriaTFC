@@ -1,0 +1,126 @@
+body {
+    background-color: #ecedee;
+}
+
+.card {
+    border: none;
+    overflow: hidden;
+}
+
+.thumbnail_images ul {
+    list-style: none;
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.thumbnail_images ul li {
+    margin: 5px;
+    padding: 10px;
+    border: 2px solid #eee;
+    cursor: pointer;
+    transition: all 0.5s;
+    max-width: 80px;
+}
+
+.thumbnail_images ul li:hover {
+    border: 2px solid #000;
+}
+
+.main_image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    min-height: 400px;
+    width: 100%;
+    overflow: hidden;
+}
+
+#main_product_image {
+    max-width: 50%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    #main_product_image {
+        max-width: 100%;
+    }
+
+    .main_image {
+        min-height: 200px;
+    }
+
+    .thumbnail_images ul li {
+        max-width: 60px;
+    }
+}
+
+.heart {
+    height: 29px;
+    width: 29px;
+    background-color: #eaeaea;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #555;
+}
+
+.ratings span {
+    font-size: 14px;
+    margin-left: 12px;
+}
+
+.quantity-selector {
+    max-width: 120px;
+}
+
+.btn-orange {
+    background-color: orangered;
+    color: white;
+    border: none;
+    padding: 20px 30px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-orange:hover {
+    background-color: darkorange;
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .btn-orange {
+        width: 100%;
+        font-size: 16px;
+        padding: 15px 20px;
+    }
+}
+
+.buttons .btn {
+    height: 65px;
+    width: 160px;
+    border-radius: 10px !important;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: orangered;
+    color: white;
+}
+
+.buttons .btn:hover {
+    background-color: darkorange;
+}

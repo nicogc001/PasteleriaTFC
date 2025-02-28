@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Portal del Empleado</title>
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="assets/css/loopple/loopple.css" rel="stylesheet" />
+    <link href="assets/css/theme.css" rel="stylesheet" />
+    <link href="assets/js/loopple/loopple.js" />
+</head>
+
+<body>
+    <header>
+       
+        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+            <div class="container-fluid">
+                <!-- Toggle button -->
+                <button
+                    data-mdb-collapse-init
+                    class="navbar-toggler"
+                    type="button"
+                    data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar brand -->
+                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
+                        <img
+                            src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
+                            height="15"
+                            alt="MDB Logo"
+                            loading="lazy"
+                        />
+                    </a>
+                    <!-- Left links -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="registroHorario.html">Registro Horario</a></li>
+                            <li class="nav-item"><a class="nav-link" href="pedidosEmpleado.html">Pedidos</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right elements -->
+                <div class="d-flex align-items-center">
+                    
+
+                    <!-- Avatar -->
+                    <div class="dropdown">
+                        <a
+                            data-mdb-dropdown-init
+                            class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                            href="login.html"
+                            id="navbarDropdownMenuAvatar"
+                            role="button"
+                            aria-expanded="false"
+                        >
+                            <img
+                                src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                                class="rounded-circle"
+                                height="25"
+                                alt="User Avatar"
+                                loading="lazy"
+                            />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li>
+                                <a class="dropdown-item" href="#">My profile</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Settings</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        <h2 class="text-center mb-4">Dashboard del Empleado</h2>
+
+        <!-- Tarjetas de estadísticas -->
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Pedidos Atendidos</h5>
+                        <h3 id="pedidos-atendidos" class="text-success">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Pedidos Totales</h5>
+                        <h3 id="pedidos-totales" class="text-primary">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Horas Trabajadas</h5>
+                        <h3 id="horas-totales" class="text-warning">0h</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">Pedidos por Mes</div>
+                    <div class="card-body">
+                        <canvas id="pedidos-chart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">Horas Trabajadas</div>
+                    <div class="card-body">
+                        <canvas id="horas-chart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-body-tertiary text-center">
+        <!-- Grid container -->
+        <div class="container p-4 pb-0">
+          <!-- Section: Social media -->
+          <section class="mb-4">
+            <!-- Facebook -->
+            <a
+            data-mdb-ripple-init
+              class="btn text-white btn-floating m-1"
+              style="background-color: #3b5998;"
+              href="#!"
+              role="button"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+      
+            <!-- Twitter -->
+            <a
+              data-mdb-ripple-init
+              class="btn text-white btn-floating m-1"
+              style="background-color: #55acee;"
+              href="#!"
+              role="button"
+              ><i class="fab fa-twitter"></i
+            ></a>
+      
+            <!-- Google -->
+            <a
+              data-mdb-ripple-init
+              class="btn text-white btn-floating m-1"
+              style="background-color: #dd4b39;"
+              href="#!"
+              role="button"
+              ><i class="fab fa-google"></i
+            ></a>
+      
+            <!-- Instagram -->
+            <a
+              data-mdb-ripple-init
+              class="btn text-white btn-floating m-1"
+              style="background-color: #ac2bac;"
+              href="#!"
+              role="button"
+              ><i class="fab fa-instagram"></i
+            ></a>
+      
+          </section>
+          <!-- Section: Social media -->
+        </div>
+        <!-- Grid container -->
+      
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+          © 2020 Copyright:
+          <a class="text-body" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Obtener datos de almacenamiento local o valores por defecto
+        const pedidosAtendidos = localStorage.getItem('pedidosAtendidos') || '15';
+        const pedidosTotales = localStorage.getItem('pedidosTotales') || '120';
+        const horasTotales = localStorage.getItem('horasTotales') || '320';
+    
+        // Actualizar las estadísticas en la página
+        document.getElementById('pedidos-atendidos').textContent = pedidosAtendidos;
+        document.getElementById('pedidos-totales').textContent = pedidosTotales;
+        document.getElementById('horas-totales').textContent = `${horasTotales}h`;
+    
+        // Obtener registros de pedidos por mes desde almacenamiento local o usar datos predeterminados
+        let pedidosPorMes = JSON.parse(localStorage.getItem('pedidosPorMes')) || [10, 20, 30, 40, 50];
+        let horasPorMes = JSON.parse(localStorage.getItem('horasPorMes')) || [40, 50, 45, 60, 55];
+    
+        // Gráfico de pedidos por mes
+        new Chart(document.getElementById('pedidos-chart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+                datasets: [{
+                    label: 'Pedidos',
+                    data: pedidosPorMes,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stepSize: 10
+                    },
+                },
+            },
+        });
+    
+        // Gráfico de horas trabajadas por mes
+        new Chart(document.getElementById('horas-chart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo'],
+                datasets: [{
+                    label: 'Horas Trabajadas',
+                    data: horasPorMes,
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stepSize: 10
+                    },
+                },
+            },
+        });
+    
+    </script>
+    
+</body>
+
+</html>

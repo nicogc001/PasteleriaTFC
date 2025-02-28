@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito</title>
+    <!-- MDBootstrap CSS -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
+        rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        rel="stylesheet"
+    />
+    <script src="scripts/cart.js"></script>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+            <div class="container-fluid">
+                <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+        
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
+                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
+                            loading="lazy" />
+                    </a>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bollería</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/salado.html">Repostería Salada</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
+                    </ul>
+                </div>
+                <div class="d-flex align-items-center">
+                    <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
+                    <div class="dropdown">
+                        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button"
+                            aria-expanded="false">
+                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li><a class="dropdown-item" href="#">My profile</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+    </header>
+
+    <main>
+        <div class="container mt-5">
+            <table id="cart" class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width:50%">Product</th>
+                        <th style="width:10%">Price</th>
+                        <th style="width:8%">Quantity</th>
+                        <th style="width:22%" class="text-center">Subtotal</th>
+                        <th style="width:10%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Los productos se cargarán dinámicamente aquí -->
+                </tbody>
+                <tfoot>
+                    <tr class="visible-xs">
+                        <td class="text-center"><strong>Total: <span id="cart-total-xs">$0.00</span></strong></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="#" class="btn btn-warning" onclick="goBack()">
+                                <i class="fa fa-angle-left"></i> Continue Shopping
+                            </a>
+                        </td>
+                        <td colspan="2" class="hidden-xs"></td>
+                        <td class="hidden-xs text-center">
+                            <strong>Total: <span id="cart-total">$0.00</span></strong>
+                        </td>
+                        <td>
+                            <button id="recalculate-btn" class="btn btn-info">Recalcular</button>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted">
+        <!-- Section: Social media -->
+        <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+            <div class="me-5 d-none d-lg-block">
+                <span>Síguenos en redes: </span>
+            </div>
+            <div>
+                <a href="" class="me-4 text-reset"><i class="fab fa-twitter"></i></a>
+                <a href="" class="me-4 text-reset"><i class="fab fa-instagram"></i></a>          
+            </div>
+        </section>
+    
+        <!-- Section: Links  -->
+        <section>
+            <div class="container text-center text-md-start mt-5">
+                <div class="row mt-3">
+                    
+    
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Productos</h6>
+                        <p><a href="#!" class="text-reset">Pasteleria</a></p>
+                        <p><a href="#!" class="text-reset">Bolleria</a></p>
+                        <p><a href="#!" class="text-reset">Salado</a></p>
+                        <p><a href="#!" class="text-reset">Tartas</a></p>
+                        <p><a href="#!" class="text-reset">Cafetería</a></p>
+                    </div>
+    
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Enlaces de interés</h6>
+                        <p><a href="#!" class="text-reset">Alérgenos</a></p>
+                        <p><a href="#!" class="text-reset">¿Quienes somos?</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Trabaja con nosotros</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Canal compliance</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Politica de cookies</a></p>
+                    </div>
+    
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
+                        <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
+                        <p><i class="fas fa-home me-3"></i>CC Espacio Torrelodones, Torrelodones</p>
+                        <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
+                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
+                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <!-- Copyright -->
+        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2025 Copyright:
+            <a class="text-reset fw-bold" href="https://mdbootstrap.com/">Pastelería El Caballo Goloso</a>
+        </div>
+    </footer>
+
+
+    <!-- Scripts -->
+    <script
+        type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
+    ></script>
+    <script>
+        // Variable global del carrito, inicializando desde localStorage
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Cargar el carrito dinámicamente
+        function loadCart() {
+            const cartTableBody = document.querySelector('#cart tbody');
+            cartTableBody.innerHTML = ''; // Limpia el contenido previo
+            let total = 0;
+
+            // Crear dinámicamente las filas del carrito
+            cart.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.name}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td>
+                        <input type="number" class="form-control text-center quantity-input" value="${product.quantity}" min="1" data-index="${index}">
+                    </td>
+                    <td class="text-center subtotal">$${product.subtotal.toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm remove-product" data-index="${index}">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </td>
+                `;
+                cartTableBody.appendChild(row);
+                total += product.subtotal;
+            });
+
+            // Actualizar el total en la tabla
+            document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
+            const totalXs = document.getElementById('cart-total-xs');
+            if (totalXs) totalXs.textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Recalcular subtotales y total general
+        function recalculateTotals() {
+            let total = 0;
+
+            // Iterar sobre los productos del carrito
+            document.querySelectorAll('#cart tbody tr').forEach(row => {
+                const price = parseFloat(row.querySelector('td:nth-child(2)').textContent.replace('$', ''));
+                const quantity = parseInt(row.querySelector('.quantity-input').value, 10);
+                const subtotal = price * quantity;
+
+                // Actualizar subtotal en la fila
+                row.querySelector('.subtotal').textContent = `$${subtotal.toFixed(2)}`;
+                total += subtotal;
+
+                // Actualizar el objeto del carrito en memoria
+                const index = row.querySelector('.quantity-input').dataset.index;
+                cart[index].quantity = quantity;
+                cart[index].subtotal = subtotal;
+            });
+
+            // Guardar cambios en localStorage y actualizar el total
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
+            const totalXs = document.getElementById('cart-total-xs');
+            if (totalXs) totalXs.textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Eliminar un producto del carrito
+        function removeProduct(e) {
+            const index = parseInt(e.target.closest('.remove-product').dataset.index, 10);
+            cart.splice(index, 1); // Eliminar el producto del carrito
+
+            // Guardar cambios en localStorage y recargar el carrito
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        // Inicializar el carrito al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+
+            // Delegación de eventos para actualizar cantidades
+            document.querySelector('#cart').addEventListener('input', e => {
+                if (e.target.classList.contains('quantity-input')) {
+                    recalculateTotals();
+                }
+            });
+
+            // Delegación de eventos para eliminar productos
+            document.querySelector('#cart').addEventListener('click', e => {
+                if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) {
+                    removeProduct(e);
+                }
+            });
+        });
+
+        // Función para regresar a la página anterior
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+
+</html>

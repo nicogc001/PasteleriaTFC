@@ -1,0 +1,33 @@
+.card img {
+    height: 250px;
+    object-fit: cover;
+    width: 100%;
+}
+.card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.btn-orange {
+    background-color: #FFA500;
+    color: white;
+}
+.row.card-deck {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+#intro-example {
+    background-size: cover;
+    background-position: center;
+    height: 500px;
+}
+.mask {
+    background-color: rgba(0, 0, 0, 0.5);
+}

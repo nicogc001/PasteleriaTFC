@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información del producto</title>
+    <!-- MDBootstrap CSS -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
+        rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        rel="stylesheet"
+    />
+    <!-- Enlace a los estilos externos -->
+    <link rel="stylesheet" href="../styles/producto.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+            <div class="container-fluid">
+                <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+        
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
+                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
+                            loading="lazy" />
+                    </a>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bollería</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/salado.html">Repostería Salada</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
+                    </ul>
+                </div>
+                <div class="d-flex align-items-center">
+                    <a class="link-secondary me-3" href="../carrito.html"><i class="fas fa-shopping-cart"></i></a>
+                    <div class="dropdown">
+                        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button"
+                            aria-expanded="false">
+                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li><a class="dropdown-item" href="#">My profile</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+
+        <!-- Background image -->
+        <div
+            class="p-5 text-center bg-image"
+            style="
+                background-image: url('https://media.scoolinary.app/images/2023/07/294_Bachour_banner2.jpg');
+                height: 300px;
+            "
+        >
+            <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="text-white">
+                        <h1 class="mb-3">Conoce el producto</h1>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+
+        <!-- Nueva barra de navegación con botones -->
+        <div class="container mt-4">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid justify-content-center">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="productos/cafeteria.html">Novedades</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="bolleria.html">Bollería</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="pasteleria.html">Cafetería</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="productos/cafeteria.html">Cafetería</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="productos/salados.html">Salados</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="productos/tartas.html">Tartas</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="container mt-5 mb-5">
+            <div class="card shadow-lg">
+                <div class="row g-0">
+                    <!-- Columna de la imagen del producto -->
+                    <div class="col-md-6 border-end d-flex align-items-center">
+                        <div class="d-flex flex-column justify-content-center w-100">
+                            <div class="main_image text-center">
+                                <img id="main_product_image" src="" class="img-fluid rounded mx-auto d-block" alt="Imagen del producto" style="max-width: 100%; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Columna de detalles del producto -->
+                    <div class="col-md-6">
+                        <div class="p-4 right-side">
+                            <h3 id="product-name" class="fw-bold"></h3>
+                            <p id="product-description" class="text-muted fs-5"></p>
+                            <h3 id="product-price" class="text-primary fw-bold"></h3>
+    
+                            <!-- Selector de cantidad -->
+                            <div class="quantity-selector mt-4">
+                                <label for="quantity" class="form-label fw-bold">Cantidad:</label>
+                                <input type="number" id="quantity" class="form-control w-50" value="1" min="1">
+                            </div>
+    
+                            <!-- Botón de añadir al carrito -->
+                            <div class="mt-4">
+                                <button id="add-to-cart" class="btn btn-orange btn-lg w-100 rounded-pill shadow-sm">
+                                    <i class="fas fa-shopping-cart"></i> Añadir a la cesta
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+    </main>
+   
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted">
+        <!-- Section: Social media -->
+        <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+            <div class="me-5 d-none d-lg-block">
+                <span>Síguenos en redes: </span>
+            </div>
+            <div>
+                <a href="" class="me-4 text-reset"><i class="fab fa-twitter"></i></a>
+                <a href="" class="me-4 text-reset"><i class="fab fa-instagram"></i></a>          
+            </div>
+        </section>
+    
+        <!-- Section: Links  -->
+        <section>
+            <div class="container text-center text-md-start mt-5">
+                <div class="row mt-3">
+                    
+    
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Productos</h6>
+                        <p><a href="#!" class="text-reset">Pasteleria</a></p>
+                        <p><a href="#!" class="text-reset">Bolleria</a></p>
+                        <p><a href="#!" class="text-reset">Salado</a></p>
+                        <p><a href="#!" class="text-reset">Tartas</a></p>
+                        <p><a href="#!" class="text-reset">Cafetería</a></p>
+                    </div>
+    
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Enlaces de interés</h6>
+                        <p><a href="#!" class="text-reset">Alérgenos</a></p>
+                        <p><a href="#!" class="text-reset">¿Quienes somos?</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Trabaja con nosotros</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Canal compliance</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Politica de cookies</a></p>
+                    </div>
+    
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
+                        <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
+                        <p><i class="fas fa-home me-3"></i>CC Espacio Torrelodones, Torrelodones</p>
+                        <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
+                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
+                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <!-- Copyright -->
+        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2025 Copyright:
+            <a class="text-reset fw-bold" href="https://mdbootstrap.com/">Pastelería El Caballo Goloso</a>
+        </div>
+    </footer>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const product = JSON.parse(localStorage.getItem('selectedProduct'));
+
+    if (product && product.name && product.price && product.image) {
+        document.getElementById('product-name').textContent = product.name;
+        document.getElementById('product-price').textContent = `${product.price} €`;
+        document.getElementById('product-description').textContent = product.description;
+        document.getElementById('main_product_image').src = product.image;
+
+        // Si el producto requiere selección, mostrar la picklist con opciones
+        if (product.name.toLowerCase().includes('café') || product.name.toLowerCase().includes('infusión')) {
+            document.querySelector('.picklist-container').style.display = 'block';
+
+            const selectElement = document.getElementById('product-options');
+            selectElement.innerHTML = product.name.toLowerCase().includes('café')
+                ? `<option value="solo">Solo</option>
+                   <option value="cortado">Cortado</option>
+                   <option value="con_leche">Con leche</option>
+                   <option value="capuchino">Capuchino</option>`
+                : `<option value="menta">Menta</option>
+                   <option value="manzanilla">Manzanilla</option>
+                   <option value="té_verde">Té Verde</option>
+                   <option value="rooibos">Rooibos</option>`;
+        }
+
+        console.log('Producto cargado en producto.html:', product);
+    } else {
+        alert('No se ha seleccionado un producto correctamente.');
+        window.history.back();
+    }
+});
+
+// Manejo del botón "Añadir a la cesta"
+document.getElementById('add-to-cart').addEventListener('click', () => {
+    const quantity = 1; // Fijado para simplificación
+    const product = JSON.parse(localStorage.getItem('selectedProduct'));
+    const selectElement = document.getElementById('product-options');
+    const selectedOption = selectElement ? selectElement.value : null;
+
+    // Validación para evitar añadir productos sin selección
+    if (document.querySelector('.picklist-container').style.display === 'block' && (!selectedOption || selectedOption === "")) {
+        alert("Por favor, selecciona una opción antes de añadir al carrito.");
+        return;
+    }
+
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Añadir producto al carrito con la opción seleccionada
+    cart.push({
+        name: product.name,
+        price: parseFloat(product.price),
+        option: selectedOption || 'N/A',
+        quantity: quantity,
+        subtotal: parseFloat(product.price) * quantity
+    });
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`${product.name} (${selectedOption || 'sin opción'}) se ha añadido a la cesta.`);
+});
+
+
+    </script>
+
+</body>
+</html>

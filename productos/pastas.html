@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tartas</title>
+    <!-- MDBootstrap CSS -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
+        rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        rel="stylesheet"
+    />
+    <link href="../styles/main.css" rel="stylesheet" />
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+            <div class="container-fluid">
+                <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+        
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
+                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
+                            loading="lazy" />
+                    </a>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pasteleria.html">Pastelería</a></li>
+                        <li class="nav-item"><a class="nav-link" href="bolleria.html">Bollería</a></li>
+                        <li class="nav-item"><a class="nav-link" href="salado.html">Repostería Salada</a></li>
+                        <li class="nav-item"><a class="nav-link" href="tartas.html">Tartas</a></li>
+                    </ul>
+                </div>
+                <div class="d-flex align-items-center">
+                    <a class="link-secondary me-3" href="../carrito.html"><i class="fas fa-shopping-cart"></i></a>
+                    <div class="dropdown">
+                        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button"
+                            aria-expanded="false">
+                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li><a class="dropdown-item" href="#">My profile</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+
+        <!-- Background image -->
+        <div
+            class="p-5 text-center bg-image"
+            style="
+                background-image: url('https://img-global.cpcdn.com/recipes/77bb8fe67b21aeee/680x482cq70/pastas-de-te-foto-principal.jpg');
+                height: 300px;
+            "
+        >
+            <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="text-white">
+                        <h1 class="mb-3">Pastas</h1>
+                        <h4 class="mb-3">Exquisitas pastas de mantequilla elaboradas en nuestro obrador por nuestros reposteros</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Nueva barra de navegación con botones -->
+        <div class="container mt-4">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid justify-content-center">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="novedades.html">Novedades</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="bolleria.html">Bollería</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="pasteleria.html">Pastelería</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="pastas.html">Pastas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="cafeteria.html">Cafetería</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="salado.html">Salados</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-warning mx-2 text-white" href="tartas.html">Tartas</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="container mt-5">
+            
+                <div class="container mt-5">
+     
+                    <div class="container py-5">
+                        <div class="row card-deck">
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Tarta de Fresas con Nata</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Tarta de fresas con nata" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Milhoja de frambuesas</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Milhoja de frambuesas" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Milhoja glaseada</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Milhoja glaseada" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Limon pie</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="limon pie" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                        </div>
+                    </div>
+     
+                    <div class="container py-5">
+                        <div class="row card-deck">
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">San Marcos</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="San Marcos" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Selva Negra</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Selva Negra" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Tarta de chocolate</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Tarta de Chocolate" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Tarta de tres chocolates</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Tarta de tres chocolates" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                        </div>
+                    </div>
+     
+                    <div class="container py-5">
+                        <div class="row card-deck">
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Tarta de queso</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Tarta de queso" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Tarta de Manzana</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="tarta de Manzana" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Tarta tropical</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Mini Croissant" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                        <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                        <a href="infoProducto.html" class="view-product">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">Tarta de frutos rojos</h5>
+                                        <button class="btn btn-primary add-to-cart btn-orange" data-name="Mini Croissant" data-price="1.20">Añadir al carrito</button>
+                                    </div>
+                                </div>                
+                            </div>
+                        </div>
+                 </div>
+                 <div class="container py-5">
+                    <div class="row card-deck">
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                    <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                    <a href="infoProducto.html" class="view-product">
+                                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Mini Croissant</h5>
+                                    <button class="btn btn-primary add-to-cart btn-orange" data-name="Mini Croissant" data-price="1.20">Añadir al carrito</button>
+                                </div>
+                            </div>                
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-center">
+                                <div class="bg-image hover-overlay" data-mdb-ripple-init data-mdb-ripple-color="light">
+                                    <img src="https://fotografias.lasexta.com/clipping/cmsimages01/2023/01/26/7EFCDA4E-F402-4E69-BCBA-2F6EE56E028B/diferentes-dulces-pasteles_98.jpg?crop=2121,1193,x0,y110&width=1900&height=1069&optimize=high&format=webply" class="card-img-top" alt="Pastelería">
+                                    <a href="infoProducto.html" class="view-product">
+                                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Mini Croissant</h5>
+                                    <button class="btn btn-primary add-to-cart btn-orange" data-name="Mini Croissant" data-price="1.20">Añadir al carrito</button>
+                                </div>
+                            </div>                
+                        </div>
+                        <div class="col-md-3">
+                                        
+                        </div>
+                        <div class="col-md-3">
+                                         
+                        </div>
+                        
+                    </div>
+                </div>
+                    
+            </div>
+            
+        </div>
+     
+    </main>
+    <!-- Footer -->
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted">
+        <!-- Section: Social media -->
+        <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+            <div class="me-5 d-none d-lg-block">
+                <span>Síguenos en redes: </span>
+            </div>
+            <div>
+                <a href="" class="me-4 text-reset"><i class="fab fa-twitter"></i></a>
+                <a href="" class="me-4 text-reset"><i class="fab fa-instagram"></i></a>          
+            </div>
+        </section>
+    
+        <!-- Section: Links  -->
+        <section>
+            <div class="container text-center text-md-start mt-5">
+                <div class="row mt-3">
+                    
+    
+                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Productos</h6>
+                        <p><a href="#!" class="text-reset">Pasteleria</a></p>
+                        <p><a href="#!" class="text-reset">Bolleria</a></p>
+                        <p><a href="#!" class="text-reset">Salado</a></p>
+                        <p><a href="#!" class="text-reset">Tartas</a></p>
+                        <p><a href="#!" class="text-reset">Cafetería</a></p>
+                    </div>
+    
+                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Enlaces de interés</h6>
+                        <p><a href="#!" class="text-reset">Alérgenos</a></p>
+                        <p><a href="#!" class="text-reset">¿Quienes somos?</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Trabaja con nosotros</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Canal compliance</a></p>
+                        <p><a href="trabajaConNosotros.html" class="text-reset">Politica de cookies</a></p>
+                    </div>
+    
+                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                        <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
+                        <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
+                        <p><i class="fas fa-home me-3"></i>CC Espacio Torrelodones, Torrelodones</p>
+                        <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
+                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
+                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <!-- Copyright -->
+        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2025 Copyright:
+            <a class="text-reset fw-bold" href="../index.html">Pastelería El Caballo Goloso</a>
+        </div>
+    </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        } else {
+            const decoded = JSON.parse(atob(token.split('.')[1]));
+            if (decoded.rol !== 'administrador') {
+                document.getElementById('admin-options').style.display = 'none';
+            }
+        }
+    });
+</script>
+
+<div id="admin-options">
+    <a href="nuevoproducto.html" class="btn btn-primary">Agregar Producto</a>
+</div>
+
+    <script
+        type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
+    ></script>
+    <script>
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+        // Función para añadir productos al carrito
+        function addToCart(productName, productPrice) {
+            const existingProduct = cart.find(item => item.name === productName);
+            if (existingProduct) {
+                existingProduct.quantity++;
+                existingProduct.subtotal = existingProduct.quantity * productPrice;
+            } else {
+                cart.push({
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1,
+                    subtotal: productPrice
+                });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart)); // Guardar carrito en localStorage
+            alert(`${productName} se añadió al carrito.`);
+        }
+    
+        // Event listeners para los botones "Añadir al carrito"
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', e => {
+                const productName = e.target.dataset.name;
+                const productPrice = parseFloat(e.target.dataset.price);
+                addToCart(productName, productPrice);
+            });
+        });
+    </script>
+    <script>
+        document.querySelectorAll('.view-product').forEach(button => {
+            button.addEventListener('click', e => {
+                e.preventDefault();
+                const product = {
+                    name: e.target.dataset.name,
+                    price: e.target.dataset.price,
+                    image: e.target.dataset.image,
+                    description: e.target.dataset.description
+                };
+                console.log('Producto guardado:', product); // Comprobar en la consola
+                localStorage.setItem('selectedProduct', JSON.stringify(product)); // Guardar datos en localStorage
+                window.location.href = e.target.href; // Redirigir a la página del producto
+            });
+        });
+    </script>
+    
+    
+    
+</body>
+
+</html>

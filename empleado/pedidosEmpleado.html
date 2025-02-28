@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos del Empleado</title>
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="assets/css/loopple/loopple.css" rel="stylesheet" />
+    <link href="assets/css/theme.css" rel="stylesheet" />
+    <link href="assets/js/loopple/loopple.js" />
+</head>
+
+<body>
+    <header>
+       
+        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+            <div class="container-fluid">
+                <!-- Toggle button -->
+                <button
+                    data-mdb-collapse-init
+                    class="navbar-toggler"
+                    type="button"
+                    data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar brand -->
+                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
+                        <img
+                            src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
+                            height="15"
+                            alt="MDB Logo"
+                            loading="lazy"
+                        />
+                    </a>
+                    <!-- Left links -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item"><a class="nav-link active" href="dashboard.html">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="registroHorario.html">Registro Horario</a></li>
+                            <li class="nav-item"><a class="nav-link" href="pedidosEmpleado.html">Pedidos</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Right elements -->
+                <div class="d-flex align-items-center">
+                    
+
+                    <!-- Avatar -->
+                    <div class="dropdown">
+                        <a
+                            data-mdb-dropdown-init
+                            class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                            href="login.html"
+                            id="navbarDropdownMenuAvatar"
+                            role="button"
+                            aria-expanded="false"
+                        >
+                            <img
+                                src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                                class="rounded-circle"
+                                height="25"
+                                alt="User Avatar"
+                                loading="lazy"
+                            />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li>
+                                <a class="dropdown-item" href="#">My profile</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Settings</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Logout</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="equipo.html">Team</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        <h2 class="text-center mb-4">Gestión de Pedidos</h2>
+        <div id="orders-container" class="row">
+            <!-- Orders will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <footer class="bg-body-tertiary text-center">
+        <!-- Grid container -->
+        <div class="container p-4 pb-0">
+          <!-- Section: Social media -->
+          <section class="mb-4">
+            <!-- Facebook -->
+            <a
+            data-mdb-ripple-init
+              class="btn text-white btn-floating m-1"
+              style="background-color: #3b5998;"
+              href="#!"
+              role="button"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+      
+            <!-- Twitter -->
+            <a
+              data-mdb-ripple-init
+              class="btn text-white btn-floating m-1"
+              style="background-color: #55acee;"
+              href="#!"
+              role="button"
+              ><i class="fab fa-twitter"></i
+            ></a>
+      
+            <!-- Google -->
+            <a
+              data-mdb-ripple-init
+              class="btn text-white btn-floating m-1"
+              style="background-color: #dd4b39;"
+              href="#!"
+              role="button"
+              ><i class="fab fa-google"></i
+            ></a>
+      
+            <!-- Instagram -->
+            <a
+              data-mdb-ripple-init
+              class="btn text-white btn-floating m-1"
+              style="background-color: #ac2bac;"
+              href="#!"
+              role="button"
+              ><i class="fab fa-instagram"></i
+            ></a>
+      
+          </section>
+          <!-- Section: Social media -->
+        </div>
+        <!-- Grid container -->
+      
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+          © 2020 Copyright:
+          <a class="text-body" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+
+
+    <script>
+        // Simulated Order Data
+        const orders = [
+            { id: 1, name: 'Pedido #001', assignedTo: 'Empleado 1', status: 'Pedido Creado' },
+            { id: 2, name: 'Pedido #002', assignedTo: 'Empleado 2', status: 'Tramitando Pedido' },
+            { id: 3, name: 'Pedido #003', assignedTo: 'Empleado 1', status: 'Pedido Preparado' }
+        ];
+
+        // Order Status Options
+        const statusOptions = ["Pedido Creado", "Tramitando Pedido", "Pedido Preparado"];
+
+        // Generate Order Cards
+        function renderOrders() {
+            const container = document.getElementById('orders-container');
+            container.innerHTML = '';
+            orders.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'col-md-4 order-card';
+
+                card.innerHTML = `
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">${order.name}</h5>
+                            <p>Responsable: <strong>${order.assignedTo}</strong></p>
+                            <div>
+                                <label for="status-${order.id}" class="form-label">Estado</label>
+                                <select id="status-${order.id}" class="form-select status-select" onchange="updateStatus(${order.id}, this.value)">
+                                    ${statusOptions.map(option => `<option value="${option}" ${option === order.status ? 'selected' : ''}>${option}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Update Order Status
+        function updateStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = newStatus;
+                alert(`El estado del ${order.name} ha cambiado a: ${newStatus}`);
+            }
+        }
+
+        // Initial Render
+        document.addEventListener('DOMContentLoaded', renderOrders);
+    </script>
+</body>
+
+</html>
