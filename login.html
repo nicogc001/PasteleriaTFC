@@ -103,31 +103,34 @@
     </form>
     
     <script>
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        const API_URL = "https://pasteleria-backend.vercel.app/api/usuarios";
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-    
-            const nombre = document.getElementById('nombre').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const rol = document.getElementById('rol').value;
-    
+            const email = document.getElementById('form2Example17').value;
+            const password = document.getElementById('form2Example27').value;
             try {
-                const response = await fetch('http://localhost:3000/api/usuarios/register', {
+                const response = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, email, password, rol })
+                    body: JSON.stringify({ email, password })
                 });
-    
                 const data = await response.json();
-    
                 if (response.ok) {
-                    alert('Usuario registrado con éxito');
-                    window.location.href = 'login.html';
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('rol', data.user.rol);
+                    alert('Inicio de sesión exitoso');
+                    if (data.user.rol === 'admin') {
+                        window.location.href = 'admin_dashboard.html';
+                    } else if (data.user.rol === 'empleado') {
+                        window.location.href = 'empleado_dashboard.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
                 } else {
                     alert(data.error);
                 }
             } catch (error) {
-                console.error('Error en el registro:', error);
+                console.error('Error al iniciar sesión:', error);
                 alert('Error en el servidor');
             }
         });
