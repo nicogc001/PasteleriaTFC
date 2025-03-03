@@ -1,21 +1,22 @@
-const express = require('express');
-const db = require('../db');
-
+const bcrypt = require("bcrypt");
+const express = require("express");
 const router = express.Router();
+const pool = require("../db"); // Conexión a MySQL
 
-// Ruta para obtener todos los usuarios
-router.get('/usuarios', async (req, res) => {
+router.post("/register", async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT id, nombre, email, rol, fecha_creacion FROM usuarios');
-        
-        if (rows.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron usuarios' });
-        }
+        const { nombre, email, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        res.status(200).json(rows);
+        const [result] = await pool.query(
+            "INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, 'cliente')",
+            [nombre, email, hashedPassword]
+        );
+
+        res.status(201).json({ mensaje: "Usuario registrado con éxito", userId: result.insertId });
     } catch (error) {
-        console.error('Error al obtener usuarios:', error);
-        res.status(500).json({ error: 'Error en el servidor' });
+        console.error("Error en el registro:", error);
+        res.status(500).json({ error: "Error en el servidor" });
     }
 });
 
