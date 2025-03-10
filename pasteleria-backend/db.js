@@ -11,11 +11,10 @@ const connection = mysql.createConnection({
 
 connection.connect((error) => {
   if (error) {
-    console.error('Error conectando:', error);
+    console.error('❌ Error conectando a MySQL:', error);
   } else {
-    console.log('Conectado correctamente a MySQL en Railway.');
+    console.log('✅ Conectado correctamente a MySQL en Railway.');
   }
 });
 
 module.exports = connection;
-
