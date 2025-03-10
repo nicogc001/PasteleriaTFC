@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const db = require('./db'); // Asegúrate de que este nombre sea el correcto
-const authRoutes = require('./routes/authRoutes'); // Importamos las rutas
+const authRoutes = require('./routes/authRoutes'); // Importamos las rutas necesarias
 
 const app = express();
 
@@ -12,11 +12,11 @@ app.use(cors());
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
-  res.send('¡Backend funcionando correctamente!');
+    res.send('¡Backend funcionando correctamente!');
 });
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`Servidor corriendo en puerto ${PORT}`);
 });
