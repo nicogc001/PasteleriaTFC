@@ -75,12 +75,15 @@
         </div>
     </section>
     <script>
+        // Definir la URL del backend en Render
+        const API_URL = "https://pasteleriatfc-back.onrender.com/api/auth"; // ✅ ¡Aquí está la corrección!
+    
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('form2Example17').value;
             const password = document.getElementById('form2Example27').value;
             try {
-                const response = await fetch(`${API_URL}/login`, {  // ✅ Cambiado a Render
+                const response = await fetch(`${API_URL}/login`, {  // ✅ Ahora API_URL está definido correctamente
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -106,5 +109,6 @@
             }
         });
     </script>
+    
 </body>
 </html>
