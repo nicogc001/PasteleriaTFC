@@ -75,13 +75,12 @@
         </div>
     </section>
     <script>
-        const API_URL = "https://pasteleria-backend.vercel.app/api/usuarios";
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('form2Example17').value;
             const password = document.getElementById('form2Example27').value;
             try {
-                const response = await fetch(`${API_URL}/login`, {
+                const response = await fetch(`${API_URL}/login`, {  // ✅ Cambiado a Render
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
