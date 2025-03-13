@@ -76,23 +76,29 @@
     </section>
     <script>
         // Definir la URL del backend en Render
-        const API_URL = "https://pasteleriatfc-back.onrender.com/api/auth"; // ✅ ¡Aquí está la corrección!
+        const API_URL = "https://pasteleriatfc-back.onrender.com/api/auth"; 
     
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+    
             const email = document.getElementById('form2Example17').value;
             const password = document.getElementById('form2Example27').value;
+    
             try {
-                const response = await fetch(`${API_URL}/login`, {  // ✅ Ahora API_URL está definido correctamente
+                const response = await fetch(`${API_URL}/login`, {  
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
+    
                 const data = await response.json();
+                console.log("📌 Respuesta del backend:", data); // ✅ Verifica la respuesta en la consola
+    
                 if (response.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('rol', data.user.rol);
                     alert('Inicio de sesión exitoso');
+    
                     if (data.user.rol === 'admin') {
                         window.location.href = 'admin_dashboard.html';
                     } else if (data.user.rol === 'empleado') {
@@ -101,14 +107,13 @@
                         window.location.href = 'index.html';
                     }
                 } else {
-                    alert(data.error);
+                    alert(data.error || 'Error en el login');
                 }
             } catch (error) {
-                console.error('Error al iniciar sesión:', error);
+                console.error('❌ Error al iniciar sesión:', error);
                 alert('Error en el servidor');
             }
         });
-    </script>
-    
+    </script>    
 </body>
 </html>
