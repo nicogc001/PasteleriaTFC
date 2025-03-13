@@ -89,7 +89,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         });
 
         const text = await response.text(); // Leer la respuesta como texto
-        console.log("📌 Respuesta del backend (RAW):", text); // ✅ Imprimir la respuesta cruda
+        console.log("📌 Respuesta del backend (RAW):", text);
 
         let data;
         try {
@@ -100,10 +100,17 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             return;
         }
 
-        console.log("📌 Respuesta del backend (JSON):", data); // ✅ Verificar respuesta JSON
+        console.log("📌 Respuesta del backend (JSON):", data);
 
         if (!response.ok) {
+            console.error("❌ Error en la respuesta:", data);
             alert(data.error || 'Error en el login');
+            return;
+        }
+
+        if (!data.user || !data.user.rol) {
+            console.error("❌ La respuesta no contiene un usuario válido:", data);
+            alert("❌ Error: La API no está devolviendo el rol del usuario.");
             return;
         }
 
@@ -116,7 +123,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         } else if (data.user.rol === 'empleado') {
             window.location.href = 'empleado/dashboard.html'; 
         } else if (data.user.rol === 'cliente') {
-            window.location.href = 'empleado/dashboard.html'; // 🔥 Para pruebas, usa el mismo que empleado
+            window.location.href = 'empleado/dashboard.html'; // 🔥 Para pruebas, usa la misma de empleado
         } else {
             alert('Rol desconocido. Contacta con soporte.');
         }
@@ -125,6 +132,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         alert('❌ Error en la conexión con el servidor. Revisa la consola.');
     }
 });
+
 
     </script>    
 </body>
