@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+app.use(cors({origin: "*"})); // permite todas las solicitudes
 
 // Configurar variables de entorno
 dotenv.config();
