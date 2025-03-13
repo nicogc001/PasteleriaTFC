@@ -47,7 +47,17 @@ exports.login = (req, res) => {
     }
 
     console.log('✅ Contraseña correcta. Usuario logueado.');
-    res.json({ message: 'Login correcto', userId: user.id, role: user.role });
+    res.json({
+      message: 'Login correcto',
+      token: "fake-jwt-token", // Si no usas JWT, puedes quitarlo
+      user: {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          rol: user.role // 🔥 Asegurar que el rol está dentro de 'user'
+      }
+  });
+  
   });
 };
 
