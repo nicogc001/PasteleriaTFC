@@ -30,12 +30,12 @@ exports.login = (req, res) => {
   db.query('SELECT * FROM usuarios WHERE email = ?', [email], (err, results) => {
     if (err) {
       console.error('❌ Error en la base de datos:', err);
-      return res.status(500).send('Error en la base de datos.');
+      return res.status(500).json({ error: 'Error en la base de datos.' });
     }
 
     if (results.length === 0) {
       console.log('❌ Usuario no encontrado:', email);
-      return res.status(401).send('Email o contraseña incorrecta.');
+      return res.status(401).json({ error: 'Email o contraseña incorrecta.' });
     }
 
     const user = results[0];
@@ -48,21 +48,19 @@ exports.login = (req, res) => {
 
     if (!passwordIsValid) {
       console.log('❌ Contraseña incorrecta.');
-      return res.status(401).send('Email o contraseña incorrecta.');
+      return res.status(401).json({ error: 'Email o contraseña incorrecta.' });
     }
 
     console.log('✅ Contraseña correcta. Usuario logueado.');
     res.json({
       message: 'Login correcto',
-      token: "fake-jwt-token", // Si no usas JWT, puedes quitarlo
+      token: "fake-jwt-token", // 🔹 Puedes cambiar esto a un JWT real en el futuro
       user: {
           id: user.id,
           email: user.email,
           username: user.username,
-          rol: user.role // 🔥 Asegurar que el rol está dentro de 'user'
+          role: user.role || user.rol  // 🔹 Se asegura de devolver siempre "role"
       }
-  });
-  
+    });
   });
 };
-
