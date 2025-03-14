@@ -75,118 +75,121 @@
         </div>
     </section>
     <script>
-const API_URL = "https://pasteleriatfc-back.onrender.com/api/auth";
+        const API_URL = "https://pasteleriatfc-back.onrender.com/api/auth";
 
-// 🔹 **Manejador de login**
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+        // 🔹 **Manejador de login**
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-    const email = document.getElementById('form2Example17').value;
-    const password = document.getElementById('form2Example27').value;
+            const email = document.getElementById('form2Example17').value;
+            const password = document.getElementById('form2Example27').value;
 
-    try {
-        const response = await fetch(`${API_URL}/login`, {  
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            try {
+                const response = await fetch(`${API_URL}/login`, {  
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const text = await response.text(); // Leer la respuesta como texto
+                console.log("📌 Respuesta del backend (RAW - Login):", text);
+
+                let data;
+                try {
+                    data = JSON.parse(text); // Intentar convertir a JSON
+                } catch (error) {
+                    console.error("❌ Error al convertir respuesta a JSON:", error);
+                    alert("❌ Respuesta no válida del servidor.");
+                    return;
+                }
+
+                console.log("📌 Respuesta del backend (JSON - Login):", data);
+
+                if (!response.ok) {
+                    console.error("❌ Error en la respuesta:", data);
+                    alert(data.error || 'Error en el login');
+                    return;
+                }
+
+                if (!data.user || !data.user.role) {
+                    console.error("❌ La respuesta no contiene un usuario válido:", data);
+                    alert("❌ Error: La API no está devolviendo el rol del usuario.");
+                    return;
+                }
+
+                // Guardar el token y rol en el LocalStorage
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('rol', data.user.role);
+                alert('Inicio de sesión exitoso');
+
+                console.log("🔹 Redirigiendo a:", data.user.role);
+
+                // 🔹 Redirección según el rol correcto
+                switch (data.user.role) {
+                    case 'admin':
+                        window.location.href = 'admin/dashboard.html'; 
+                        break;
+                    case 'empleado':
+                        window.location.href = 'empleado/dashboard.html'; 
+                        break;
+                    case 'cliente':
+                        window.location.href = 'cliente/dashboard.html'; 
+                        break;
+                    default:
+                        alert('Rol desconocido. Contacta con soporte.');
+                }
+
+            } catch (error) {
+                console.error('❌ Error en la petición:', error);
+                alert('❌ Error en la conexión con el servidor. Revisa la consola.');
+            }
         });
 
-        const text = await response.text(); // Leer la respuesta como texto
-        console.log("📌 Respuesta del backend (RAW - Login):", text);
+        // 🔹 **Manejador de registro**
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        let data;
-        try {
-            data = JSON.parse(text); // Intentar convertir a JSON
-        } catch (error) {
-            console.error("❌ Error al convertir respuesta a JSON:", error);
-            alert("❌ Respuesta no válida del servidor.");
-            return;
-        }
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const userRole = "cliente"; // 🔹 Siempre asigna "cliente" para registros desde login.html
 
-        console.log("📌 Respuesta del backend (JSON - Login):", data);
+            try {
+                const response = await fetch(`${API_URL}/register`, {  
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: nombre, email, password, role: userRole })
+                });
 
-        if (!response.ok) {
-            console.error("❌ Error en la respuesta:", data);
-            alert(data.error || 'Error en el login');
-            return;
-        }
+                const text = await response.text(); // Leer la respuesta como texto
+                console.log("📌 Respuesta del backend (RAW - Registro):", text);
 
-        if (!data.user || !data.user.role) {
-            console.error("❌ La respuesta no contiene un usuario válido:", data);
-            alert("❌ Error: La API no está devolviendo el rol del usuario.");
-            return;
-        }
+                let data;
+                try {
+                    data = JSON.parse(text); // Intentar convertir a JSON
+                } catch (error) {
+                    console.error("❌ Error al convertir respuesta a JSON:", error);
+                    alert("❌ Respuesta no válida del servidor.");
+                    return;
+                }
 
-        // Guardar el token y rol en el LocalStorage
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('rol', data.user.role);
-        alert('Inicio de sesión exitoso');
+                console.log("📌 Respuesta del backend (JSON - Registro):", data);
 
-        // 🔹 Redirección según el rol
-        switch (data.user.role) {
-            case 'admin':
-                window.location.href = 'empleado/dashboard.html'; 
-                break;
-            case 'empleado':
-                window.location.href = 'empleado/dashboard.html'; 
-                break;
-            case 'cliente':
-                window.location.href = 'empleado/dashboard.html'; 
-                break;
-            default:
-                alert('Rol desconocido. Contacta con soporte.');
-        }
+                if (!response.ok) {
+                    console.error("❌ Error en la respuesta:", data);
+                    alert(data.error || 'Error en el registro');
+                    return;
+                }
 
-    } catch (error) {
-        console.error('❌ Error en la petición:', error);
-        alert('❌ Error en la conexión con el servidor. Revisa la consola.');
-    }
-});
+                alert('Registro exitoso, ahora puedes iniciar sesión.');
+                window.location.href = 'login.html';
 
-// 🔹 **Manejador de registro**
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const nombre = document.getElementById('nombre').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const userRole = "cliente"; // 🔹 Siempre asigna "cliente" para registros desde login.html
-
-    try {
-        const response = await fetch(`${API_URL}/register`, {  
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: nombre, email, password, role: userRole })
+            } catch (error) {
+                console.error('❌ Error en la petición:', error);
+                alert('❌ Error en la conexión con el servidor. Revisa la consola.');
+            }
         });
 
-        const text = await response.text(); // Leer la respuesta como texto
-        console.log("📌 Respuesta del backend (RAW - Registro):", text);
-
-        let data;
-        try {
-            data = JSON.parse(text); // Intentar convertir a JSON
-        } catch (error) {
-            console.error("❌ Error al convertir respuesta a JSON:", error);
-            alert("❌ Respuesta no válida del servidor.");
-            return;
-        }
-
-        console.log("📌 Respuesta del backend (JSON - Registro):", data);
-
-        if (!response.ok) {
-            console.error("❌ Error en la respuesta:", data);
-            alert(data.error || 'Error en el registro');
-            return;
-        }
-
-        alert('Registro exitoso, ahora puedes iniciar sesión.');
-        window.location.href = 'login.html';
-
-    } catch (error) {
-        console.error('❌ Error en la petición:', error);
-        alert('❌ Error en la conexión con el servidor. Revisa la consola.');
-    }
-});
 
     </script>    
 </body>
