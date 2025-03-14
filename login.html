@@ -126,18 +126,19 @@
 
                 // 🔹 Redirección según el rol correcto
                 switch (data.user.role) {
-                    case 'admin':
-                        window.location.href = '/empleado/dashboard.html'; 
-                        break;
-                    case 'empleado':
-                        window.location.href = '/empleado/dashboard.html'; 
-                        break;
-                    case 'cliente':
-                        window.location.href = '/empleado/dashboard.html'; 
-                        break;
-                    default:
-                        alert('Rol desconocido. Contacta con soporte.');
-                }
+                case 'admin':
+                    window.location.href = `/empleado/dashboard.html?id=${data.user.id}`;
+                    break;
+                case 'empleado':
+                    window.location.href = `/empleado/dashboard.html?id=${data.user.id}`;
+                    break;
+                case 'cliente':
+                    window.location.href = `/empleado/dashboard.html?id=${data.user.id}`;
+                    break;
+                default:
+                    alert('Rol desconocido. Contacta con soporte.');
+            }
+
 
             } catch (error) {
                 console.error('❌ Error en la petición:', error);
