@@ -75,7 +75,7 @@
         </div>
     </section>
     <script>
-        const API_URL = "https://pasteleriatfc-back.onrender.com/api/auth";
+const API_URL = "https://pasteleriatfc-back.onrender.com/api/auth";
 
 // 🔹 **Manejador de login**
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -111,7 +111,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             return;
         }
 
-        if (!data.user || !data.user.rol) {
+        if (!data.user || !data.user.role) {
             console.error("❌ La respuesta no contiene un usuario válido:", data);
             alert("❌ Error: La API no está devolviendo el rol del usuario.");
             return;
@@ -119,18 +119,22 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
         // Guardar el token y rol en el LocalStorage
         localStorage.setItem('token', data.token);
-        localStorage.setItem('rol', data.user.rol);
+        localStorage.setItem('rol', data.user.role);
         alert('Inicio de sesión exitoso');
 
         // 🔹 Redirección según el rol
-        if (data.user.rol === 'admin') {
-            window.location.href = 'admin/dashboard.html'; 
-        } else if (data.user.rol === 'empleado') {
-            window.location.href = 'empleado/dashboard.html'; 
-        } else if (data.user.rol === 'cliente') {
-            window.location.href = 'cliente/dashboard.html'; 
-        } else {
-            alert('Rol desconocido. Contacta con soporte.');
+        switch (data.user.role) {
+            case 'admin':
+                window.location.href = 'empleado/dashboard.html'; 
+                break;
+            case 'empleado':
+                window.location.href = 'empleado/dashboard.html'; 
+                break;
+            case 'cliente':
+                window.location.href = 'empleado/dashboard.html'; 
+                break;
+            default:
+                alert('Rol desconocido. Contacta con soporte.');
         }
 
     } catch (error) {
@@ -146,13 +150,13 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const nombre = document.getElementById('nombre').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const rol = document.getElementById('rol').value; // Valor por defecto: 'cliente'
+    const userRole = "cliente"; // 🔹 Siempre asigna "cliente" para registros desde login.html
 
     try {
         const response = await fetch(`${API_URL}/register`, {  
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: nombre, email, password, role: rol })
+            body: JSON.stringify({ username: nombre, email, password, role: userRole })
         });
 
         const text = await response.text(); // Leer la respuesta como texto

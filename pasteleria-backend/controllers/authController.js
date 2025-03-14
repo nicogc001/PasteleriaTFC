@@ -3,18 +3,23 @@ const bcrypt = require('bcryptjs');
 
 exports.register = (req, res) => {
   const { username, email, password, role } = req.body;
+  const userRole = role || 'cliente'; // 🔹 Si no se envía rol, asigna "cliente"
+
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: "Todos los campos son obligatorios." });
+  }
+
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   db.query(
     'INSERT INTO usuarios (username, email, password, role) VALUES (?, ?, ?, ?)',
-    [username, email, hashedPassword, role || 'cliente'],
+    [username, email, hashedPassword, userRole],
     (err) => {
       if (err) {
-        console.error(err);
-        res.status(500).send('Error en registro.');
-      } else {
-        res.status(201).send('Usuario registrado correctamente.');
+        console.error('❌ Error en la base de datos:', err);
+        return res.status(500).json({ error: 'Error al registrar el usuario.' });
       }
+      res.status(201).json({ message: 'Usuario registrado correctamente.', role: userRole });
     }
   );
 };
