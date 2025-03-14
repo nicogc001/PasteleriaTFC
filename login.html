@@ -127,13 +127,13 @@
                 // 🔹 Redirección según el rol correcto
                 switch (data.user.role) {
                     case 'admin':
-                        window.location.href = 'admin/dashboard.html'; 
+                        window.location.href = '/empleado/dashboard.html'; 
                         break;
                     case 'empleado':
-                        window.location.href = 'empleado/dashboard.html'; 
+                        window.location.href = '/empleado/dashboard.html'; 
                         break;
                     case 'cliente':
-                        window.location.href = 'cliente/dashboard.html'; 
+                        window.location.href = '/empleado/dashboard.html'; 
                         break;
                     default:
                         alert('Rol desconocido. Contacta con soporte.');
