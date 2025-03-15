@@ -1,3 +1,20 @@
+document.addEventListener("DOMContentLoaded", async function () {
+    await cargarNavbar(); // Cargar el navbar primero
+    cargarCliente(); // Luego cargar los datos del cliente
+});
+
+async function cargarNavbar() {
+    try {
+        const response = await fetch("navbar.html");
+        if (!response.ok) throw new Error("Error al cargar el navbar.");
+        
+        const html = await response.text();
+        document.getElementById("navbar-container").innerHTML = html;
+    } catch (error) {
+        console.error("❌ Error cargando navbar:", error);
+    }
+}
+
 async function cargarCliente() {
     const token = localStorage.getItem('token');
 
@@ -6,11 +23,6 @@ async function cargarCliente() {
         window.location.href = "/login.html";
         return;
     }
-
-    // Cargar navbar en todas las páginas
-    fetch("navbar.html")
-        .then(response => response.text())
-        .then(html => document.getElementById("navbar-container").innerHTML = html);
 
     try {
         const response = await fetch("https://pasteleriatfc-back.onrender.com/api/cliente/perfil", {
@@ -60,5 +72,3 @@ function cerrarSesion() {
     localStorage.removeItem('token');
     window.location.href = "/login.html";
 }
-
-cargarCliente();
