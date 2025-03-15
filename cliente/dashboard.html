@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Cliente</title>
+    <script src="../scripts/dashboard_cliente.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="welcome">Cargando...</h1>
+
+        <h2>Mis Datos</h2>
+        <p><strong>Nombre:</strong> <span id="username"></span></p>
+        <p><strong>Email:</strong> <span id="email"></span></p>
+
+        <h2>Mis Direcciones</h2>
+        <div id="direcciones"></div>
+
+        <h2>Mis Pedidos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Pedido</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="pedidos-lista"></tbody>
+        </table>
+
+        <h2>Mis Cupones</h2>
+        <div id="cupones"></div>
+    </div>
+</body>
+</html>
