@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function () {
-    await cargarNavbar(); // Cargar el navbar primero
-    cargarCliente(); // Luego cargar los datos del cliente
+    await cargarNavbar(); // Cargar el navbar
+    await cargarFooter(); // Cargar el footer
+    cargarCliente(); // Luego cargar la información del cliente
 });
 
 async function cargarNavbar() {
@@ -12,6 +13,18 @@ async function cargarNavbar() {
         document.getElementById("navbar-container").innerHTML = html;
     } catch (error) {
         console.error("❌ Error cargando navbar:", error);
+    }
+}
+
+async function cargarFooter() {
+    try {
+        const response = await fetch("footer.html");
+        if (!response.ok) throw new Error("Error al cargar el footer.");
+        
+        const html = await response.text();
+        document.getElementById("footer-container").innerHTML = html;
+    } catch (error) {
+        console.error("❌ Error cargando footer:", error);
     }
 }
 
