@@ -19,70 +19,90 @@
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-            <div class="container-fluid">
-                <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-bars"></i>
-                </button>
-        
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
-                            loading="lazy" />
-                    </a>
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bollería</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/salado.html">Repostería Salada</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
+  <header>
+       
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+        <div class="container-fluid">
+            <!-- Toggle button -->
+            <button
+                data-mdb-collapse-init
+                class="navbar-toggler"
+                type="button"
+                data-mdb-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Collapsible wrapper -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Navbar brand -->
+                <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
+                    <img
+                        src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
+                        height="15"
+                        alt="MDB Logo"
+                        loading="lazy"
+                    />
+                </a>
+                <!-- Left links -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="registroHorario.html">Estados del pedido</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pedidosCliente.html">Historial de pedidos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="equipo.html">Empleados</a></li>
                     </ul>
                 </div>
-                <div class="d-flex align-items-center">
-                    <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
-                    <div class="dropdown">
-                        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button"
-                            aria-expanded="false">
-                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                            <li><a class="dropdown-item" href="#">My profile</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
             </div>
-        </nav>
-        
 
-        <!-- Background image -->
-        <div
-            class="p-5 text-center bg-image"
-            style="
-                background-image: url('https://media.scoolinary.app/images/2023/07/294_Bachour_banner2.jpg');
-                height: 300px;
-            "
-        >
-            <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
-                <div class="d-flex justify-content-center align-items-center h-100">
-                    <div class="text-white">
-                        <h1 class="mb-3">Bollería</h1>
-                        <h4 class="mb-3">Esponjosos y deliciosos bollos recién horneados</h4>
-                    </div>
+            <!-- Right elements -->
+            <div class="d-flex align-items-center">
+                
+
+                <!-- Avatar -->
+                <div class="dropdown">
+                    <a
+                        data-mdb-dropdown-init
+                        class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                        href="login.html"
+                        id="navbarDropdownMenuAvatar"
+                        role="button"
+                        aria-expanded="false"
+                    >
+                        <img
+                            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                            class="rounded-circle"
+                            height="25"
+                            alt="User Avatar"
+                            loading="lazy"
+                        />
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                        <li>
+                            <a class="dropdown-item" href="#">My profile</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Settings</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Logout</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
+</header>
 
     <main>
         <section class="py-5 draggable">
             <div class="container">
               <div class="row">
                 <div class="col-md-8 mx-auto text-center">
-                  <h4 class="text-gradient text-primary">Join our awesome team</h4>
+                  <h4 class="text-gradient text-primary">Tablón de empleados</h4>
                 </div>
               </div>
               <div class="row mt-lg-5 mt-4">
@@ -92,6 +112,8 @@
                       <div class="col-lg-7">
                         <h5 class="mb-2">Michael Frisen</h5>
                         <span class="badge badge-sm rounded-pill mb-3 text-dark">PHP Developer</span>
+                        <span class="badge badge-sm rounded-pill mb-3 text-dark">Fijar Horario</span>
+                        <span class="badge badge-sm rounded-pill mb-3 text-dark">Consultar jornada registrada</span>
                         <br/>
                         <button type="button" class="btn btn-twitter btn-simple px-2 mb-0">
                           <i class="fab fa-twitter text-lg"></i>
