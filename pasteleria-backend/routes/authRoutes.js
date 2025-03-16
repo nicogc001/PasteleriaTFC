@@ -12,9 +12,9 @@ router.get('/empleado/dashboard', authController.obtenerDashboardEmpleado);
 router.get('/empleado/estadisticas', authController.obtenerEstadisticasEmpleado);
 
 // 📌 **Ruta para registrar el horario del empleado**
-router.post('/empleado/registro-horario', authController.registrarHorario); // 🔹 La ruta debe coincidir con el frontend
+router.post('/empleado/registroHorario', authController.registroHorario); // 🔹 La ruta debe coincidir con el frontend
 
 // 📌 **Ruta para obtener los horarios registrados por el empleado**
-router.get('/empleado/horarios', authController.obtenerHorarios);
+router.get('/empleado/registroHorario', authController.obtenerHorarios);
 
 module.exports = router;

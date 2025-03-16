@@ -139,7 +139,7 @@ exports.verifyToken = (req, res, next) => {
 
 // 🔹 **Registrar horario laboral**
 exports.registrarHorario = (req, res) => {
-    const empleadoId = req.user.id;
+    const empleadoId = req.user.id;  // 🔹 Se obtiene del token
     const { fecha, hora_entrada, hora_salida } = req.body;
 
     if (!fecha || !hora_entrada) {
@@ -147,15 +147,19 @@ exports.registrarHorario = (req, res) => {
     }
 
     db.query(
-        `INSERT INTO registro_horario (empleado_id, fecha, hora_entrada, hora_salida) VALUES (?, ?, ?, ?)`,
+        `INSERT INTO registro_horario (empleado_id, fecha, hora_entrada, hora_salida) 
+         VALUES (?, ?, ?, ?)`,
         [empleadoId, fecha, hora_entrada, hora_salida || null],
         (err) => {
-            if (err) return res.status(500).json({ error: 'Error al registrar horario.' });
-
-            res.status(201).json({ message: "Horario registrado correctamente." });
+            if (err) {
+                console.error("❌ Error en la base de datos:", err);
+                return res.status(500).json({ error: "Error al registrar horario." });
+            }
+            res.status(201).json({ message: "✅ Horario registrado correctamente." });
         }
     );
 };
+
 
 // 🔹 **Obtener horarios laborales**
 exports.obtenerHorarios = (req, res) => {
