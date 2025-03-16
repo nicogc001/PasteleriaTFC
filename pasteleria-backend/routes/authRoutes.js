@@ -1,20 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController'); // Verifica que la ruta sea correcta
+const authController = require('../controllers/authController'); // ✅ Asegúrate de que esta ruta es correcta
 
-// Middleware de autenticación con JWT
-router.use(authController.verifyToken);
+// ✅ Verifica que los métodos existen en `authController.js`
+if (!authController.register || !authController.login) {
+    console.error("❌ Error: Las funciones register o login no están definidas en authController.");
+}
 
-// 📌 **Ruta para obtener datos del Dashboard del Empleado**
-router.get('/empleado/dashboard', authController.obtenerDashboardEmpleado);
+// 📌 **Rutas de autenticación**
+router.post('/register', authController.register);
+router.post('/login', authController.login);
 
-// 📌 **Ruta para obtener estadísticas del Empleado**
-router.get('/empleado/estadisticas', authController.obtenerEstadisticasEmpleado);
-
-// 📌 **Ruta para registrar el horario del empleado**
-router.post('/empleado/registroHorario', authController.registrarHorario); // 🔹 La ruta debe coincidir con el frontend
-
-// 📌 **Ruta para obtener los horarios registrados por el empleado**
-router.get('/empleado/registroHorario', authController.obtenerHorarios);
+// 📌 **Revisar si estás usando un método incorrecto**
+// Si tienes algo como esto y `authController.algunMetodo` no existe, coméntalo o corrígelo:
+router.get('/perfil', authController.getUserProfile); // ✅ Asegúrate de que `getUserProfile` está en `authController.js`
 
 module.exports = router;
