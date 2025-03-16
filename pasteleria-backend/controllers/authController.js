@@ -22,6 +22,7 @@ exports.register = (req, res) => {
         (err, result) => {
             if (err) return res.status(500).json({ error: 'Error al registrar el usuario.' });
 
+            // Si el usuario es un cliente, agregar su dirección
             if (userRole === "cliente" && direccion) {
                 db.query(
                     'INSERT INTO direcciones (usuario_id, calle, ciudad, codigo_postal, pais) VALUES (?, ?, ?, ?, ?)',
@@ -94,43 +95,29 @@ exports.getUserProfile = (req, res) => {
     });
 };
 
-// 🔹 **Obtener perfil completo del cliente (Pedidos, Direcciones y Cupones)**
-exports.obtenerPerfilCompleto = (req, res) => {
+// 🔹 **Obtener perfil completo del cliente con consultas paralelas**
+exports.obtenerPerfilCompleto = async (req, res) => {
     const userId = req.user.id;
 
-    const queryPerfil = `SELECT id, username, email, role FROM usuarios WHERE id = ?`;
-    const queryPedidos = `SELECT id, fecha_pedido, estado, total FROM pedidos WHERE usuario_id = ?`;
-    const queryDirecciones = `SELECT calle, ciudad, codigo_postal, pais FROM direcciones WHERE usuario_id = ?`;
-    const queryCupones = `
-        SELECT c.codigo, c.descuento, c.fecha_expiracion 
-        FROM cupones c 
-        JOIN cupones_pedidos cp ON c.id = cp.cupon_id 
-        JOIN pedidos p ON cp.pedido_id = p.id 
-        WHERE p.usuario_id = ?
-    `;
+    try {
+        const [perfil, pedidos, direcciones, cupones] = await Promise.all([
+            new Promise((resolve, reject) => db.query(`SELECT id, username, email, role FROM usuarios WHERE id = ?`, [userId], (err, res) => err ? reject(err) : resolve(res[0]))),
+            new Promise((resolve, reject) => db.query(`SELECT id, fecha_pedido, estado, total FROM pedidos WHERE usuario_id = ?`, [userId], (err, res) => err ? reject(err) : resolve(res))),
+            new Promise((resolve, reject) => db.query(`SELECT calle, ciudad, codigo_postal, pais FROM direcciones WHERE usuario_id = ?`, [userId], (err, res) => err ? reject(err) : resolve(res))),
+            new Promise((resolve, reject) => db.query(`
+                SELECT c.codigo, c.descuento, c.fecha_expiracion 
+                FROM cupones c 
+                JOIN cupones_pedidos cp ON c.id = cp.cupon_id 
+                JOIN pedidos p ON cp.pedido_id = p.id 
+                WHERE p.usuario_id = ?`, [userId], (err, res) => err ? reject(err) : resolve(res)))
+        ]);
 
-    db.query(queryPerfil, [userId], (err, perfil) => {
-        if (err) return res.status(500).json({ error: 'Error al obtener perfil.' });
+        res.json({ perfil, pedidos, direcciones, cupones });
 
-        db.query(queryPedidos, [userId], (err, pedidos) => {
-            if (err) return res.status(500).json({ error: 'Error al obtener pedidos.' });
-
-            db.query(queryDirecciones, [userId], (err, direcciones) => {
-                if (err) return res.status(500).json({ error: 'Error al obtener direcciones.' });
-
-                db.query(queryCupones, [userId], (err, cupones) => {
-                    if (err) return res.status(500).json({ error: 'Error al obtener cupones.' });
-
-                    res.json({
-                        perfil: perfil[0] || {},
-                        pedidos: pedidos || [],
-                        direcciones: direcciones || [],
-                        cupones: cupones || []
-                    });
-                });
-            });
-        });
-    });
+    } catch (error) {
+        console.error('❌ Error al obtener datos:', error);
+        res.status(500).json({ error: 'Error al obtener perfil completo.' });
+    }
 };
 
 // 🔹 **Middleware para verificar autenticación con JWT**
@@ -148,4 +135,38 @@ exports.verifyToken = (req, res, next) => {
         req.user = decoded;
         next();
     });
+};
+
+// 🔹 **Registrar horario laboral**
+exports.registrarHorario = (req, res) => {
+    const empleadoId = req.user.id;
+    const { fecha, hora_entrada, hora_salida } = req.body;
+
+    if (!fecha || !hora_entrada) {
+        return res.status(400).json({ error: "Fecha y hora de entrada son obligatorias." });
+    }
+
+    db.query(
+        `INSERT INTO registro_horario (empleado_id, fecha, hora_entrada, hora_salida) VALUES (?, ?, ?, ?)`,
+        [empleadoId, fecha, hora_entrada, hora_salida || null],
+        (err) => {
+            if (err) return res.status(500).json({ error: 'Error al registrar horario.' });
+
+            res.status(201).json({ message: "Horario registrado correctamente." });
+        }
+    );
+};
+
+// 🔹 **Obtener horarios laborales**
+exports.obtenerHorarios = (req, res) => {
+    const empleadoId = req.user.id;
+
+    db.query('SELECT fecha, hora_entrada, hora_salida FROM registro_horario WHERE empleado_id = ?', 
+        [empleadoId], 
+        (err, results) => {
+            if (err) return res.status(500).json({ error: 'Error al obtener los horarios.' });
+
+            res.json(results);
+        }
+    );
 };

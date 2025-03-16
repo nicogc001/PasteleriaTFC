@@ -189,70 +189,48 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.getElementById('log-time').addEventListener('click', () => {
-            const workDate = document.getElementById('work-date').value;
-            const startTime = document.getElementById('start-time').value;
-            const endTime = document.getElementById('end-time').value;
+ async function registrarHorario() {
+    const token = localStorage.getItem('token');
 
-            if (workDate && startTime && endTime) {
-                const start = new Date(`${workDate}T${startTime}`);
-                const end = new Date(`${workDate}T${endTime}`);
-                const hoursWorked = (end - start) / (1000 * 60 * 60);
+    if (!token) {
+        alert("No estás autenticado. Redirigiendo...");
+        window.location.href = "/login.html";
+        return;
+    }
 
-                if (hoursWorked > 0) {
-                    const records = JSON.parse(localStorage.getItem('workHours')) || [];
-                    records.push({ date: workDate, hours: hoursWorked });
-                    localStorage.setItem('workHours', JSON.stringify(records));
+    const fecha = document.getElementById("work-date").value;
+    const horaEntrada = document.getElementById("start-time").value;
+    const horaSalida = document.getElementById("end-time").value || null;
 
-                    alert(`Jornada registrada: ${workDate} (${hoursWorked.toFixed(2)} h)`);
-                    updateCharts();
-                } else {
-                    alert('La hora de salida debe ser posterior a la de entrada.');
-                }
-            } else {
-                alert('Por favor, completa todos los campos.');
-            }
+    if (!fecha || !horaEntrada) {
+        alert("Debes ingresar una fecha y hora de entrada.");
+        return;
+    }
+
+    try {
+        const response = await fetch("https://pasteleriatfc-back.onrender.com/api/empleado/registro-horario", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ fecha, hora_entrada: horaEntrada, hora_salida: horaSalida })
         });
 
-        function updateCharts() {
-            const records = JSON.parse(localStorage.getItem('workHours')) || [];
+        const data = await response.json();
 
-            const dailyData = {};
-            const monthlyData = {};
-
-            records.forEach(record => {
-                const date = new Date(record.date);
-                const day = date.toLocaleDateString('es-ES', { weekday: 'long' });
-                const month = date.toLocaleDateString('es-ES', { month: 'short' });
-
-                dailyData[day] = (dailyData[day] || 0) + record.hours;
-                monthlyData[month] = (monthlyData[month] || 0) + record.hours;
-            });
-
-            hoursPerDayChart.data.labels = Object.keys(dailyData);
-            hoursPerDayChart.data.datasets[0].data = Object.values(dailyData);
-            hoursPerDayChart.update();
-
-            hoursPerMonthChart.data.labels = Object.keys(monthlyData);
-            hoursPerMonthChart.data.datasets[0].data = Object.values(monthlyData);
-            hoursPerMonthChart.update();
+        if (!response.ok) {
+            throw new Error(data.error || "Error al registrar el horario.");
         }
 
-        const hoursPerDayChart = new Chart(document.getElementById('hours-per-day-chart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                datasets: [{
-                    label: 'Horas por Día',
-                    data: [8, 7.5, 6, 8.5, 7, 6.5, 8],
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                }]
-            }
-        });
+        alert("Horario registrado correctamente.");
+        updateCharts(); // Actualiza los gráficos con datos reales
+    } catch (error) {
+        console.error("❌ Error al registrar horario:", error);
+        alert("Error al registrar el horario. Revisa la consola.");
+    }
+}
 
-        document.addEventListener('DOMContentLoaded', updateCharts);
     </script>
 </body>
 
