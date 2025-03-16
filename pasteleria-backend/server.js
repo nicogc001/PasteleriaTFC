@@ -1,25 +1,31 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+
+dotenv.config();
+
+const app = express();
+
+// ✅ Configurar CORS
 app.use(cors({
-    origin: "*",  // ✅ Permite todas las conexiones (para pruebas)
+    origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     allowedHeaders: "Content-Type,Authorization"
 }));
 
-
-// Configurar variables de entorno
-dotenv.config();
-
-const app = express();
-app.use(cors());
 app.use(express.json());
 
-// Importar rutas
-const usuariosRoutes = require('./routes/usuarios');
+// ✅ Importar rutas
+const authRoutes = require('./routes/authRoutes');  // 🔹 Asegúrate de que este archivo existe
+const empleadosRoutes = require('./routes/empleadosRoutes');  // 🔹 Asegúrate de que este archivo existe
+const usuariosRoutes = require('./routes/usuarios'); 
+
+// ✅ Definir los endpoints base
+app.use('/api/auth', authRoutes); 
+app.use('/api/empleado', empleadosRoutes);
 app.use('/api', usuariosRoutes);
 
-// Ruta de prueba
+// ✅ Ruta de prueba
 app.get('/', (req, res) => {
     res.send('Servidor funcionando correctamente');
 });

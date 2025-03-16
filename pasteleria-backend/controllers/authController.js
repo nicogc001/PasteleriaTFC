@@ -137,40 +137,40 @@ exports.verifyToken = (req, res, next) => {
     });
 };
 
-// 🔹 **Registrar horario laboral**
 exports.registrarHorario = (req, res) => {
-    const empleadoId = req.user.id;  // 🔹 Se obtiene del token
+    const empleadoId = req.user.id; // Obtener ID del empleado desde el JWT
     const { fecha, hora_entrada, hora_salida } = req.body;
 
     if (!fecha || !hora_entrada) {
         return res.status(400).json({ error: "Fecha y hora de entrada son obligatorias." });
     }
 
-    db.query(
-        `INSERT INTO registro_horario (empleado_id, fecha, hora_entrada, hora_salida) 
-         VALUES (?, ?, ?, ?)`,
-        [empleadoId, fecha, hora_entrada, hora_salida || null],
-        (err) => {
-            if (err) {
-                console.error("❌ Error en la base de datos:", err);
-                return res.status(500).json({ error: "Error al registrar horario." });
-            }
-            res.status(201).json({ message: "✅ Horario registrado correctamente." });
+    const query = `
+        INSERT INTO registro_horario (empleado_id, fecha, hora_entrada, hora_salida) 
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(query, [empleadoId, fecha, hora_entrada, hora_salida || null], (err, result) => {
+        if (err) {
+            console.error('❌ Error en la base de datos:', err);
+            return res.status(500).json({ error: 'Error al registrar horario.' });
         }
-    );
+        res.status(201).json({ message: "Horario registrado correctamente." });
+    });
 };
 
-
-// 🔹 **Obtener horarios laborales**
 exports.obtenerHorarios = (req, res) => {
     const empleadoId = req.user.id;
 
     db.query('SELECT fecha, hora_entrada, hora_salida FROM registro_horario WHERE empleado_id = ?', 
         [empleadoId], 
         (err, results) => {
-            if (err) return res.status(500).json({ error: 'Error al obtener los horarios.' });
-
+            if (err) {
+                console.error('❌ Error en la base de datos:', err);
+                return res.status(500).json({ error: 'Error al obtener los horarios.' });
+            }
             res.json(results);
         }
     );
 };
+
