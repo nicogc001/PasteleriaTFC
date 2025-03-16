@@ -12,7 +12,7 @@ router.get('/empleado/dashboard', authController.obtenerDashboardEmpleado);
 router.get('/empleado/estadisticas', authController.obtenerEstadisticasEmpleado);
 
 // 📌 **Ruta para registrar el horario del empleado**
-router.post('/empleado/registroHorario', authController.registrarHorario);
+router.post('/empleado/registro-horario', authController.registrarHorario); // 🔹 Corregido a `registro-horario`
 
 // 📌 **Ruta para obtener los horarios registrados por el empleado**
 router.get('/empleado/horarios', authController.obtenerHorarios);
