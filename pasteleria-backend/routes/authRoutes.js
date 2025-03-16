@@ -10,6 +10,7 @@ if (!authController.register || !authController.login) {
 // 📌 **Rutas de autenticación**
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post('/empleado/registroHorario', authController.registrarHorario);
 
 // 📌 **Revisar si estás usando un método incorrecto**
 // Si tienes algo como esto y `authController.algunMetodo` no existe, coméntalo o corrígelo:
