@@ -38,6 +38,7 @@ const usuariosRoutes = require('./pasteleria-backend/routes/usuarios');
 // ✅ Definir los endpoints base
 app.use('/api/auth', authRoutes); 
 app.use('/api/empleado', empleadosRoutes);
+console.log("✅ Rutas de empleados cargadas en /api/empleado");
 app.use('/api', usuariosRoutes);
 
 // ✅ Ruta de prueba para verificar que el servidor está activo
