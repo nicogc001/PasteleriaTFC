@@ -49,41 +49,40 @@
     
     <!-- Contenido Principal -->
     <main class="container mt-5">
-        <h1 class="text-center">Bienvenido, Nicolás</h1>
-        <p class="text-center">Aquí puedes gestionar tus pedidos, revisar tus facturas y más.</p>
-        <div class="d-flex justify-content-center mt-3">
-            <a href="pedidos.html" class="btn btn-primary mx-2">Mis Pedidos</a>
-            <a href="facturas.html" class="btn btn-primary mx-2">Facturas</a>
-            <a href="direcciones.html" class="btn btn-primary mx-2">Direcciones Guardadas</a>
+        <h1 class="text-center" id="welcome-message">Bienvenido</h1>
+        <div class="d-flex">
+            <nav class="me-4">
+                <h3 class="text-danger">Sección</h3>
+                <ul class="list-unstyled">
+                    <li><strong>Pedidos</strong></li>
+                    <li><a href="facturas.html">Facturas</a></li>
+                    <li><a href="perfil.html">Perfil</a></li>
+                    <li><a href="direcciones.html">Direcciones</a></li>
+                    <li><a href="tarjetas.html">Tarjetas</a></li>
+                    <li><a href="#">Darme de baja</a></li>
+                    <li><a href="#">Salir</a></li>
+                </ul>
+            </nav>
+            <div class="w-100">
+                <div class="mt-4">
+                    <h3>Historial de Pedidos</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-pedidos">
+                            <!-- Pedidos se cargarán dinámicamente aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        
-        <section class="mt-5">
-            <h2>Últimos Pedidos</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Pedido</th>
-                        <th>Estado</th>
-                        <th>Fecha de Entrega</th>
-                        <th>Importe</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>#1023</td>
-                        <td>En camino</td>
-                        <td>21/03/2025</td>
-                        <td>25.50€</td>
-                    </tr>
-                    <tr>
-                        <td>#1019</td>
-                        <td>Entregado</td>
-                        <td>18/03/2025</td>
-                        <td>30.00€</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
     </main>
     
     <!-- Footer -->
@@ -103,5 +102,43 @@
             <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
         </div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = localStorage.getItem('userId');
+            const userName = localStorage.getItem('userName') || 'Usuario';
+            document.getElementById('welcome-message').textContent = `Bienvenido, ${userName}`;
+
+            if (!userId) {
+                alert("Debes iniciar sesión para ver tus pedidos.");
+                window.location.href = "/login.html";
+
+                return;
+            }
+
+            const orders = JSON.parse(localStorage.getItem('orders')) || {};
+            const userOrders = orders[userId] || [];
+            const ordersTable = document.getElementById("lista-pedidos");
+            
+            ordersTable.innerHTML = "";
+            
+            userOrders.slice(-5).reverse().forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.date}</td>
+                    <td>$${order.total.toFixed(2)}</td>
+                    <td>${order.status}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
+                    </td>
+                `;
+                ordersTable.appendChild(row);
+            });
+        });
+        
+        function verPedido(id) {
+            alert("Mostrando detalles del pedido " + id);
+        }
+    </script>
 </body>
 </html>
