@@ -7,7 +7,11 @@ dotenv.config();
 const app = express();
 
 // ✅ Configurar CORS globalmente para permitir todas las peticiones
-app.use(cors());
+app.use(cors({
+    origin: "https://pasteleriatfc-front.onrender.com", // Asegurar que coincide con el frontend
+    credentials: true
+}));
+
 app.use(express.json());
 
 
