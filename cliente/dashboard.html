@@ -104,64 +104,83 @@
     </div>
 </footer>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('/api/usuario', { credentials: 'include' });
-                if (!response.ok) throw new Error('No autenticado');
-                
-                const user = await response.json();
-                document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
-                cargarPedidos(user.id);
-            } catch (error) {
-                alert("Debes iniciar sesión para ver tus pedidos.");
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            console.log("Verificando sesión del usuario...");
+            const response = await fetch('/api/usuario', {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Cache-Control': 'no-cache' }
+            });
+            
+            if (!response.ok) {
+                console.warn("No autenticado, redirigiendo a login...");
                 window.location.href = "/login.html";
+                return;
             }
-        });
-        
-        async function cargarPedidos(userId) {
-            try {
-                const response = await fetch(`/api/pedidos?userId=${userId}`);
-                if (!response.ok) throw new Error('Error al obtener pedidos');
-                
-                const pedidos = await response.json();
-                const ordersTable = document.getElementById("lista-pedidos");
-                ordersTable.innerHTML = "";
-                
-                if (pedidos.length === 0) {
-                    ordersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No tienes pedidos aún.</td></tr>";
-                }
-                
-                pedidos.forEach(order => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${order.id}</td>
-                        <td>${order.fecha}</td>
-                        <td>$${order.total.toFixed(2)}</td>
-                        <td>${order.estado}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
-                        </td>
-                    `;
-                    ordersTable.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error cargando pedidos:', error);
+            
+            const user = await response.json();
+            console.log("Usuario autenticado:", user);
+            document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
+            cargarPedidos(user.id);
+        } catch (error) {
+            console.error("Error verificando sesión:", error);
+            alert("Error al verificar sesión. Intenta de nuevo.");
+            window.location.href = "/login.html";
+        }
+    });
+    
+    async function cargarPedidos(userId) {
+        try {
+            console.log("Cargando pedidos para el usuario", userId);
+            const response = await fetch(`/api/pedidos?userId=${userId}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Cache-Control': 'no-cache' }
+            });
+            
+            if (!response.ok) throw new Error('Error al obtener pedidos');
+            
+            const pedidos = await response.json();
+            console.log("Pedidos cargados:", pedidos);
+            const ordersTable = document.getElementById("lista-pedidos");
+            ordersTable.innerHTML = "";
+            
+            if (pedidos.length === 0) {
+                ordersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No tienes pedidos aún.</td></tr>";
             }
+            
+            pedidos.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.fecha}</td>
+                    <td>$${order.total.toFixed(2)}</td>
+                    <td>${order.estado}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
+                    </td>
+                `;
+                ordersTable.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error cargando pedidos:', error);
         }
-        
-        function verPedido(id) {
-            alert("Mostrando detalles del pedido " + id);
-        }
-        
-        function logout() {
-            fetch('/api/logout', { method: 'POST', credentials: 'include' })
-                .then(() => {
-                    alert("Has cerrado sesión correctamente.");
-                    window.location.href = "/login.html";
-                })
-                .catch(error => console.error('Error al cerrar sesión:', error));
-        }
-    </script>
+    }
+    
+    function verPedido(id) {
+        alert("Mostrando detalles del pedido " + id);
+    }
+    
+    function logout() {
+        fetch('/api/logout', { method: 'POST', credentials: 'include' })
+            .then(() => {
+                alert("Has cerrado sesión correctamente.");
+                window.location.href = "/login.html";
+            })
+            .catch(error => console.error('Error al cerrar sesión:', error));
+    }
+</script>
 </body>
 </html>
