@@ -6,7 +6,7 @@ const authController = require('../controllers/authController');
 router.use(authController.verifyToken);
 
 // 📌 Ruta para registrar el horario del empleado
-router.post('/registroHorario', authController.registrarHorario);
+router.post('/registro-horario', authController.registrarHorario);
 
 // 📌 Ruta para obtener los horarios registrados por el empleado
 router.get('/horarios', authController.obtenerHorarios);
