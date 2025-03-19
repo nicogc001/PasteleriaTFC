@@ -10,6 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 // ✅ Habilitar CORS en respuestas preflight
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
