@@ -31,15 +31,21 @@ app.use((req, res, next) => {
 });
 
 // ✅ Importar rutas con la ruta correcta
-const authRoutes = require('./pasteleria-backend/routes/authRoutes');  
-const empleadosRoutes = require('./pasteleria-backend/routes/empleadosRoutes');  
-const usuariosRoutes = require('./pasteleria-backend/routes/usuarios'); 
+const authRoutes = require('./routes/authRoutes');  
+const empleadosRoutes = require('./routes/empleadosRoutes');  
+const usuariosRoutes = require('./routes/usuarios');  
 
-// ✅ Definir los endpoints base
+console.log("🔍 Probando carga de rutas...");
+console.log("📌 Ruta auth:", authRoutes ? "Cargada" : "❌ No encontrada");
+console.log("📌 Ruta empleados:", empleadosRoutes ? "Cargada" : "❌ No encontrada");
+console.log("📌 Ruta usuarios:", usuariosRoutes ? "Cargada" : "❌ No encontrada");
+
 app.use('/api/auth', authRoutes); 
 app.use('/api/empleado', empleadosRoutes);
-console.log("✅ Rutas de empleados cargadas en /api/empleado");
 app.use('/api', usuariosRoutes);
+
+console.log("✅ Rutas cargadas correctamente.");
+
 
 // ✅ Ruta de prueba para verificar que el servidor está activo
 app.get('/', (req, res) => {
