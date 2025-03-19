@@ -138,6 +138,9 @@ exports.verifyToken = (req, res, next) => {
 };
 
 exports.registrarHorario = (req, res) => {
+    console.log("📥 Recibida solicitud en /registro-horario");
+    console.log("📝 Datos recibidos:", req.body);
+
     const empleadoId = req.user.id; // Obtener ID del empleado desde el JWT
     const { fecha, hora_entrada, hora_salida } = req.body;
 
@@ -152,12 +155,14 @@ exports.registrarHorario = (req, res) => {
 
     db.query(query, [empleadoId, fecha, hora_entrada, hora_salida || null], (err, result) => {
         if (err) {
-            console.error('❌ Error en la base de datos:', err);
-            return res.status(500).json({ error: 'Error al registrar horario.' });
+            console.error("❌ Error en MySQL:", err);
+            return res.status(500).json({ error: "Error al registrar horario." });
         }
+        console.log("✅ Horario registrado correctamente:", result);
         res.status(201).json({ message: "Horario registrado correctamente." });
     });
 };
+
 
 exports.obtenerHorarios = (req, res) => {
     const empleadoId = req.user.id;
