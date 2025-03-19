@@ -30,10 +30,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// ✅ Importar rutas
-const authRoutes = require('./routes/authRoutes');  
-const empleadosRoutes = require('./routes/empleadosRoutes');  
-const usuariosRoutes = require('./routes/usuarios'); 
+// ✅ Importar rutas con la ruta correcta
+const authRoutes = require('./pasteleria-backend/routes/authRoutes');  
+const empleadosRoutes = require('./pasteleria-backend/routes/empleadosRoutes');  
+const usuariosRoutes = require('./pasteleria-backend/routes/usuarios'); 
 
 // ✅ Definir los endpoints base
 app.use('/api/auth', authRoutes); 
