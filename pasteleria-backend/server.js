@@ -35,10 +35,11 @@ const authRoutes = require('./routes/authRoutes');
 const empleadosRoutes = require('./routes/empleadosRoutes');  
 const usuariosRoutes = require('./routes/usuarios');  
 
-console.log("🔍 Probando carga de rutas...");
-console.log("📌 Ruta auth:", authRoutes ? "Cargada" : "❌ No encontrada");
-console.log("📌 Ruta empleados:", empleadosRoutes ? "Cargada" : "❌ No encontrada");
-console.log("📌 Ruta usuarios:", usuariosRoutes ? "Cargada" : "❌ No encontrada");
+console.log("🛠️ INICIANDO SERVER: Revisando carga de rutas...");
+console.log("📌 Ruta auth:", authRoutes ? "✅ Cargada" : "❌ No encontrada");
+console.log("📌 Ruta empleados:", empleadosRoutes ? "✅ Cargada" : "❌ No encontrada");
+console.log("📌 Ruta usuarios:", usuariosRoutes ? "✅ Cargada" : "❌ No encontrada");
+
 
 app.use('/api/auth', authRoutes); 
 app.use('/api/empleado', empleadosRoutes);
