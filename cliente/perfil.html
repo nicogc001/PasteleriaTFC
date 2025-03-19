@@ -2,23 +2,212 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Información</title>
-    <script src="../scripts/dashboard_cliente.js" defer></script>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - Pastelería El Caballo Goloso</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="styles/main.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+        <div class="container-fluid">
+            <!-- Toggle button -->
+            <button
+                data-mdb-collapse-init
+                class="navbar-toggler"
+                type="button"
+                data-mdb-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <i class="fas fa-bars"></i>
+            </button>
 
-    <div id="navbar-container"></div>
+            <!-- Collapsible wrapper -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Navbar brand -->
+                <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
+                    <img
+                        src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
+                        height="15"
+                        alt="MDB Logo"
+                        loading="lazy"
+                    />
+                </a>
+                <!-- Left links -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><a class="nav-link active" href="dashboard.html">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="registroHorario.html">Registro Horario</a></li>
+                        <li class="nav-item"><a class="nav-link" href="pedidosEmpleado.html">Pedidos</a></li>
+                    </ul>
+                </div>
+            </div>
 
-    <div class="container">
-        <h1>Mi Información</h1>
-        <p><strong>Nombre:</strong> <span id="username"></span></p>
-        <p><strong>Email:</strong> <span id="email"></span></p>
+            <!-- Right elements -->
+            <div class="d-flex align-items-center">
+                
 
-        <h2>Mis Direcciones</h2>
-        <div id="direcciones"></div>
-    </div>
-
-    <div id="footer-container"></div> <!-- Aquí se insertará el footer -->
+                <!-- Avatar -->
+                <div class="dropdown">
+                    <a
+                        data-mdb-dropdown-init
+                        class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                        href="login.html"
+                        id="navbarDropdownMenuAvatar"
+                        role="button"
+                        aria-expanded="false"
+                    >
+                        <img
+                            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+                            class="rounded-circle"
+                            height="25"
+                            alt="User Avatar"
+                            loading="lazy"
+                        />
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                        <li>
+                            <a class="dropdown-item" href="#">My profile</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Settings</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container mt-5">
+        <h1 class="text-center">Perfil</h1>
+        <div class="d-flex">
+            <nav class="me-4">
+                <h3 class="text-danger">Sección</h3>
+                <ul class="list-unstyled">
+                    <li><a href="pedidos.html">Pedidos</a></li>
+                    <li><a href="facturas.html">Facturas</a></li>
+                    <li><strong>Perfil</strong></li>
+                    <li><a href="direcciones.html">Direcciones</a></li>
+                    <li><a href="tarjetas.html">Tarjetas</a></li>
+                    <li><a href="#">Darme de baja</a></li>
+                    <li><a href="#">Salir</a></li>
+                </ul>
+            </nav>
+            <div class="w-100">
+                <form onsubmit="guardarPerfil(event)">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" id="inputNombre" class="form-control" value="Nicolás González">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Apellidos</label>
+                            <input type="text" id="inputApellidos" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="inputEmail" class="form-control" value="nicolas.gonzalez.cuchi@gmail.com">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" id="inputTelefono" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Empresa</label>
+                            <input type="text" id="inputEmpresa" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">CIF</label>
+                            <input type="text" id="inputCIF" class="form-control">
+                        </div>
+                    </div>
+                    <hr>
+                    <h3>Contraseña</h3>
+                    <p>Si desea cambiar la contraseña, indique la actual e introduzca dos veces la nueva contraseña.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Contraseña Actual</label>
+                            <input type="password" id="inputPassActual" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <input type="password" id="inputPassNueva" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Repetir Nueva Contraseña</label>
+                            <input type="password" id="inputPassNuevaRep" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-4 text-end">
+                        <button type="submit" class="btn btn-danger">Grabar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+        <div class="container text-center text-md-start mt-5">
+            <div class="row">
+                <div class="col-md-4 col-lg-3 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
+                    <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
+                    <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
+                    <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2025 Copyright:
+            <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
+        </div>
+    </footer>
+    
+    <script>
+        function guardarPerfil(event) {
+            event.preventDefault();
+            
+            let nombre = document.getElementById("inputNombre").value;
+            let apellidos = document.getElementById("inputApellidos").value;
+            let email = document.getElementById("inputEmail").value;
+            let telefono = document.getElementById("inputTelefono").value;
+            let empresa = document.getElementById("inputEmpresa").value;
+            let cif = document.getElementById("inputCIF").value;
+            let passActual = document.getElementById("inputPassActual").value;
+            let passNueva = document.getElementById("inputPassNueva").value;
+            let passNuevaRep = document.getElementById("inputPassNuevaRep").value;
+            
+            if (!nombre || !apellidos || !email || !telefono) {
+                alert("Por favor, completa todos los campos obligatorios.");
+                return;
+            }
+            
+            if (passNueva || passNuevaRep) {
+                if (passNueva !== passNuevaRep) {
+                    alert("Las contraseñas nuevas no coinciden.");
+                    return;
+                }
+                if (!passActual) {
+                    alert("Debe ingresar su contraseña actual para cambiarla.");
+                    return;
+                }
+            }
+            
+            alert("Perfil actualizado correctamente.");
+        }
+    </script>
 </body>
 </html>

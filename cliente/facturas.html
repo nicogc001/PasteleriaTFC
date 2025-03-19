@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos - Pastelería El Caballo Goloso</title>
+    <title>Facturas - Pastelería El Caballo Goloso</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="styles/main.css" rel="stylesheet" />
@@ -85,15 +85,15 @@
     </nav>
     
     <main class="container mt-5">
-        <h1 class="text-center">Mis Pedidos</h1>
+        <h1 class="text-center">Facturas</h1>
         <div class="d-flex">
             <nav class="me-4">
                 <h3 class="text-danger">Sección</h3>
                 <ul class="list-unstyled">
-                    <li><strong>Pedidos</strong></li>
-                    <li><a href="facturas.html">Facturas</a></li>
+                    <li><a href="pedidos.html">Pedidos</a></li>
+                    <li><strong>Facturas</strong></li>
                     <li><a href="perfil.html">Perfil</a></li>
-                    <li><a href="direcciones.html">Direcciones</a></li>
+                    <li><a href="misDirecciones.html">Direcciones</a></li>
                     <li><a href="tarjetas.html">Tarjetas</a></li>
                     <li><a href="#">Darme de baja</a></li>
                     <li><a href="#">Salir</a></li>
@@ -101,34 +101,31 @@
             </nav>
             <div class="w-100">
                 <div class="mt-4">
-                    <h3>Historial de Pedidos</h3>
+                    <h3>Historial de Facturas</h3>
                     <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Fecha</th>
                                 <th>Total</th>
-                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="lista-pedidos">
+                        <tbody id="lista-facturas">
                             <tr>
-                                <td>1023</td>
-                                <td>18/03/2025</td>
-                                <td>25.50€</td>
-                                <td>En camino</td>
+                                <td>001</td>
+                                <td>10/03/2025</td>
+                                <td>45.00€</td>
                                 <td>
-                                    <button class="btn btn-sm btn-primary" onclick="verPedido(1023)">Ver</button>
+                                    <button class="btn btn-sm btn-primary" onclick="descargarFactura(1)">Descargar</button>
                                 </td>
                             </tr>
                             <tr>
-                                <td>1019</td>
+                                <td>002</td>
                                 <td>15/03/2025</td>
-                                <td>30.00€</td>
-                                <td>Entregado</td>
+                                <td>30.50€</td>
                                 <td>
-                                    <button class="btn btn-sm btn-primary" onclick="verPedido(1019)">Ver</button>
+                                    <button class="btn btn-sm btn-primary" onclick="descargarFactura(2)">Descargar</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -138,27 +135,27 @@
         </div>
     </main>
     
-        <!-- Footer -->
-        <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-            <div class="container text-center text-md-start mt-5">
-                <div class="row">
-                    <div class="col-md-4 col-lg-3 mx-auto mb-4">
-                        <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-                        <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
-                        <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
-                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-                    </div>
+    <!-- Footer -->
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+        <div class="container text-center text-md-start mt-5">
+            <div class="row">
+                <div class="col-md-4 col-lg-3 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
+                    <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
+                    <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
+                    <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
                 </div>
             </div>
-            <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-                © 2025 Copyright:
-                <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
-            </div>
-        </footer>
+        </div>
+        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2025 Copyright:
+            <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
+        </div>
+    </footer>
     
     <script>
-        function verPedido(id) {
-            alert("Mostrando detalles del pedido " + id);
+        function descargarFactura(id) {
+            alert("Descargando factura " + id);
         }
     </script>
 </body>
