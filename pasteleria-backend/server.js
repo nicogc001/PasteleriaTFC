@@ -15,9 +15,12 @@ app.use(cors({
 
 // ✅ Habilitar CORS en respuestas preflight
 app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
-    res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+
+    // 📌 Permitir conexiones desde cualquier origen
+    res.setHeader("Content-Security-Policy", "default-src *; connect-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';");
 
     if (req.method === "OPTIONS") {
         return res.status(200).end();
@@ -25,6 +28,7 @@ app.use((req, res, next) => {
 
     next();
 });
+
 
 // ✅ Middleware para interpretar JSON
 app.use(express.json());
