@@ -17,23 +17,17 @@ app.use(express.json());
 
 // ✅ Habilitar CORS en respuestas preflight
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Origin", "https://pasteleriatfc-front.onrender.com"); 
     res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
-
-    // 🔹 Nueva configuración de Content Security Policy (CSP)
-    res.setHeader(
-        "Content-Security-Policy",
-        "default-src *; connect-src *; script-src * 'unsafe-inline' 'unsafe-eval'; " +
-        "style-src * 'unsafe-inline'; img-src * data:;"
-    );
+    res.setHeader("Access-Control-Allow-Credentials", "true");  // ✅ PERMITE ENVIAR TOKEN O COOKIE
 
     if (req.method === "OPTIONS") {
         return res.status(204).end();
     }
-
     next();
 });
+
 
 // ✅ Importar rutas con la ruta correcta
 const authRoutes = require('./routes/authRoutes');  

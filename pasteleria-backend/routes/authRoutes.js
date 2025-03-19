@@ -16,4 +16,7 @@ router.post('/empleado/registroHorario', authController.registrarHorario);
 // Si tienes algo como esto y `authController.algunMetodo` no existe, coméntalo o corrígelo:
 router.get('/perfil', authController.getUserProfile); // ✅ Asegúrate de que `getUserProfile` está en `authController.js`
 
+app.use('/api/usuario', verificarToken, usuariosRoutes);
+
+
 module.exports = router;

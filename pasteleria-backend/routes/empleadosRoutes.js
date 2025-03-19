@@ -11,4 +11,7 @@ router.post('/registro-horario', authController.registrarHorario);
 // ✅ Definir la ruta GET para obtener los horarios registrados
 router.get('/horarios', authController.obtenerHorarios);
 
+app.use('/api/usuario', verificarToken, usuariosRoutes);
+
+
 module.exports = router;

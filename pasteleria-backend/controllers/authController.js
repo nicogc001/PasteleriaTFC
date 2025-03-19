@@ -5,6 +5,11 @@ const jwt = require('jsonwebtoken');
 
 const SECRET_KEY = process.env.SECRET_KEY || "clave_super_secreta"; // Se recomienda definir en .env
 
+const token = jwt.sign({ id: user.id, role: user.role }, process.env.SECRET_KEY, { expiresIn: "3h" });
+const decoded = jwt.verify(token.split(' ')[1], process.env.SECRET_KEY);
+
+
+
 // 🔹 **Registro de usuario**
 exports.register = (req, res) => {
     const { username, email, password, role, direccion } = req.body;

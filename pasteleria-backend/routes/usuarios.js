@@ -44,4 +44,7 @@ router.get("/usuario", async (req, res) => {
     }
 });
 
+app.use('/api/usuario', verificarToken, usuariosRoutes);
+
+
 module.exports = router;
