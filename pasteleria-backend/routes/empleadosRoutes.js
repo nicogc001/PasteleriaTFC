@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const authController = require('../controllers/authController'); // ✅ Verifica esta ruta
 
-// Middleware de autenticación con JWT
+// ✅ Middleware de autenticación con JWT
 router.use(authController.verifyToken);
 
-// 📌 Ruta para registrar el horario del empleado
+// ✅ Definir la ruta POST para registrar horario
 router.post('/registro-horario', authController.registrarHorario);
 
-// 📌 Ruta para obtener los horarios registrados por el empleado
+// ✅ Definir la ruta GET para obtener los horarios registrados
 router.get('/horarios', authController.obtenerHorarios);
 
 module.exports = router;
