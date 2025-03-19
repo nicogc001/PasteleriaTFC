@@ -102,39 +102,64 @@
             </div>
         </footer>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                alert("Debes iniciar sesión para ver tus pedidos.");
-                window.location.href = "login.html";
-                return;
-            }
-
-            const orders = JSON.parse(localStorage.getItem('orders')) || {};
-            const userOrders = orders[userId] || [];
-            const ordersTable = document.getElementById("lista-pedidos");
-            
-            ordersTable.innerHTML = "";
-            
-            userOrders.forEach(order => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${order.id}</td>
-                    <td>${order.date}</td>
-                    <td>$${order.total.toFixed(2)}</td>
-                    <td>${order.status}</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
-                    </td>
-                `;
-                ordersTable.appendChild(row);
+        <script>
+            document.addEventListener('DOMContentLoaded', async () => {
+                try {
+                    const response = await fetch('/api/usuario', { credentials: 'include' });
+                    if (!response.ok) throw new Error('No autenticado');
+                    
+                    const user = await response.json();
+                    document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
+                    cargarPedidos(user.id);
+                } catch (error) {
+                    alert("Debes iniciar sesión para ver tus pedidos.");
+                    window.location.href = "/login.html";
+                }
             });
-        });
-        
-        function verPedido(id) {
-            alert("Mostrando detalles del pedido " + id);
-        }
-    </script>
+            
+            async function cargarPedidos(userId) {
+                try {
+                    const response = await fetch(`/api/pedidos?userId=${userId}`);
+                    if (!response.ok) throw new Error('Error al obtener pedidos');
+                    
+                    const pedidos = await response.json();
+                    const ordersTable = document.getElementById("lista-pedidos");
+                    ordersTable.innerHTML = "";
+                    
+                    if (pedidos.length === 0) {
+                        ordersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No tienes pedidos aún.</td></tr>";
+                    }
+                    
+                    pedidos.forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.id}</td>
+                            <td>${order.fecha}</td>
+                            <td>$${order.total.toFixed(2)}</td>
+                            <td>${order.estado}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
+                            </td>
+                        `;
+                        ordersTable.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Error cargando pedidos:', error);
+                }
+            }
+            
+            function verPedido(id) {
+                alert("Mostrando detalles del pedido " + id);
+            }
+            
+            function logout() {
+                fetch('/api/logout', { method: 'POST', credentials: 'include' })
+                    .then(() => {
+                        alert("Has cerrado sesión correctamente.");
+                        window.location.href = "/login.html";
+                    })
+                    .catch(error => console.error('Error al cerrar sesión:', error));
+            }
+        </script>
 </body>
 </html>

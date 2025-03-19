@@ -7,6 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="styles/main.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -47,6 +48,7 @@
         </div>
     </nav>
     
+    
     <!-- Contenido Principal -->
     <main class="container mt-5">
         <h1 class="text-center" id="welcome-message">Bienvenido</h1>
@@ -59,8 +61,7 @@
                     <li><a href="perfil.html">Perfil</a></li>
                     <li><a href="direcciones.html">Direcciones</a></li>
                     <li><a href="tarjetas.html">Tarjetas</a></li>
-                    <li><a href="#">Darme de baja</a></li>
-                    <li><a href="#">Salir</a></li>
+                    <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
                 </ul>
             </nav>
             <div class="w-100">
@@ -85,59 +86,81 @@
         </div>
     </main>
     
-    <!-- Footer -->
-    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-        <div class="container text-center text-md-start mt-5">
-            <div class="row">
-                <div class="col-md-4 col-lg-3 mx-auto mb-4">
-                    <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-                    <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
-                    <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
-                    <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-                </div>
+   <!-- Footer -->
+   <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+    <div class="container text-center text-md-start mt-5">
+        <div class="row">
+            <div class="col-md-4 col-lg-3 mx-auto mb-4">
+                <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
+                <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
+                <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
+                <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
             </div>
         </div>
-        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-            © 2025 Copyright:
-            <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
-        </div>
-    </footer>
+    </div>
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+        © 2025 Copyright:
+        <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
+    </div>
+</footer>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const userId = localStorage.getItem('userId');
-            const userName = localStorage.getItem('userName') || 'Usuario';
-            document.getElementById('welcome-message').textContent = `Bienvenido, ${userName}`;
-
-            if (!userId) {
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/usuario', { credentials: 'include' });
+                if (!response.ok) throw new Error('No autenticado');
+                
+                const user = await response.json();
+                document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
+                cargarPedidos(user.id);
+            } catch (error) {
                 alert("Debes iniciar sesión para ver tus pedidos.");
                 window.location.href = "/login.html";
-
-                return;
             }
-
-            const orders = JSON.parse(localStorage.getItem('orders')) || {};
-            const userOrders = orders[userId] || [];
-            const ordersTable = document.getElementById("lista-pedidos");
-            
-            ordersTable.innerHTML = "";
-            
-            userOrders.slice(-5).reverse().forEach(order => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${order.id}</td>
-                    <td>${order.date}</td>
-                    <td>$${order.total.toFixed(2)}</td>
-                    <td>${order.status}</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
-                    </td>
-                `;
-                ordersTable.appendChild(row);
-            });
         });
+        
+        async function cargarPedidos(userId) {
+            try {
+                const response = await fetch(`/api/pedidos?userId=${userId}`);
+                if (!response.ok) throw new Error('Error al obtener pedidos');
+                
+                const pedidos = await response.json();
+                const ordersTable = document.getElementById("lista-pedidos");
+                ordersTable.innerHTML = "";
+                
+                if (pedidos.length === 0) {
+                    ordersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No tienes pedidos aún.</td></tr>";
+                }
+                
+                pedidos.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.id}</td>
+                        <td>${order.fecha}</td>
+                        <td>$${order.total.toFixed(2)}</td>
+                        <td>${order.estado}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
+                        </td>
+                    `;
+                    ordersTable.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error cargando pedidos:', error);
+            }
+        }
         
         function verPedido(id) {
             alert("Mostrando detalles del pedido " + id);
+        }
+        
+        function logout() {
+            fetch('/api/logout', { method: 'POST', credentials: 'include' })
+                .then(() => {
+                    alert("Has cerrado sesión correctamente.");
+                    window.location.href = "/login.html";
+                })
+                .catch(error => console.error('Error al cerrar sesión:', error));
         }
     </script>
 </body>
