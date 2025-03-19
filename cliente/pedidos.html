@@ -12,72 +12,35 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container-fluid">
-            <!-- Toggle button -->
-            <button
-                data-mdb-collapse-init
-                class="navbar-toggler"
-                type="button"
-                data-mdb-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
+            <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fas fa-bars"></i>
             </button>
-
-            <!-- Collapsible wrapper -->
+    
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Navbar brand -->
                 <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                    <img
-                        src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
-                        height="15"
-                        alt="MDB Logo"
-                        loading="lazy"
-                    />
+                    <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
+                        loading="lazy" />
                 </a>
-                <!-- Left links -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" href="dashboard.html">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="registroHorario.html">Registro Horario</a></li>
-                        <li class="nav-item"><a class="nav-link" href="pedidosEmpleado.html">Pedidos</a></li>
-                    </ul>
-                </div>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../productos/pasteleria.html">Pastelería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../productos/bolleria.html">Bollería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../productos/salado.html">Repostería Salada</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../productos/tartas.html">Tartas</a></li>
+                </ul>
             </div>
-
-            <!-- Right elements -->
             <div class="d-flex align-items-center">
-                
-
-                <!-- Avatar -->
+                <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
                 <div class="dropdown">
-                    <a
-                        data-mdb-dropdown-init
-                        class="dropdown-toggle d-flex align-items-center hidden-arrow"
-                        href="login.html"
-                        id="navbarDropdownMenuAvatar"
-                        role="button"
-                        aria-expanded="false"
-                    >
-                        <img
-                            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                            class="rounded-circle"
-                            height="25"
-                            alt="User Avatar"
-                            loading="lazy"
-                        />
+                    <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="login.html" id="navbarDropdownMenuAvatar" role="button"
+                        aria-expanded="false">
+                        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                        <li>
-                            <a class="dropdown-item" href="#">My profile</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Settings</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Logout</a>
-                        </li>
+                        <li><a class="dropdown-item" href="#">My profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -113,24 +76,7 @@
                             </tr>
                         </thead>
                         <tbody id="lista-pedidos">
-                            <tr>
-                                <td>1023</td>
-                                <td>18/03/2025</td>
-                                <td>25.50€</td>
-                                <td>En camino</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" onclick="verPedido(1023)">Ver</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>1019</td>
-                                <td>15/03/2025</td>
-                                <td>30.00€</td>
-                                <td>Entregado</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" onclick="verPedido(1019)">Ver</button>
-                                </td>
-                            </tr>
+                            <!-- Pedidos se cargarán dinámicamente aquí -->
                         </tbody>
                     </table>
                 </div>
@@ -157,6 +103,35 @@
         </footer>
     
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                alert("Debes iniciar sesión para ver tus pedidos.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const orders = JSON.parse(localStorage.getItem('orders')) || {};
+            const userOrders = orders[userId] || [];
+            const ordersTable = document.getElementById("lista-pedidos");
+            
+            ordersTable.innerHTML = "";
+            
+            userOrders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.date}</td>
+                    <td>$${order.total.toFixed(2)}</td>
+                    <td>${order.status}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
+                    </td>
+                `;
+                ordersTable.appendChild(row);
+            });
+        });
+        
         function verPedido(id) {
             alert("Mostrando detalles del pedido " + id);
         }
