@@ -1,5 +1,27 @@
+const bcrypt = require("bcrypt");
+const express = require("express");
 const jwt = require("jsonwebtoken");
+const router = express.Router();
+const pool = require("../db"); // Conexión a MySQL
 
+router.post("/register", async (req, res) => {
+    try {
+        const { nombre, email, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const [result] = await pool.query(
+            "INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, 'cliente')",
+            [nombre, email, hashedPassword]
+        );
+
+        res.status(201).json({ mensaje: "Usuario registrado con éxito", userId: result.insertId });
+    } catch (error) {
+        console.error("Error en el registro:", error);
+        res.status(500).json({ error: "Error en el servidor" });
+    }
+});
+
+// Nueva ruta para obtener los datos del usuario autenticado
 router.get("/usuario", async (req, res) => {
     try {
         const token = req.headers.authorization?.split(" ")[1];
@@ -21,3 +43,5 @@ router.get("/usuario", async (req, res) => {
         res.status(401).json({ error: "Token inválido" });
     }
 });
+
+module.exports = router;
