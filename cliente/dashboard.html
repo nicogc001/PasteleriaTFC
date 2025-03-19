@@ -108,20 +108,25 @@
     document.addEventListener('DOMContentLoaded', async () => {
         try {
             console.log("Verificando sesión del usuario...");
-            const response = await fetch('/api/usuario', {
+            const response = await fetch('https://pasteleriatfc-back.onrender.com/api/usuario', {
                 method: 'GET',
                 credentials: 'include',
                 headers: { 'Cache-Control': 'no-cache' }
             });
             
             if (!response.ok) {
-                console.warn("No autenticado, redirigiendo a login...");
+                console.warn("No autenticado, código:", response.status);
+                alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
                 window.location.href = "/login.html";
                 return;
             }
             
             const user = await response.json();
             console.log("Usuario autenticado:", user);
+            if (!user || !user.id) {
+                throw new Error("Usuario no válido");
+            }
+            
             document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
             cargarPedidos(user.id);
         } catch (error) {
@@ -134,7 +139,7 @@
     async function cargarPedidos(userId) {
         try {
             console.log("Cargando pedidos para el usuario", userId);
-            const response = await fetch(`/api/pedidos?userId=${userId}`, {
+            const response = await fetch(`https://pasteleriatfc-back.onrender.com/api/pedidos?userId=${userId}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: { 'Cache-Control': 'no-cache' }
@@ -174,7 +179,7 @@
     }
     
     function logout() {
-        fetch('/api/logout', { method: 'POST', credentials: 'include' })
+        fetch('https://pasteleriatfc-back.onrender.com/api/auth/logout', { method: 'POST', credentials: 'include' })
             .then(() => {
                 alert("Has cerrado sesión correctamente.");
                 window.location.href = "/login.html";
