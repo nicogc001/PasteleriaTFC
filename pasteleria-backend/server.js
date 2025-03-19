@@ -7,11 +7,8 @@ dotenv.config();
 const app = express();
 
 // ✅ Configurar CORS globalmente para permitir todas las peticiones
-app.use(cors({
-    origin: "*",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type,Authorization"
-}));
+app.use(cors());
+app.use(express.json());
 
 // ✅ Habilitar CORS en respuestas preflight
 app.use((req, res, next) => {
@@ -19,23 +16,23 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
 
-    // 📌 Permitir conexiones desde cualquier origen
-    res.setHeader("Content-Security-Policy", "default-src *; connect-src *; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';");
+    // 🔹 Nueva configuración de Content Security Policy (CSP)
+    res.setHeader(
+        "Content-Security-Policy",
+        "default-src *; connect-src *; script-src * 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src * 'unsafe-inline'; img-src * data:;"
+    );
 
     if (req.method === "OPTIONS") {
-        return res.status(200).end();
+        return res.status(204).end();
     }
 
     next();
 });
 
-
-// ✅ Middleware para interpretar JSON
-app.use(express.json());
-
 // ✅ Importar rutas
-const authRoutes = require('./routes/authRoutes');  // 🔹 Asegúrate de que este archivo existe
-const empleadosRoutes = require('./routes/empleadosRoutes');  // 🔹 Asegúrate de que este archivo existe
+const authRoutes = require('./routes/authRoutes');  
+const empleadosRoutes = require('./routes/empleadosRoutes');  
 const usuariosRoutes = require('./routes/usuarios'); 
 
 // ✅ Definir los endpoints base
@@ -59,6 +56,7 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: "Error interno del servidor" });
 });
 
+// ✅ Arrancar el servidor en el puerto configurado
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
