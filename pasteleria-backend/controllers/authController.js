@@ -128,14 +128,15 @@ exports.verifyToken = (req, res, next) => {
         return res.status(403).json({ error: "No se proporcionó un token." });
     }
 
-    jwt.verify(token.replace("Bearer ", ""), SECRET_KEY, (err, decoded) => {
+    jwt.verify(token.replace("Bearer ", ""), process.env.SECRET_KEY, (err, decoded) => {
         if (err) {
             return res.status(401).json({ error: "Token no válido." });
         }
-        req.user = decoded;
+        req.user = decoded; // ✅ Aquí se asigna el usuario autenticado
         next();
     });
 };
+
 
 exports.registrarHorario = (req, res) => {
     console.log("📥 Recibida solicitud en /registro-horario");
@@ -165,17 +166,24 @@ exports.registrarHorario = (req, res) => {
 
 
 exports.obtenerHorarios = (req, res) => {
-    const empleadoId = req.user.id;
+    const empleadoId = req.user.id; // 👀 Verifica que `req.user.id` no sea undefined
+    console.log("📥 Buscando horarios para empleado ID:", empleadoId);
 
-    db.query('SELECT fecha, hora_entrada, hora_salida FROM registro_horario WHERE empleado_id = ?', 
-        [empleadoId], 
-        (err, results) => {
-            if (err) {
-                console.error('❌ Error en la base de datos:', err);
-                return res.status(500).json({ error: 'Error al obtener los horarios.' });
-            }
-            res.json(results);
+    if (!empleadoId) {
+        return res.status(400).json({ error: "No se encontró el ID del empleado." });
+    }
+
+    const query = 'SELECT fecha, hora_entrada, hora_salida FROM registro_horario WHERE empleado_id = ?';
+
+    db.query(query, [empleadoId], (err, results) => {
+        if (err) {
+            console.error('❌ Error en la base de datos:', err);
+            return res.status(500).json({ error: 'Error al obtener los horarios.' });
         }
-    );
+
+        console.log("✅ Horarios obtenidos:", results);
+        res.json(results);
+    });
 };
+
 
