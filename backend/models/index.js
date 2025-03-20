@@ -7,6 +7,8 @@ const Pedidos = require('./Pedidos');
 const ProductosCarrito = require('./ProductosCarrito');
 const ProductosPedidos = require('./ProductosPedidos');
 const Ofertas = require('./Ofertas');
+const RegistroHorario = require('./RegistroHorarios'); // Agregar modelo
+
 
 // Definir relaciones entre modelos
 Usuario.hasOne(Carrito, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
@@ -40,4 +42,4 @@ const syncDB = async () => {
     }
 };
 
-module.exports = { db, syncDB, Usuario, Rol, Carrito, Productos, Pedidos, ProductosCarrito, ProductosPedidos, Ofertas };
+module.exports = { db, syncDB, Usuario, Rol, Carrito, Productos, Pedidos, ProductosCarrito, ProductosPedidos, Ofertas, RegistroHorarios };

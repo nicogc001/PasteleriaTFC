@@ -24,10 +24,10 @@ const Usuario = db.define('Usuario', {
         allowNull: false,
         defaultValue: 'user'
     },
-    contraseña: {
+    password: {
         type: DataTypes.STRING,
         allowNull: false
-    }
+    }    
 }, {
     tableName: 'Usuarios',
     timestamps: false

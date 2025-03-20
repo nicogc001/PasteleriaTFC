@@ -1,10 +1,73 @@
 const express = require('express');
+const Productos = require('../models/Productos');
 const router = express.Router();
 
-// Ruta de prueba para productos
-router.get('/', (req, res) => {
-    res.json({ message: 'Productos API funcionando' });
+// Crear un nuevo producto
+router.post('/', async (req, res) => {
+    try {
+        const { nombre, descripcion, precio, stock, imagen } = req.body;
+
+        // Validar que todos los campos obligatorios estén presentes
+        if (!nombre || !descripcion || !precio || stock === undefined) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+        }
+
+        const nuevoProducto = await Productos.create({ nombre, descripcion, precio, stock, imagen });
+
+        res.status(201).json({
+            message: 'Producto creado correctamente',
+            producto: nuevoProducto
+        });
+
+    } catch (error) {
+        console.error('❌ Error al crear producto:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
+// Obtener todos los productos
+router.get('/', async (req, res) => {
+    try {
+        const productos = await Productos.findAll({
+            attributes: ['id', 'nombre', 'descripcion', 'precio', 'stock', 'imagen']
+        });
+
+        if (productos.length === 0) {
+            return res.status(404).json({ error: 'No hay productos registrados' });
+        }
+
+        res.json(productos);
+
+    } catch (error) {
+        console.error('❌ Error al obtener productos:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
+// Actualizar stock de un producto
+router.put('/:id', async (req, res) => {
+    try {
+        const { stock } = req.body;
+        const { id } = req.params;
+
+        const producto = await Productos.findByPk(id);
+        if (!producto) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+
+        if (stock < 0) {
+            return res.status(400).json({ error: 'El stock no puede ser negativo' });
+        }
+
+        producto.stock = stock;
+        await producto.save();
+
+        res.json({ message: 'Stock actualizado correctamente', producto });
+
+    } catch (error) {
+        console.error('❌ Error al actualizar stock:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
 });
 
 module.exports = router;
-

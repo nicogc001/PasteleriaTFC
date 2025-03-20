@@ -38,6 +38,8 @@ app.use(morgan('dev'));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/pedidos', require('./routes/pedidosRoutes'));
 app.use('/api/productos', require('./routes/productosRoutes'));
+app.use('/api/registro-horario', require('./routes/registroHorarioRoutes'));
+
 
 // Ruta de prueba
 app.get('/', (req, res) => {
