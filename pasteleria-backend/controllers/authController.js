@@ -85,7 +85,7 @@ exports.login = (req, res) => {
     });
 };
 
-// 🔹 **Obtener información del usuario autenticado**
+// 🔹 **Obtener información del usuario autenticados**
 exports.getUserProfile = (req, res) => {
     const userId = req.user.id;
 
