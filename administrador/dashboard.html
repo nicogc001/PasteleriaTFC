@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador - Pastelería El Caballo Goloso</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="styles/main.css" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">[...]</nav>
+    
+    <main class="container mt-5">
+        <h1 class="text-center">Panel de Administración</h1>
+        <div class="d-flex">
+            <nav class="me-4">
+                <h3 class="text-danger">Menú</h3>
+                <ul class="list-unstyled">
+                    <li><strong>Dashboard</strong></li>
+                    <li><a href="admin_pedidos.html">Pedidos</a></li>
+                    <li><a href="admin_usuarios.html">Usuarios</a></li>
+                    <li><a href="admin_productos.html">Productos</a></li>
+                    <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+                </ul>
+            </nav>
+            <div class="w-100">
+                <div class="mt-4">
+                    <h3>Resumen General</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card text-center p-3">
+                                <h5>Total Pedidos</h5>
+                                <p id="total-pedidos">0</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center p-3">
+                                <h5>Total Usuarios</h5>
+                                <p id="total-usuarios">0</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center p-3">
+                                <h5>Total Productos</h5>
+                                <p id="total-productos">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">[...]</footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('https://pasteleriatfc-back.onrender.com/api/admin/resumen', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error obteniendo resumen');
+                }
+                
+                const data = await response.json();
+                document.getElementById('total-pedidos').textContent = data.totalPedidos;
+                document.getElementById('total-usuarios').textContent = data.totalUsuarios;
+                document.getElementById('total-productos').textContent = data.totalProductos;
+            } catch (error) {
+                console.error("Error obteniendo datos:", error);
+            }
+        });
+        
+        function logout() {
+            fetch('https://pasteleriatfc-back.onrender.com/api/auth/logout', { method: 'POST', credentials: 'include' })
+                .then(() => {
+                    alert("Has cerrado sesión correctamente.");
+                    window.location.href = "/login.html";
+                })
+                .catch(error => console.error('Error al cerrar sesión:', error));
+        }
+    </script>
+</body>
+</html>
