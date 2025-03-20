@@ -7,8 +7,7 @@ const Pedidos = require('./Pedidos');
 const ProductosCarrito = require('./ProductosCarrito');
 const ProductosPedidos = require('./ProductosPedidos');
 const Ofertas = require('./Ofertas');
-const RegistroHorario = require('./RegistroHorarios'); // Agregar modelo
-
+const RegistroHorarios = require('./RegistroHorarios'); // Asegurar que el nombre coincida con el archivo
 
 // Definir relaciones entre modelos
 Usuario.hasOne(Carrito, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
@@ -31,6 +30,9 @@ ProductosPedidos.belongsTo(Productos, { foreignKey: 'productoId' });
 
 Productos.hasMany(Ofertas, { foreignKey: 'productoId', onDelete: 'CASCADE' });
 Ofertas.belongsTo(Productos, { foreignKey: 'productoId' });
+
+Usuario.hasMany(RegistroHorarios, { foreignKey: 'empleadoId', onDelete: 'CASCADE' });
+RegistroHorarios.belongsTo(Usuario, { foreignKey: 'empleadoId' });
 
 // Sincronizar los modelos con la base de datos
 const syncDB = async () => {

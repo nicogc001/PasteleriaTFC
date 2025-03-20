@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 const Usuario = require('./Usuario'); // Relación con empleados
 
-const RegistroHorario = db.define('RegistroHorario', {
+const RegistroHorarios = db.define('RegistroHorarios', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -30,12 +30,12 @@ const RegistroHorario = db.define('RegistroHorario', {
         allowNull: true // Puede ser nulo hasta que salga
     }
 }, {
-    tableName: 'RegistroHorario',
+    tableName: 'RegistroHorarios',
     timestamps: false
 });
 
 // Relaciones
-Usuario.hasMany(RegistroHorario, { foreignKey: 'empleadoId', onDelete: 'CASCADE' });
-RegistroHorario.belongsTo(Usuario, { foreignKey: 'empleadoId' });
+Usuario.hasMany(RegistroHorarios, { foreignKey: 'empleadoId', onDelete: 'CASCADE' });
+RegistroHorarios.belongsTo(Usuario, { foreignKey: 'empleadoId' });
 
-module.exports = RegistroHorario;
+module.exports = RegistroHorarios;
