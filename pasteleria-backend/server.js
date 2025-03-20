@@ -1,52 +1,36 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const authRoutes = require('./routes/authRoutes');
+const empleadosRoutes = require('./routes/empleadosRoutes');
+const usuariosRoutes = require('./routes/usuarios');
 
 dotenv.config();
 
 const app = express();
+app.use(express.json());
 
-// ✅ Configurar CORS globalmente para permitir todas las peticiones
+// ✅ Configuración correcta de CORS
 app.use(cors({
-    origin: "https://pasteleriatfc-front.onrender.com", // Asegurar que coincide con el frontend
+    origin: "https://pasteleriatfc-front.onrender.com",
     credentials: true
 }));
 
-app.use(express.json());
-
-
-// ✅ Habilitar CORS en respuestas preflight
+// ✅ Eliminar configuración errónea de CORS
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "https://pasteleriatfc-front.onrender.com"); 
     res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
-    res.setHeader("Access-Control-Allow-Credentials", "true");  // ✅ PERMITE ENVIAR TOKEN O COOKIE
-
-    if (req.method === "OPTIONS") {
-        return res.status(204).end();
-    }
+    res.setHeader("Access-Control-Allow-Credentials", "true");
     next();
 });
 
-
-// ✅ Importar rutas con la ruta correcta
-const authRoutes = require('./routes/authRoutes');  
-const empleadosRoutes = require('./routes/empleadosRoutes');  
-const usuariosRoutes = require('./routes/usuarios');  
-
-console.log("🔍 Probando carga de rutas...");
-console.log("📌 Ruta auth:", authRoutes ? "Cargada" : "❌ No encontrada");
-console.log("📌 Ruta empleados:", empleadosRoutes ? "Cargada" : "❌ No encontrada");
-console.log("📌 Ruta usuarios:", usuariosRoutes ? "Cargada" : "❌ No encontrada");
-
+// ✅ Registrar rutas correctamente
 app.use('/api/auth', authRoutes); 
 app.use('/api/empleado', empleadosRoutes);
 app.use('/api', usuariosRoutes);
 
-console.log("✅ Rutas cargadas correctamente.");
-
-
-// ✅ Ruta de prueba para verificar que el servidor está activo
+// ✅ Ruta de prueba
 app.get('/', (req, res) => {
     res.send('¡Backend funcionando correctamente!');
 });
@@ -62,7 +46,6 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: "Error interno del servidor" });
 });
 
-// ✅ Arrancar el servidor en el puerto configurado
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);

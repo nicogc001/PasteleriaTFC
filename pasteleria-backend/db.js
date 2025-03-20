@@ -1,37 +1,26 @@
-const mysql = require('mysql2');
-require('dotenv').config();
+const mysql = require("mysql2/promise");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306
+// ✅ Crear conexión con MySQL usando variables de entorno
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-// Manejo de errores y reconexión automática
-function connectToDatabase() {
-  connection.connect((error) => {
-    if (error) {
-      console.error('❌ Error conectando a MySQL:', error);
-      setTimeout(connectToDatabase, 5000); // Intenta reconectar en 5 segundos
-    } else {
-      console.log('✅ Conectado correctamente a MySQL en Railway.');
-    }
-  });
-}
+// ✅ Manejo de errores en la conexión a la base de datos
+pool.getConnection()
+    .then(conn => {
+        console.log("✅ Conexión a la base de datos establecida correctamente");
+        conn.release();
+    })
+    .catch(err => {
+        console.error("❌ Error conectando a la base de datos:", err);
+    });
 
-// Manejo de desconexión
-connection.on('error', (err) => {
-  console.error('⚠️ Error en la conexión a MySQL:', err);
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-    console.log('🔄 Intentando reconectar...');
-    connectToDatabase();
-  } else {
-    throw err;
-  }
-});
-
-connectToDatabase();
-
-module.exports = connection;
+module.exports = pool;

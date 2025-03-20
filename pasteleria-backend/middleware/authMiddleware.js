@@ -1,17 +1,21 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
-function verificarToken(req, res, next) {
-    const token = req.headers.authorization?.split(" ")[1];
+env = process.env.SECRET_KEY;
+
+const authMiddleware = (req, res, next) => {
+    const token = req.headers['authorization'];
 
     if (!token) {
-        return res.status(403).json({ error: "No autorizado" });
+        return res.status(403).json({ error: 'Acceso denegado' });
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        const decoded = jwt.verify(token.split(' ')[1], env); // ✅ Se usa SECRET_KEY de .env
         req.user = decoded;
         next();
-    } catch (error) {
-        return res.status(401).json({ error: "Token inválido" });
+    } catch (err) {
+        return res.status(401).json({ error: 'Token inválido' });
     }
-}
+};
+
+module.exports = authMiddleware;
