@@ -39,25 +39,28 @@
         </div>
     </main>
     
-    <!-- Modal para agregar/modificar dirección -->
-    <div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalDireccionLabel">Dirección</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="text" id="inputCalle" class="form-control mb-2" placeholder="Calle" />
-                    <input type="text" id="inputCP" class="form-control mb-2" placeholder="Código Postal" />
-                    <input type="text" id="inputProvincia" class="form-control mb-2" placeholder="Provincia" />
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" onclick="guardarDireccion()">Guardar</button>
-                </div>
-            </div>
+<!-- Modal para agregar/modificar dirección -->
+<div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDireccionLabel">Dirección</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+          <input type="text" id="inputCalle" class="form-control mb-2" placeholder="Calle" />
+          <input type="text" id="inputCP" class="form-control mb-2" placeholder="Código Postal" />
+          <input type="text" id="inputProvincia" class="form-control mb-2" placeholder="Provincia" />
+          <input type="text" id="inputLocalidad" class="form-control mb-2" placeholder="Localidad" />
+          <textarea id="inputNotas" class="form-control mb-2" placeholder="Notas (opcional)"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" onclick="guardarDireccion()">Guardar</button>
+        </div>
+      </div>
     </div>
+  </div>
+  
     
     <!-- Footer -->
     <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
