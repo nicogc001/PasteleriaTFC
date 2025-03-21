@@ -9,19 +9,14 @@ async function seed() {
 
         await Productos.bulkCreate([
             {
-                nombre: 'Tarta de queso',
-                descripcion: 'Tarta suave con base de galleta',
+                nombre: "Tarta de Fresas",
+                descripcion: "Fresca y deliciosa",
                 precio: 12.50,
                 stock: 10,
-                imagen: 'https://ruta-a-imagen.jpg'
-            },
-            {
-                nombre: 'Tarta de chocolate',
-                descripcion: 'Chocolate puro para los más golosos',
-                precio: 14.00,
-                stock: 8,
-                imagen: 'https://ruta-a-imagen.jpg'
-            }
+                imagen: "https://tudominio.com/fresas.jpg",
+                categoria: "tartas"
+              }
+              
         ]);
 
         console.log('✅ Datos insertados correctamente');

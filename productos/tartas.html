@@ -137,19 +137,23 @@
         const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
         const container = document.getElementById('productos-container');
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
+    
         async function loadProductos() {
             try {
                 const res = await fetch(API_URL);
                 if (!res.ok) throw new Error("Error al cargar productos");
                 const productos = await res.json();
-                renderProductos(productos);
+    
+                // 🔥 Filtrar solo los productos de categoría 'tartas'
+                const tartas = productos.filter(p => p.categoria?.toLowerCase() === 'tartas');
+    
+                renderProductos(tartas);
             } catch (err) {
                 console.error(err);
                 container.innerHTML = '<p class="text-danger">No se pudieron cargar los productos.</p>';
             }
         }
-
+    
         function renderProductos(productos) {
             container.innerHTML = '';
             productos.forEach(p => {
@@ -173,7 +177,7 @@
                 container.appendChild(col);
             });
         }
-
+    
         function addToCart(productName, productPrice) {
             const existingProduct = cart.find(item => item.name === productName);
             if (existingProduct) {
@@ -185,7 +189,7 @@
             localStorage.setItem('cart', JSON.stringify(cart));
             alert(`${productName} se añadió al carrito.`);
         }
-
+    
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('add-to-cart')) {
                 const name = e.target.dataset.name;
@@ -205,8 +209,9 @@
                 window.location.href = link.href;
             }
         });
-
+    
         document.addEventListener('DOMContentLoaded', loadProductos);
     </script>
+    
 </body>
 </html>
