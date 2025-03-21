@@ -69,11 +69,11 @@
         </div>
     </header>
 
-     <!-- Contenido -->
-  <main class="container mt-5">
+ <!-- Contenido -->
+ <main class="container mt-5">
     <h2 class="text-center mb-4">Nuestras Tartas</h2>
     <div class="row" id="productos-container">
-      <!-- Aquí se insertan las cards dinámicamente -->
+      <!-- Las cards de productos se insertarán aquí -->
     </div>
   </main>
 
@@ -134,85 +134,84 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
-    <script>
-        const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
-        const container = document.getElementById('productos-container');
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-        async function loadProductos() {
-            try {
-                const res = await fetch(API_URL);
-                if (!res.ok) throw new Error("Error al cargar productos");
-                const productos = await res.json();
-    
-                // 🔥 Filtrar productos de la categoría 'tartas'
-                const tartas = productos.filter(p => p.categoria?.toLowerCase() === 'tartas');
-                renderProductos(tartas);
-            } catch (err) {
-                console.error(err);
-                container.innerHTML = '<p class="text-danger">No se pudieron cargar los productos.</p>';
-            }
-        }
-    
-        function renderProductos(productos) {
-            container.innerHTML = '';
-            productos.forEach(p => {
-                const col = document.createElement('div');
-                col.className = 'col-md-3';
-                col.innerHTML = `
-                    <div class="card text-center mb-4">
-                        <div class="bg-image hover-overlay">
-                            <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" />
-                            <a href="infoProducto.html" class="view-product" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}" data-image="${p.imagen}" data-description="${p.descripcion}">
-                                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-                            </a>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">${p.nombre}</h5>
-                            <button class="btn btn-danger add-to-cart" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(col);
-            });
-        }
-    
-        function addToCart(productName, productPrice) {
-            const existingProduct = cart.find(item => item.name === productName);
-            if (existingProduct) {
-                existingProduct.quantity++;
-                existingProduct.subtotal = existingProduct.quantity * productPrice;
-            } else {
-                cart.push({ name: productName, price: productPrice, quantity: 1, subtotal: productPrice });
-            }
-            localStorage.setItem('cart', JSON.stringify(cart));
-            alert(`${productName} se añadió al carrito.`);
-        }
-    
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('add-to-cart')) {
-                const name = e.target.dataset.name;
-                const price = parseFloat(e.target.dataset.price);
-                addToCart(name, price);
-            }
-    
-            if (e.target.closest('.view-product')) {
-                const link = e.target.closest('.view-product');
-                e.preventDefault();
-                const product = {
-                    name: link.dataset.name,
-                    price: link.dataset.price,
-                    image: link.dataset.image,
-                    description: link.dataset.description
-                };
-                localStorage.setItem('selectedProduct', JSON.stringify(product));
-                window.location.href = link.href;
-            }
-        });
-    
-        document.addEventListener('DOMContentLoaded', loadProductos);
-    </script>
-    
+<!-- Scripts -->
+<script>
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
+    const container = document.getElementById('productos-container');
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    async function loadProductos() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error("Error al cargar productos");
+        const productos = await res.json();
+
+        const tartas = productos.filter(p => p.categoria?.toLowerCase() === 'tartas');
+        renderProductos(tartas);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p class="text-danger">No se pudieron cargar los productos.</p>';
+      }
+    }
+
+    function renderProductos(productos) {
+      container.innerHTML = '';
+      productos.forEach(p => {
+        const col = document.createElement('div');
+        col.className = 'col-md-3';
+        col.innerHTML = `
+          <div class="card text-center mb-4">
+            <div class="bg-image hover-overlay">
+              <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" />
+              <a href="infoProducto.html" class="view-product" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}" data-image="${p.imagen}" data-description="${p.descripcion}">
+                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+              </a>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">${p.nombre}</h5>
+              <p class="card-text fw-bold">${p.precio} €</p>
+              <button class="btn btn-primary add-to-cart" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(col);
+      });
+    }
+
+    function addToCart(name, price) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.quantity++;
+        existing.subtotal = existing.quantity * price;
+      } else {
+        cart.push({ name, price, quantity: 1, subtotal: price });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(`${name} añadido al carrito`);
+    }
+
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('add-to-cart')) {
+        const name = e.target.dataset.name;
+        const price = parseFloat(e.target.dataset.price);
+        addToCart(name, price);
+      }
+      if (e.target.closest('.view-product')) {
+        const link = e.target.closest('.view-product');
+        e.preventDefault();
+        const product = {
+          name: link.dataset.name,
+          price: link.dataset.price,
+          image: link.dataset.image,
+          description: link.dataset.description
+        };
+        localStorage.setItem('selectedProduct', JSON.stringify(product));
+        window.location.href = link.href;
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadProductos);
+  </script>
     
 </body>
 </html>
