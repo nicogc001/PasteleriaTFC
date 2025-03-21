@@ -11,7 +11,15 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+
+// ✅ Configurar CORS correctamente para el frontend de Vercel
+app.use(cors({
+  origin: [
+    'https://pasteleria-d6dwxswii-nicogc001s-projects.vercel.app'
+  ],
+  credentials: true
+}));
+
 app.use(helmet());
 app.use(morgan('dev'));
 
@@ -34,14 +42,12 @@ app.use(morgan('dev'));
     }
 })();
 
-// Rutas base (se irán agregando más módulos)
+// Rutas base
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/pedidos', require('./routes/pedidosRoutes'));
 app.use('/api/productos', require('./routes/productosRoutes'));
 app.use('/api/registro-horario', require('./routes/registroHorarioRoutes'));
 app.use('/api/usuario', require('./routes/usuariosRoutes'));
-
-
 
 // Ruta de prueba
 app.get('/', (req, res) => {
