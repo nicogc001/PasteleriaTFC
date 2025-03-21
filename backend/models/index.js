@@ -1,4 +1,5 @@
 const db = require('../config/db');
+
 const Usuario = require('./Usuario');
 const Rol = require('./Rol');
 const Carrito = require('./Carrito');
@@ -7,14 +8,18 @@ const Pedidos = require('./Pedidos');
 const ProductosCarrito = require('./ProductosCarrito');
 const ProductosPedidos = require('./ProductosPedidos');
 const Ofertas = require('./Ofertas');
-const RegistroHorarios = require('./RegistroHorarios'); // Asegurar que el nombre coincida con el archivo
+const RegistroHorarios = require('./RegistroHorarios');
+const Direccion = require('./Direccion');
 
-// Definir relaciones entre modelos
+// Relaciones
 Usuario.hasOne(Carrito, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
 Carrito.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
 Usuario.hasMany(Pedidos, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
 Pedidos.belongsTo(Usuario, { foreignKey: 'usuarioId' });
+
+Usuario.hasMany(Direccion, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
+Direccion.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
 Carrito.hasMany(ProductosCarrito, { foreignKey: 'carritoId', onDelete: 'CASCADE' });
 ProductosCarrito.belongsTo(Carrito, { foreignKey: 'carritoId' });
@@ -31,17 +36,27 @@ ProductosPedidos.belongsTo(Productos, { foreignKey: 'productoId' });
 Productos.hasMany(Ofertas, { foreignKey: 'productoId', onDelete: 'CASCADE' });
 Ofertas.belongsTo(Productos, { foreignKey: 'productoId' });
 
-Usuario.hasMany(RegistroHorarios, { foreignKey: 'empleadoId', onDelete: 'CASCADE' });
-RegistroHorarios.belongsTo(Usuario, { foreignKey: 'empleadoId' });
-
-// Sincronizar los modelos con la base de datos
+// Sync
 const syncDB = async () => {
-    try {
-        await db.sync({ alter: true });
-        console.log('✅ Base de datos sincronizada correctamente');
-    } catch (error) {
-        console.error('❌ Error al sincronizar la base de datos:', error);
-    }
+  try {
+    await db.sync({ alter: true });
+    console.log('✅ Base de datos sincronizada correctamente');
+  } catch (error) {
+    console.error('❌ Error al sincronizar la base de datos:', error);
+  }
 };
 
-module.exports = { db, syncDB, Usuario, Rol, Carrito, Productos, Pedidos, ProductosCarrito, ProductosPedidos, Ofertas, RegistroHorarios };
+module.exports = {
+  db,
+  syncDB,
+  Usuario,
+  Rol,
+  Carrito,
+  Productos,
+  Pedidos,
+  ProductosCarrito,
+  ProductosPedidos,
+  Ofertas,
+  RegistroHorarios,
+  Direccion
+};

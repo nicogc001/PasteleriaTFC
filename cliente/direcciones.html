@@ -78,116 +78,126 @@
     </footer>
     
     <script>
-        let direcciones = [];
-        let direccionEditando = null;
-        const token = localStorage.getItem('token');
-        const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/direcciones';
-      
-        document.addEventListener('DOMContentLoaded', async () => {
-          if (!token) return (window.location.href = 'login.html');
-          await cargarDirecciones();
-        });
-      
-        async function cargarDirecciones() {
-          try {
-            const res = await fetch(API_URL, {
-              headers: { 'Authorization': `Bearer ${token}` },
-              credentials: 'include'
-            });
-            if (!res.ok) throw new Error("Error al obtener direcciones");
-      
-            direcciones = await res.json();
-            renderDirecciones();
-          } catch (err) {
-            console.error(err);
-            alert("Error cargando direcciones");
-          }
-        }
-      
-        function renderDirecciones() {
-          const lista = document.getElementById('lista-direcciones');
-          lista.innerHTML = '';
-          direcciones.forEach((d) => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item d-flex justify-content-between align-items-center';
-            li.innerHTML = `
-              ${d.calle}, ${d.cp}, ${d.provincia}
-              <div>
-                <button class="btn btn-sm btn-warning me-1" onclick="editarDireccion(${d.id})">Modificar</button>
-                <button class="btn btn-sm btn-danger" onclick="eliminarDireccion(${d.id})">Eliminar</button>
-              </div>`;
-            lista.appendChild(li);
-          });
-        }
-      
-        function abrirModalAgregar() {
-          direccionEditando = null;
-          document.getElementById('inputCalle').value = '';
-          document.getElementById('inputCP').value = '';
-          document.getElementById('inputProvincia').value = '';
-        }
-      
-        async function guardarDireccion() {
-          const calle = document.getElementById('inputCalle').value;
-          const cp = document.getElementById('inputCP').value;
-          const provincia = document.getElementById('inputProvincia').value;
-      
-          if (!calle || !cp || !provincia) {
-            return alert("Todos los campos son obligatorios.");
-          }
-      
-          const payload = { calle, cp, provincia };
-      
-          try {
-            const res = await fetch(direccionEditando ? `${API_URL}/${direccionEditando}` : API_URL, {
-              method: direccionEditando ? 'PUT' : 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(payload),
-              credentials: 'include'
-            });
-      
-            if (!res.ok) throw new Error("Error guardando dirección");
-            direccionEditando = null;
-            await cargarDirecciones();
-            bootstrap.Modal.getInstance(document.getElementById('modalDireccion')).hide();
-          } catch (err) {
-            console.error(err);
-            alert("Error al guardar dirección");
-          }
-        }
-      
-        function editarDireccion(id) {
-          const dir = direcciones.find(d => d.id === id);
-          if (!dir) return;
-      
-          direccionEditando = id;
-          document.getElementById('inputCalle').value = dir.calle;
-          document.getElementById('inputCP').value = dir.cp;
-          document.getElementById('inputProvincia').value = dir.provincia;
-          const modal = new bootstrap.Modal(document.getElementById('modalDireccion'));
-          modal.show();
-        }
-      
-        async function eliminarDireccion(id) {
-          if (!confirm("¿Estás seguro de eliminar esta dirección?")) return;
-      
-          try {
-            const res = await fetch(`${API_URL}/${id}`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token}` },
-              credentials: 'include'
-            });
-      
-            if (!res.ok) throw new Error("Error al eliminar");
-            await cargarDirecciones();
-          } catch (err) {
-            console.error(err);
-            alert("No se pudo eliminar");
-          }
-        }
+
+  let direcciones = [];
+  let direccionEditando = null;
+  const token = localStorage.getItem('token');
+  const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/direcciones';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!token) return (window.location.href = 'login.html');
+    await cargarDirecciones();
+  });
+
+  async function cargarDirecciones() {
+    try {
+      const res = await fetch(API_URL, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+      if (!res.ok) throw new Error("Error al obtener direcciones");
+
+      direcciones = await res.json();
+      renderDirecciones();
+    } catch (err) {
+      console.error(err);
+      alert("Error cargando direcciones");
+    }
+  }
+
+  function renderDirecciones() {
+    const lista = document.getElementById('lista-direcciones');
+    lista.innerHTML = '';
+    direcciones.forEach((d) => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.innerHTML = `
+        ${d.calle}, ${d.cp}, ${d.provincia}, ${d.localidad} <br><small>${d.notas || ''}</small>
+        <div>
+          <button class="btn btn-sm btn-warning me-1" onclick="editarDireccion(${d.id})">Modificar</button>
+          <button class="btn btn-sm btn-danger" onclick="eliminarDireccion(${d.id})">Eliminar</button>
+        </div>`;
+      lista.appendChild(li);
+    });
+  }
+
+  function abrirModalAgregar() {
+    direccionEditando = null;
+    document.getElementById('inputCalle').value = '';
+    document.getElementById('inputCP').value = '';
+    document.getElementById('inputProvincia').value = '';
+    document.getElementById('inputLocalidad').value = '';
+    document.getElementById('inputNotas').value = '';
+  }
+
+  async function guardarDireccion() {
+    const calle = document.getElementById('inputCalle').value;
+    const cp = document.getElementById('inputCP').value;
+    const provincia = document.getElementById('inputProvincia').value;
+    const localidad = document.getElementById('inputLocalidad').value;
+    const notas = document.getElementById('inputNotas').value;
+
+    if (!calle || !cp || !provincia || !localidad) {
+      return alert("Todos los campos obligatorios deben estar completos.");
+    }
+
+    const payload = { calle, cp, provincia, localidad, notas };
+
+    try {
+      const res = await fetch(direccionEditando ? `${API_URL}/${direccionEditando}` : API_URL, {
+        method: direccionEditando ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload),
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error("Error guardando dirección");
+      direccionEditando = null;
+      await cargarDirecciones();
+      bootstrap.Modal.getInstance(document.getElementById('modalDireccion')).hide();
+    } catch (err) {
+      console.error(err);
+      alert("Error al guardar dirección");
+    }
+  }
+
+  function editarDireccion(id) {
+    const dir = direcciones.find(d => d.id === id);
+    if (!dir) return;
+
+    direccionEditando = id;
+    document.getElementById('inputCalle').value = dir.calle;
+    document.getElementById('inputCP').value = dir.cp;
+    document.getElementById('inputProvincia').value = dir.provincia;
+    document.getElementById('inputLocalidad').value = dir.localidad;
+    document.getElementById('inputNotas').value = dir.notas || '';
+
+    const modal = new bootstrap.Modal(document.getElementById('modalDireccion'));
+    modal.show();
+  }
+
+  async function eliminarDireccion(id) {
+    if (!confirm("¿Estás seguro de eliminar esta dirección?")) return;
+
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error("Error al eliminar");
+      await cargarDirecciones();
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo eliminar");
+    }
+  }
+
+
       </script>
       
 </body>
