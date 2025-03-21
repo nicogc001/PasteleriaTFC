@@ -14,20 +14,19 @@ app.use(express.json());
 // ✅ Habilitar CORS para múltiples versiones del frontend
 const allowedOrigins = [
     'https://pasteleria-d6dwxswii-nicogc001s-projects.vercel.app',
-    'https://pasteleria-tfc-front-okev3enjh-nicogc001s-projects.vercel.app'
+    'https://pasteleria-tfc-front-okev3enjh-nicogc001s-projects.vercel.app',
+    'https://pasteleria-tfc-front-XXXXXXXX-nicogc001s-projects.vercel.app' // la actual
   ];
   
-  app.use(cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn('⚠️ Origen no permitido por CORS:', origin);
-        callback(null, false); // ← NO lanza error, solo deniega
-      }
-    },
-    credentials: true
-  }));
+  
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('❌ Acceso denegado por CORS'));
+    }
+  }
+  
   
 
 app.use(helmet());
