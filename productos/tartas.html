@@ -144,9 +144,8 @@
                 if (!res.ok) throw new Error("Error al cargar productos");
                 const productos = await res.json();
     
-                // 🔥 Filtrar solo los productos de categoría 'tartas'
+                // 🔥 Filtrar productos de la categoría 'tartas'
                 const tartas = productos.filter(p => p.categoria?.toLowerCase() === 'tartas');
-    
                 renderProductos(tartas);
             } catch (err) {
                 console.error(err);
@@ -169,8 +168,7 @@
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">${p.nombre}</h5>
-                            <p class="card-text">${p.precio} €</p>
-                            <button class="btn btn-primary add-to-cart" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
+                            <button class="btn btn-danger add-to-cart" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
                         </div>
                     </div>
                 `;
@@ -196,6 +194,7 @@
                 const price = parseFloat(e.target.dataset.price);
                 addToCart(name, price);
             }
+    
             if (e.target.closest('.view-product')) {
                 const link = e.target.closest('.view-product');
                 e.preventDefault();
@@ -212,6 +211,7 @@
     
         document.addEventListener('DOMContentLoaded', loadProductos);
     </script>
+    
     
 </body>
 </html>
