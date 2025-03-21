@@ -29,6 +29,8 @@ router.post('/', authMiddleware, async (req, res) => {
 
     // Calcular total
     let total = 0;
+    const productosParaActualizar = [];
+
     for (const item of items) {
       const producto = await Producto.findByPk(item.productoId);
       if (!producto) return res.status(404).json({ error: `Producto con ID ${item.productoId} no encontrado` });
@@ -38,6 +40,7 @@ router.post('/', authMiddleware, async (req, res) => {
       }
 
       total += producto.precio * item.cantidad;
+      productosParaActualizar.push({ producto, cantidad: item.cantidad });
     }
 
     // Crear el pedido
@@ -49,15 +52,14 @@ router.post('/', authMiddleware, async (req, res) => {
     });
 
     // Crear los ProductosPedidos y actualizar stock
-    for (const item of items) {
+    for (const { producto, cantidad } of productosParaActualizar) {
       await ProductosPedidos.create({
         pedidoId: pedido.id,
-        productoId: item.productoId,
-        cantidad: item.cantidad
+        productoId: producto.id,
+        cantidad
       });
 
-      const producto = await Producto.findByPk(item.productoId);
-      producto.stock -= item.cantidad;
+      producto.stock -= cantidad;
       await producto.save();
     }
 
