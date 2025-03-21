@@ -15,7 +15,7 @@ app.use(express.json());
 const allowedOrigins = [
     'https://pasteleria-d6dwxswii-nicogc001s-projects.vercel.app',
     'https://pasteleria-tfc-front-okev3enjh-nicogc001s-projects.vercel.app',
-    'https://pasteleria-tfc-front-XXXXXXXX-nicogc001s-projects.vercel.app' // la actual
+    'https://pasteleria-8qny93cf4-nicogc001s-projects.vercel.app' // la actual
   ];
   
   
