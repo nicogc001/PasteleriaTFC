@@ -13,20 +13,23 @@ app.use(express.json());
 
 // ✅ Habilitar CORS para múltiples versiones del frontend
 const allowedOrigins = [
-    'https://pasteleria-d6dwxswii-nicogc001s-projects.vercel.app',
-    'https://pasteleria-tfc-front-okev3enjh-nicogc001s-projects.vercel.app',
-    'https://pasteleria-8qny93cf4-nicogc001s-projects.vercel.app' // la actual
+    'https://pasteleriatfc.vercel.app', // producción
+    'http://localhost:5500'             // desarrollo local (opcional)
   ];
   
+  const vercelSubdomainRegex = /^https:\/\/pasteleriatfc-[\w-]+-nicogc001s-projects\.vercel\.app$/;
   
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('❌ Acceso denegado por CORS'));
-    }
-  }
-  
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin) || vercelSubdomainRegex.test(origin)) {
+        callback(null, true);
+      } else {
+        console.warn('⚠️ Origen no permitido por CORS:', origin);
+        callback(new Error('No permitido por CORS'));
+      }
+    },
+    credentials: true
+  }));  
   
 
 app.use(helmet());
