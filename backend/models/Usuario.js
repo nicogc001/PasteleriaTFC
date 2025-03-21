@@ -11,6 +11,10 @@ const Usuario = db.define('Usuario', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    apellidos: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -18,6 +22,18 @@ const Usuario = db.define('Usuario', {
         validate: {
             isEmail: true
         }
+    },
+    telefono: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    empresa: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    cif: {
+        type: DataTypes.STRING,
+        allowNull: true
     },
     rol: {
         type: DataTypes.STRING,
