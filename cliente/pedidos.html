@@ -27,81 +27,109 @@
                 </ul>
             </nav>
             <div class="w-100">
-                <div class="mt-4">
-                    <h3>Historial de Pedidos</h3>
-                    <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Fecha</th>
-                            <th>Total</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                          </tr>
-                        </thead>
-                        <tbody id="lista-pedidos">
-                          <!-- JS rellena aquí -->
-                        </tbody>
-                      </table>
-                </div>
+              <div class="mt-4">
+                <h3>Historial de Pedidos</h3>
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Fecha</th>
+                      <th>Total</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lista-pedidos">
+                    <!-- JS insertará los pedidos aquí -->
+                  </tbody>
+                </table>
+              </div>
             </div>
-        </div>
-    </main>
+          </div>
+        </main>
     
     <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">[...]</footer>
     
     <script>
-        const token = localStorage.getItem('token');
-        const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
-      
-        document.addEventListener('DOMContentLoaded', async () => {
-          if (!token) {
-            alert("Debes iniciar sesión.");
-            return window.location.href = 'login.html';
-          }
-      
-          try {
-            const res = await fetch(API_URL, {
-              headers: { 'Authorization': `Bearer ${token}` },
-              credentials: 'include'
-            });
-      
-            if (!res.ok) throw new Error("Error al obtener pedidos");
-      
-            const pedidos = await res.json();
-            renderPedidos(pedidos);
-          } catch (error) {
-            console.error(error);
-            alert("No se pudieron cargar los pedidos.");
-          }
-        });
-      
-        function renderPedidos(pedidos) {
-          const contenedor = document.getElementById('lista-pedidos');
-          contenedor.innerHTML = '';
-      
-          if (pedidos.length === 0) {
-            contenedor.innerHTML = '<tr><td colspan="5" class="text-center">No tienes pedidos aún.</td></tr>';
-            return;
-          }
-      
-          pedidos.forEach(p => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${p.id}</td>
-              <td>${new Date(p.fecha).toLocaleDateString()}</td>
-              <td>${p.total.toFixed(2)} €</td>
-              <td>${p.estado}</td>
-              <td><button class="btn btn-sm btn-info" onclick="verPedido(${p.id})">Ver</button></td>
-            `;
-            contenedor.appendChild(row);
-          });
-        }
-      
-        function verPedido(id) {
-          alert(`Mostrando detalles del pedido ${id}`);
-          // Aquí podrías abrir un modal o redirigir a otra página con el detalle
-        }
+ 
+  const token = localStorage.getItem('token');
+  const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!token) {
+      alert("Debes iniciar sesión.");
+      return window.location.href = 'login.html';
+    }
+
+    try {
+      const res = await fetch(API_URL, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error("Error al obtener pedidos");
+
+      const pedidos = await res.json();
+      renderPedidos(pedidos);
+    } catch (error) {
+      console.error(error);
+      alert("No se pudieron cargar los pedidos.");
+    }
+  });
+
+  function renderPedidos(pedidos) {
+    const contenedor = document.getElementById('lista-pedidos');
+    contenedor.innerHTML = '';
+
+    if (pedidos.length === 0) {
+      contenedor.innerHTML = '<tr><td colspan="5" class="text-center">No tienes pedidos aún.</td></tr>';
+      return;
+    }
+
+    pedidos.forEach(p => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${p.id}</td>
+        <td>${new Date(p.fecha).toLocaleDateString()}</td>
+        <td>${p.total.toFixed(2)} €</td>
+        <td>${p.estado}</td>
+        <td>
+          <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
+          ${p.estado === 'pendiente' ? `<button class="btn btn-sm btn-success" onclick="confirmarPago(${p.id})">Confirmar</button>` : ''}
+        </td>
+      `;
+      contenedor.appendChild(row);
+    });
+  }
+
+  function verPedido(id) {
+    alert(`Mostrando detalles del pedido ${id}`);
+    // Aquí podrías abrir un modal o redirigir a otra página con el detalle
+  }
+
+  async function confirmarPago(pedidoId) {
+    const token = localStorage.getItem('token');
+
+    try {
+      const res = await fetch(`${API_URL}/${pedidoId}/confirmar`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error('No se pudo confirmar el pedido.');
+
+      alert("✅ Pedido confirmado correctamente.");
+      location.reload();
+    } catch (err) {
+      console.error("❌ Error confirmando pedido:", err);
+      alert("Error al confirmar el pedido.");
+    }
+  }
+
+
       </script>
       
 </body>

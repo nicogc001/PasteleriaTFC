@@ -541,34 +541,31 @@
 
 <!-- Script para redirigir a la página de producto -->
 <script>
-    document.querySelectorAll('.view-product').forEach(button => {
-        button.addEventListener('click', e => {
-            e.preventDefault();
-
-            // Obtener datos directamente del enlace del producto
-            const product = {
-                name: e.currentTarget.dataset.name,
-                price: e.currentTarget.dataset.price,
-                image: e.currentTarget.dataset.image,
-                description: e.currentTarget.dataset.description
-            };
-
-            if (!product.name || !product.price || !product.image || !product.description) {
-                alert("Error: No se encontraron datos del producto.");
-                return;
-            }
-
-            console.log('Producto guardado:', product); // Verificar en consola
-
-            localStorage.setItem('selectedProduct', JSON.stringify(product)); // Guardar datos en localStorage
-            window.location.href = e.currentTarget.href; // Redirigir a la página del producto
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.view-product').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+  
+          const product = {
+            id: link.dataset.id || null,
+            name: link.dataset.name || '',
+            price: parseFloat(link.dataset.price) || 0,
+            image: link.dataset.image || '',
+            description: link.dataset.description || ''
+          };
+  
+          // Validaciones básicas
+          if (!product.name || !product.price || !product.image || !product.description) {
+            alert("Error: Información incompleta del producto.");
+            return;
+          }
+  
+          // Guardar en localStorage y redirigir
+          localStorage.setItem('selectedProduct', JSON.stringify(product));
+          window.location.href = link.getAttribute('href');
         });
+      });
     });
-
-</script>
-
-    
-    
+  </script>
 </body>
-
 </html>

@@ -1,51 +1,92 @@
 const express = require('express');
-const authMiddleware = require('../middleware/authMiddleware');
-const Pedidos = require('../models/Pedidos');
-const ProductosPedidos = require('../models/ProductosPedidos');
-const Productos = require('../models/Productos');
 const router = express.Router();
+const { Pedidos, ProductosPedidos, Producto } = require('../models');
+const authMiddleware = require('../middleware/authMiddleware');
 
-// Crear un nuevo pedido
+// 🔹 Obtener los pedidos del usuario autenticado
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    const pedidos = await Pedidos.findAll({
+      where: { usuarioId: req.user.id },
+      include: [{ model: ProductosPedidos, include: [Producto] }],
+      order: [['fecha', 'DESC']]
+    });
+
+    res.json(pedidos);
+  } catch (err) {
+    console.error('❌ Error al obtener pedidos:', err);
+    res.status(500).json({ error: 'Error al obtener pedidos' });
+  }
+});
+
+// 🔹 Crear un nuevo pedido
 router.post('/', authMiddleware, async (req, res) => {
-    try {
-        const { productos } = req.body; // Array de productos con id y cantidad
-        const usuarioId = req.user.id;
-
-        if (!productos || productos.length === 0) {
-            return res.status(400).json({ error: 'No se han proporcionado productos para el pedido' });
-        }
-
-        // Calcular el total del pedido
-        let total = 0;
-        for (const item of productos) {
-            const producto = await Productos.findByPk(item.productoId);
-            if (!producto) {
-                return res.status(404).json({ error: `Producto con ID ${item.productoId} no encontrado` });
-            }
-            total += producto.precio * item.cantidad;
-        }
-
-        // Crear el pedido en la base de datos
-        const nuevoPedido = await Pedidos.create({ usuarioId, total });
-
-        // Guardar los productos asociados al pedido
-        for (const item of productos) {
-            await ProductosPedidos.create({
-                pedidoId: nuevoPedido.id,
-                productoId: item.productoId,
-                cantidad: item.cantidad
-            });
-        }
-
-        res.status(201).json({
-            message: 'Pedido creado correctamente',
-            pedido: nuevoPedido
-        });
-
-    } catch (error) {
-        console.error('❌ Error al crear el pedido:', error);
-        res.status(500).json({ error: 'Error en el servidor' });
+  try {
+    const { items } = req.body; // items: [{ productoId, cantidad }]
+    if (!items || items.length === 0) {
+      return res.status(400).json({ error: 'El pedido no contiene productos.' });
     }
+
+    // Calcular total
+    let total = 0;
+    for (const item of items) {
+      const producto = await Producto.findByPk(item.productoId);
+      if (!producto) return res.status(404).json({ error: `Producto con ID ${item.productoId} no encontrado` });
+
+      if (producto.stock < item.cantidad) {
+        return res.status(400).json({ error: `No hay suficiente stock de ${producto.nombre}` });
+      }
+
+      total += producto.precio * item.cantidad;
+    }
+
+    // Crear el pedido
+    const pedido = await Pedidos.create({
+      usuarioId: req.user.id,
+      fecha: new Date(),
+      estado: 'pendiente',
+      total
+    });
+
+    // Crear los ProductosPedidos y actualizar stock
+    for (const item of items) {
+      await ProductosPedidos.create({
+        pedidoId: pedido.id,
+        productoId: item.productoId,
+        cantidad: item.cantidad
+      });
+
+      const producto = await Producto.findByPk(item.productoId);
+      producto.stock -= item.cantidad;
+      await producto.save();
+    }
+
+    res.status(201).json({ message: 'Pedido creado exitosamente', pedidoId: pedido.id });
+  } catch (err) {
+    console.error('❌ Error creando pedido:', err);
+    res.status(500).json({ error: 'Error al crear pedido' });
+  }
+});
+
+// 🔹 Confirmar un pedido (marcar como pagado)
+router.put('/:id/confirmar', authMiddleware, async (req, res) => {
+  try {
+    const pedido = await Pedidos.findOne({
+      where: { id: req.params.id, usuarioId: req.user.id }
+    });
+
+    if (!pedido) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+
+    pedido.estado = 'confirmado';
+    await pedido.save();
+
+    res.json({ message: 'Pedido confirmado correctamente' });
+  } catch (err) {
+    console.error('❌ Error confirmando pedido:', err);
+    res.status(500).json({ error: 'Error al confirmar pedido' });
+  }
 });
 
 module.exports = router;

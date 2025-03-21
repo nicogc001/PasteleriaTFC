@@ -14,42 +14,42 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-            <div class="container-fluid">
-                <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-bars"></i>
-                </button>
-        
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
-                            loading="lazy" />
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+        <div class="container-fluid">
+            <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+    
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
+                    <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
+                        loading="lazy" />
+                </a>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bollería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos/salado.html">Repostería Salada</a></li>
+                    <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
+                </ul>
+            </div>
+            <div class="d-flex align-items-center">
+                <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
+                <div class="dropdown">
+                    <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="login.html" id="navbarDropdownMenuAvatar" role="button"
+                        aria-expanded="false">
+                        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
                     </a>
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bollería</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/salado.html">Repostería Salada</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                        <li><a class="dropdown-item" href="#">My profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Logout</a></li>
                     </ul>
                 </div>
-                <div class="d-flex align-items-center">
-                    <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
-                    <div class="dropdown">
-                        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="login.html" id="navbarDropdownMenuAvatar" role="button"
-                            aria-expanded="false">
-                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                            <li><a class="dropdown-item" href="#">My profile</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
             </div>
-        </nav>
+        </div>
+    </nav>
     </header>
 
     <main>
@@ -136,36 +136,50 @@
             document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
         }
 
-        function saveOrder() {
-            if (cart.length === 0) {
-                alert("El carrito está vacío.");
-                return;
-            }
-            
-            if (!userId) {
-                alert("Debes iniciar sesión para realizar una compra.");
-                window.location.href = "login.html";
-                return;
-            }
+        async function saveOrder() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const token = localStorage.getItem('token');
 
-            let orders = JSON.parse(localStorage.getItem('orders')) || {};
-            if (!orders[userId]) orders[userId] = [];
-
-            const newOrder = {
-                id: Date.now(),
-                date: new Date().toLocaleDateString(),
-                total: cart.reduce((sum, item) => sum + item.subtotal, 0),
-                status: "Pendiente",
-                items: [...cart]
-            };
-            
-            orders[userId].push(newOrder);
-            localStorage.setItem('orders', JSON.stringify(orders));
-            localStorage.setItem('cart', JSON.stringify([]));
-
-            alert("Compra realizada con éxito.");
-            window.location.href = "cliente/pedidos.html";
+        if (!token) {
+            alert("Debes iniciar sesión para realizar una compra.");
+            return window.location.href = "login.html";
         }
+
+        if (cart.length === 0) {
+            alert("Tu carrito está vacío.");
+            return;
+        }
+
+        const items = cart.map(p => ({
+            productoId: p.id,        // ⚠️ Asegúrate de que el producto tenga el campo `id` en el carrito
+            cantidad: p.quantity
+        }));
+
+        try {
+            const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ items }),
+            credentials: 'include'
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
+
+            alert("✅ Pedido realizado correctamente.");
+            localStorage.removeItem('cart');
+            window.location.href = "cliente/pedidos.html";
+        } catch (error) {
+            console.error('❌ Error al enviar pedido:', error);
+            alert("Error al crear el pedido.");
+        }
+        }
+
+
 
         document.addEventListener('DOMContentLoaded', () => {
             loadCart();
