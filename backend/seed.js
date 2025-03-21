@@ -1,41 +1,35 @@
-const { db, Productos } = require('./models');
+const { db, Productos } = require('./models'); // Asegúrate que el modelo se llama 'Productos' en index.js
 
-const productos = [
-  {
-    nombre: 'Mini Croissant',
-    descripcion: 'Delicioso croissant recién horneado.',
-    precio: 1.20,
-    stock: 100,
-    imagen: 'https://media.istockphoto.com/id/869469118/photo/two-fresh-croissants.jpg'
-  },
-  {
-    nombre: 'Croissant de Chocolate',
-    descripcion: 'Croissant con cobertura de chocolate.',
-    precio: 1.70,
-    stock: 80,
-    imagen: 'https://piccolinoscoffee.com/wp-content/uploads/2023/12/piccolino-mixto.jpg'
-  },
-  {
-    nombre: 'Palmerita Chocolate',
-    descripcion: 'Palmerita con cobertura de chocolate.',
-    precio: 1.50,
-    stock: 90,
-    imagen: 'https://www.bopan.cat/1948-home_default/palmera-de-chocolate-50g.jpg'
-  }
-];
+async function seed() {
+    try {
+        await db.authenticate();
+        console.log('📦 Base de datos conectada');
 
-const seed = async () => {
-  try {
-    await db.sync({ force: false });
-    console.log('📦 Base de datos conectada');
+        await db.sync({ force: true }); // opcional si quieres resetear
 
-    await Productos.bulkCreate(productos);
-    console.log('✅ Productos insertados correctamente');
-    process.exit(0);
-  } catch (err) {
-    console.error('❌ Error en el seed:', err);
-    process.exit(1);
-  }
-};
+        await Productos.bulkCreate([
+            {
+                nombre: 'Tarta de queso',
+                descripcion: 'Tarta suave con base de galleta',
+                precio: 12.50,
+                stock: 10,
+                imagen: 'https://ruta-a-imagen.jpg'
+            },
+            {
+                nombre: 'Tarta de chocolate',
+                descripcion: 'Chocolate puro para los más golosos',
+                precio: 14.00,
+                stock: 8,
+                imagen: 'https://ruta-a-imagen.jpg'
+            }
+        ]);
+
+        console.log('✅ Datos insertados correctamente');
+    } catch (err) {
+        console.error('❌ Error en el seed:', err);
+    } finally {
+        await db.close();
+    }
+}
 
 seed();
