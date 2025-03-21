@@ -3,7 +3,7 @@ const router = express.Router();
 const { Direccion } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// Obtener todas las direcciones del usuario autenticado
+// 🔐 Obtener todas las direcciones del usuario autenticado
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const direcciones = await Direccion.findAll({
@@ -11,19 +11,19 @@ router.get('/', authMiddleware, async (req, res) => {
     });
     res.json(direcciones);
   } catch (error) {
-    console.error('❌ Error obteniendo direcciones:', error);
+    console.error("❌ Error al obtener direcciones:", error);
     res.status(500).json({ error: 'Error al obtener direcciones' });
   }
 });
 
-// Crear una nueva dirección
+// ➕ Crear nueva dirección
 router.post('/', authMiddleware, async (req, res) => {
-  const { calle, cp, provincia, localidad, notas } = req.body;
-  if (!calle || !cp || !provincia || !localidad) {
-    return res.status(400).json({ error: 'Faltan campos obligatorios' });
-  }
-
   try {
+    const { calle, cp, provincia, localidad, notas } = req.body;
+    if (!calle || !cp || !provincia || !localidad) {
+      return res.status(400).json({ error: 'Todos los campos obligatorios deben estar completos' });
+    }
+
     const direccion = await Direccion.create({
       calle,
       cp,
@@ -32,25 +32,27 @@ router.post('/', authMiddleware, async (req, res) => {
       notas,
       usuarioId: req.user.id
     });
+
     res.status(201).json(direccion);
   } catch (error) {
-    console.error('❌ Error creando dirección:', error);
+    console.error("❌ Error al crear dirección:", error);
     res.status(500).json({ error: 'Error al crear dirección' });
   }
 });
 
-// Actualizar una dirección
+// ✏️ Actualizar dirección
 router.put('/:id', authMiddleware, async (req, res) => {
-  const { id } = req.params;
-  const { calle, cp, provincia, localidad, notas } = req.body;
-
   try {
-    const direccion = await Direccion.findOne({
-      where: { id, usuarioId: req.user.id }
-    });
+    const { id } = req.params;
+    const direccion = await Direccion.findByPk(id);
 
-    if (!direccion) {
+    if (!direccion || direccion.usuarioId !== req.user.id) {
       return res.status(404).json({ error: 'Dirección no encontrada' });
+    }
+
+    const { calle, cp, provincia, localidad, notas } = req.body;
+    if (!calle || !cp || !provincia || !localidad) {
+      return res.status(400).json({ error: 'Todos los campos obligatorios deben estar completos' });
     }
 
     direccion.calle = calle;
@@ -60,30 +62,28 @@ router.put('/:id', authMiddleware, async (req, res) => {
     direccion.notas = notas;
 
     await direccion.save();
+
     res.json(direccion);
   } catch (error) {
-    console.error('❌ Error actualizando dirección:', error);
+    console.error("❌ Error al actualizar dirección:", error);
     res.status(500).json({ error: 'Error al actualizar dirección' });
   }
 });
 
-// Eliminar una dirección
+// ❌ Eliminar dirección
 router.delete('/:id', authMiddleware, async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const direccion = await Direccion.findOne({
-      where: { id, usuarioId: req.user.id }
-    });
+    const { id } = req.params;
+    const direccion = await Direccion.findByPk(id);
 
-    if (!direccion) {
+    if (!direccion || direccion.usuarioId !== req.user.id) {
       return res.status(404).json({ error: 'Dirección no encontrada' });
     }
 
     await direccion.destroy();
     res.json({ message: 'Dirección eliminada correctamente' });
   } catch (error) {
-    console.error('❌ Error eliminando dirección:', error);
+    console.error("❌ Error al eliminar dirección:", error);
     res.status(500).json({ error: 'Error al eliminar dirección' });
   }
 });
