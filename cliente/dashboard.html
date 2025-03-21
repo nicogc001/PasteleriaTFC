@@ -106,86 +106,84 @@
     
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            console.log("Verificando sesión del usuario...");
-            const response = await fetch('https://pasteleriatfc-back.onrender.com/api/usuario', {
-                method: 'GET',
-                credentials: 'include',
-                headers: { 'Cache-Control': 'no-cache' }
-            });
-            
-            if (!response.ok) {
-                console.warn("No autenticado, código:", response.status);
-                alert("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.");
-                window.location.href = "/login.html";
-                return;
-            }
-            
-            const user = await response.json();
-            console.log("Usuario autenticado:", user);
-            if (!user || !user.id) {
-                throw new Error("Usuario no válido");
-            }
-            
-            document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
-            cargarPedidos(user.id);
-        } catch (error) {
-            console.error("Error verificando sesión:", error);
-            alert("Error al verificar sesión. Intenta de nuevo.");
-            window.location.href = "/login.html";
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Debes iniciar sesión para acceder al dashboard');
+        window.location.href = '/login.html';
+        return;
+      }
+  
+      try {
+        // Obtener datos del usuario autenticado
+        const response = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/auth/me', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+  
+        if (!response.ok) {
+          throw new Error('Sesión inválida');
         }
+  
+        const user = await response.json();
+        document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
+  
+        cargarPedidos(user.id);
+      } catch (error) {
+        console.error('❌ Error en sesión:', error);
+        alert('Tu sesión ha expirado. Inicia sesión nuevamente.');
+        window.location.href = '/login.html';
+      }
     });
-    
+  
     async function cargarPedidos(userId) {
-        try {
-            console.log("Cargando pedidos para el usuario", userId);
-            const response = await fetch(`https://pasteleriatfc-back.onrender.com/api/pedidos?userId=${userId}`, {
-                method: 'GET',
-                credentials: 'include',
-                headers: { 'Cache-Control': 'no-cache' }
-            });
-            
-            if (!response.ok) throw new Error('Error al obtener pedidos');
-            
-            const pedidos = await response.json();
-            console.log("Pedidos cargados:", pedidos);
-            const ordersTable = document.getElementById("lista-pedidos");
-            ordersTable.innerHTML = "";
-            
-            if (pedidos.length === 0) {
-                ordersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No tienes pedidos aún.</td></tr>";
-            }
-            
-            pedidos.forEach(order => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${order.id}</td>
-                    <td>${order.fecha}</td>
-                    <td>$${order.total.toFixed(2)}</td>
-                    <td>${order.estado}</td>
-                    <td>
-                        <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
-                    </td>
-                `;
-                ordersTable.appendChild(row);
-            });
-        } catch (error) {
-            console.error('Error cargando pedidos:', error);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/pedidos?userId=${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+  
+        if (!response.ok) throw new Error('Error al obtener pedidos');
+  
+        const pedidos = await response.json();
+        const ordersTable = document.getElementById("lista-pedidos");
+        ordersTable.innerHTML = "";
+  
+        if (pedidos.length === 0) {
+          ordersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No tienes pedidos aún.</td></tr>";
         }
+  
+        pedidos.forEach(order => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${order.id}</td>
+            <td>${order.fecha}</td>
+            <td>$${order.total.toFixed(2)}</td>
+            <td>${order.estado}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
+            </td>
+          `;
+          ordersTable.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error cargando pedidos:', error);
+      }
     }
-    
+  
     function verPedido(id) {
-        alert("Mostrando detalles del pedido " + id);
+      alert("Mostrando detalles del pedido " + id);
     }
-    
+  
     function logout() {
-        fetch('https://pasteleriatfc-back.onrender.com/api/auth/logout', { method: 'POST', credentials: 'include' })
-            .then(() => {
-                alert("Has cerrado sesión correctamente.");
-                window.location.href = "/login.html";
-            })
-            .catch(error => console.error('Error al cerrar sesión:', error));
+      localStorage.removeItem('token');
+      alert('Sesión cerrada correctamente');
+      window.location.href = '/login.html';
     }
-</script>
+  </script>
+  
 </body>
 </html>
