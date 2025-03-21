@@ -31,7 +31,8 @@
                       <input type="password" id="password" class="form-control" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Registrarse</button>
-                  </form>
+                </form>
+                  
                   
                 <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="login.html">Inicia sesión aquí</a></p>
                 <p class="text-center mt-3"><a href="index.html" class="btn btn-secondary">Volver a Inicio</a></p>
@@ -66,8 +67,12 @@
                 });
       
                 if (!response.ok) {
-                  const error = await response.json();
-                  throw new Error(error.error || 'Error en el registro');
+                    const error = await response.json();
+                    if (error.error && error.error.includes('ya está registrado')) {
+                        alert('❌ Este correo ya está registrado.');
+                    } else {
+                        throw new Error(error.error || 'Error en el registro');
+                    }
                 }
       
                 alert('✅ Registro exitoso. Ahora puedes iniciar sesión.');
