@@ -11,15 +11,14 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// ✅ Habilitar CORS para producción, local y despliegues temporales de Vercel
 const allowedOrigins = [
-  'https://pasteleriatfc.vercel.app', // Producción fija
-  'http://localhost:5500'             // Desarrollo local
+  'https://pasteleriatfc.vercel.app',
+  'http://localhost:5500'
 ];
 
 const vercelSubdomainRegex = /^https:\/\/pasteleriatfc-[\w-]+-nicogc001s-projects\.vercel\.app$/;
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin) || vercelSubdomainRegex.test(origin)) {
       callback(null, true);
@@ -28,13 +27,46 @@ app.use(cors({
       callback(new Error('No permitido por CORS'));
     }
   },
-  credentials: true
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+// ✅ Aplica CORS normal
+app.use(cors(corsOptions));
+
+// ✅ Responde manualmente a preflights
+app.options('*', cors(corsOptions));
 
 app.use(helmet());
 app.use(morgan('dev'));
 
-// Conexión y sincronización con la base de datos
+// Rutas principales
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/usuario', require('./routes/usuariosRoutes'));
+app.use('/api/productos', require('./routes/productosRoutes'));
+app.use('/api/pedidos', require('./routes/pedidosRoutes'));
+app.use('/api/registro-horario', require('./routes/registroHorarioRoutes'));
+app.use('/api/direcciones', require('./routes/direccionesRoutes'));
+app.use('/api/tartas', require('./routes/tartasRoutes'));
+
+// Ruta base
+app.get('/', (req, res) => {
+  res.send('🚀 Backend funcionando correctamente');
+});
+
+// 404
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
+
+// Middleware de errores global
+app.use((err, req, res, next) => {
+  console.error('❌ Error en el servidor:', err.message);
+  res.status(500).json({ error: 'Error interno del servidor' });
+});
+
+// Conexión BD y arranque del servidor
 (async () => {
   try {
     await db.authenticate();
@@ -52,28 +84,3 @@ app.use(morgan('dev'));
     process.exit(1);
   }
 })();
-
-// 📦 Rutas del proyecto
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/usuario', require('./routes/usuariosRoutes'));
-app.use('/api/productos', require('./routes/productosRoutes'));
-app.use('/api/pedidos', require('./routes/pedidosRoutes'));
-app.use('/api/registro-horario', require('./routes/registroHorarioRoutes'));
-app.use('/api/direcciones', require('./routes/direccionesRoutes'));
-app.use('/api/tartas', require('./routes/tartasRoutes'));
-
-// 🧪 Ruta base de prueba
-app.get('/', (req, res) => {
-  res.send('🚀 Backend funcionando correctamente');
-});
-
-// 🔍 Manejo de rutas no existentes
-app.use((req, res) => {
-  res.status(404).json({ error: 'Ruta no encontrada' });
-});
-
-//  Middleware de errores global
-app.use((err, req, res, next) => {
-  console.error('❌ Error en el servidor:', err.message);
-  res.status(500).json({ error: 'Error interno del servidor' });
-});
