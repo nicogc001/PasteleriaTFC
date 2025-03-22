@@ -26,10 +26,18 @@ router.post('/', async (req, res) => {
 });
 
 // Obtener todos los productos
+// Obtener productos (con filtro opcional por categoría)
 router.get('/', async (req, res) => {
     try {
+        const { categoria } = req.query;
+
+        const whereClause = categoria
+            ? { categoria: categoria.toLowerCase() }
+            : {};
+
         const productos = await Productos.findAll({
-            attributes: ['id', 'nombre', 'descripcion', 'precio', 'stock', 'imagen']
+            where: whereClause,
+            attributes: ['id', 'nombre', 'descripcion', 'precio', 'stock', 'imagen', 'categoria']
         });
 
         if (productos.length === 0) {
@@ -37,7 +45,6 @@ router.get('/', async (req, res) => {
         }
 
         res.json(productos);
-
     } catch (error) {
         console.error('❌ Error al obtener productos:', error);
         res.status(500).json({ error: 'Error en el servidor' });

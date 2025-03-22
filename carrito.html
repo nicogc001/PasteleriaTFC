@@ -108,19 +108,19 @@
     <script>
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         const userId = localStorage.getItem('userId');
-
+    
         function loadCart() {
             const cartTableBody = document.querySelector('#cart tbody');
             cartTableBody.innerHTML = '';
             let total = 0;
-
+    
             cart.forEach((product, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${product.name}</td>
                     <td>$${product.price.toFixed(2)}</td>
                     <td>
-                        <input type="number" class="form-control text-center quantity-input" value="${product.quantity}" min="1" data-index="index">
+                        <input type="number" class="form-control text-center quantity-input" value="${product.quantity}" min="1" data-index="${index}">
                     </td>
                     <td class="text-center subtotal">$${product.subtotal.toFixed(2)}</td>
                     <td>
@@ -132,121 +132,104 @@
                 cartTableBody.appendChild(row);
                 total += product.subtotal;
             });
-
+    
             document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
         }
-
+    
         async function saveOrder() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-            alert("Debes iniciar sesión para realizar una compra.");
-            return window.location.href = "login.html";
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const token = localStorage.getItem('token');
+    
+            if (!token) {
+                alert("Debes iniciar sesión para realizar una compra.");
+                return window.location.href = "login.html";
+            }
+    
+            if (cart.length === 0) {
+                alert("Tu carrito está vacío.");
+                return;
+            }
+    
+            // ✅ Corregido: asegurarse de que cada producto tenga un id válido
+            const items = cart.map(p => ({
+                productoId: p.id,
+                cantidad: p.quantity
+            }));
+    
+            try {
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ items }),
+                    credentials: 'include'
+                });
+    
+                const data = await res.json();
+    
+                if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
+    
+                alert("✅ Pedido realizado correctamente.");
+                localStorage.removeItem('cart');
+                window.location.href = "cliente/pedidos.html";
+            } catch (error) {
+                console.error('❌ Error al enviar pedido:', error);
+                alert("Error al crear el pedido.");
+            }
         }
-
-        if (cart.length === 0) {
-            alert("Tu carrito está vacío.");
-            return;
-        }
-
-        const items = cart.map(p => ({
-            productoId: p.id,        // ⚠️ Asegúrate de que el producto tenga el campo `id` en el carrito
-            cantidad: p.quantity
-        }));
-
-        try {
-            const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ items }),
-            credentials: 'include'
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
-
-            alert("✅ Pedido realizado correctamente.");
-            localStorage.removeItem('cart');
-            window.location.href = "cliente/pedidos.html";
-        } catch (error) {
-            console.error('❌ Error al enviar pedido:', error);
-            alert("Error al crear el pedido.");
-        }
-        }
-
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCart();
-            document.querySelector('#buy-btn').addEventListener('click', saveOrder);
-        });
-
-        // Recalcular subtotales y total general
+    
         function recalculateTotals() {
             let total = 0;
-
-            // Iterar sobre los productos del carrito
+    
             document.querySelectorAll('#cart tbody tr').forEach(row => {
                 const price = parseFloat(row.querySelector('td:nth-child(2)').textContent.replace('$', ''));
                 const quantity = parseInt(row.querySelector('.quantity-input').value, 10);
                 const subtotal = price * quantity;
-
-                // Actualizar subtotal en la fila
+    
                 row.querySelector('.subtotal').textContent = `$${subtotal.toFixed(2)}`;
                 total += subtotal;
-
-                // Actualizar el objeto del carrito en memoria
+    
                 const index = row.querySelector('.quantity-input').dataset.index;
                 cart[index].quantity = quantity;
                 cart[index].subtotal = subtotal;
             });
-
-            // Guardar cambios en localStorage y actualizar el total
+    
             localStorage.setItem('cart', JSON.stringify(cart));
             document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
-            const totalXs = document.getElementById('cart-total-xs');
-            if (totalXs) totalXs.textContent = `$${total.toFixed(2)}`;
         }
-
-        // Eliminar un producto del carrito
+    
         function removeProduct(e) {
             const index = parseInt(e.target.closest('.remove-product').dataset.index, 10);
-            cart.splice(index, 1); // Eliminar el producto del carrito
-
-            // Guardar cambios en localStorage y recargar el carrito
+            cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             loadCart();
         }
-
-        // Inicializar el carrito al cargar la página
+    
         document.addEventListener('DOMContentLoaded', () => {
             loadCart();
-
-            // Delegación de eventos para actualizar cantidades
+    
+            document.querySelector('#buy-btn').addEventListener('click', saveOrder);
+    
             document.querySelector('#cart').addEventListener('input', e => {
                 if (e.target.classList.contains('quantity-input')) {
                     recalculateTotals();
                 }
             });
-
-            // Delegación de eventos para eliminar productos
+    
             document.querySelector('#cart').addEventListener('click', e => {
                 if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) {
                     removeProduct(e);
                 }
             });
         });
-
-        // Función para regresar a la página anterior
+    
         function goBack() {
             window.history.back();
         }
     </script>
+    
 </body>
 
 </html>

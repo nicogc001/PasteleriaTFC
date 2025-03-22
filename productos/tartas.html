@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tartas</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="../styles/main.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tartas</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <link href="../styles/main.css" rel="stylesheet"/>
 </head>
-
 <body>
+
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
             <div class="container-fluid">
@@ -61,7 +60,7 @@
             <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <div class="text-white">
-                        <h1 class="mb-3">Tartas</h1>
+                        <h1 class="mb-3">Bollería</h1>
                         <h4 class="mb-3">Esponjosos y deliciosos bollos recién horneados</h4>
                     </div>
                 </div>
@@ -69,149 +68,91 @@
         </div>
     </header>
 
- <!-- Contenido -->
- <main class="container mt-5">
-    <h2 class="text-center mb-4">Nuestras Tartas</h2>
-    <div class="row" id="productos-container">
-      <!-- Las cards de productos se insertarán aquí -->
-    </div>
-  </main>
+<main class="container mt-5">
+  <h2 class="text-center mb-4">Nuestras Tartas</h2>
+  <div class="row" id="productos-container"></div>
+</main>
 
-    <!-- Footer -->
-    <footer class="text-center text-lg-start bg-body-tertiary text-muted">
-        <!-- Section: Social media -->
-        <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
-            <div class="me-5 d-none d-lg-block">
-                <span>Síguenos en redes: </span>
-            </div>
-            <div>
-                <a href="" class="me-4 text-reset"><i class="fab fa-twitter"></i></a>
-                <a href="" class="me-4 text-reset"><i class="fab fa-instagram"></i></a>          
-            </div>
-        </section>
-    
-        <!-- Section: Links  -->
-        <section>
-            <div class="container text-center text-md-start mt-5">
-                <div class="row mt-3">
-                    
-    
-                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-                        <h6 class="text-uppercase fw-bold mb-4">Productos</h6>
-                        <p><a href="#!" class="text-reset">Pasteleria</a></p>
-                        <p><a href="#!" class="text-reset">Bolleria</a></p>
-                        <p><a href="#!" class="text-reset">Salado</a></p>
-                        <p><a href="#!" class="text-reset">Tartas</a></p>
-                        <p><a href="#!" class="text-reset">Cafetería</a></p>
-                    </div>
-    
-                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-                        <h6 class="text-uppercase fw-bold mb-4">Enlaces de interés</h6>
-                        <p><a href="#!" class="text-reset">Alérgenos</a></p>
-                        <p><a href="#!" class="text-reset">¿Quienes somos?</a></p>
-                        <p><a href="trabajaConNosotros.html" class="text-reset">Trabaja con nosotros</a></p>
-                        <p><a href="trabajaConNosotros.html" class="text-reset">Canal compliance</a></p>
-                        <p><a href="trabajaConNosotros.html" class="text-reset">Politica de cookies</a></p>
-                    </div>
-    
-                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                        <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-                        <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
-                        <p><i class="fas fa-home me-3"></i>CC Espacio Torrelodones, Torrelodones</p>
-                        <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
-                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    
-        <!-- Copyright -->
-        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-            © 2025 Copyright:
-            <a class="text-reset fw-bold" href="https://mdbootstrap.com/">Pastelería El Caballo Goloso</a>
-        </div>
-    </footer>
+<footer class="text-center text-muted mt-5">
+  <!-- Tu footer aquí -->
+</footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
-<!-- Scripts -->
 <script>
-    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
-    const container = document.getElementById('productos-container');
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos?categoria=tartas';
+  const container = document.getElementById('productos-container');
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    async function loadProductos() {
-      try {
-        const res = await fetch(API_URL);
-        if (!res.ok) throw new Error("Error al cargar productos");
-        const productos = await res.json();
-
-        const tartas = productos.filter(p => p.categoria?.toLowerCase() === 'tartas');
-        renderProductos(tartas);
-      } catch (err) {
-        console.error(err);
-        container.innerHTML = '<p class="text-danger">No se pudieron cargar los productos.</p>';
-      }
+  async function loadProductos() {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Error al cargar productos");
+      const productos = await res.json();
+      renderProductos(productos);
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = '<p class="text-danger">No se pudieron cargar los productos.</p>';
     }
+  }
 
-    function renderProductos(productos) {
-      container.innerHTML = '';
-      productos.forEach(p => {
-        const col = document.createElement('div');
-        col.className = 'col-md-3';
-        col.innerHTML = `
-          <div class="card text-center mb-4">
-            <div class="bg-image hover-overlay">
-              <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" />
-              <a href="infoProducto.html" class="view-product" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}" data-image="${p.imagen}" data-description="${p.descripcion}">
-                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-              </a>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">${p.nombre}</h5>
-              <p class="card-text fw-bold">${p.precio} €</p>
-              <button class="btn btn-primary add-to-cart" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
-            </div>
+  function renderProductos(productos) {
+    container.innerHTML = '';
+    productos.forEach(p => {
+      const col = document.createElement('div');
+      col.className = 'col-md-3';
+      col.innerHTML = `
+        <div class="card text-center mb-4">
+          <div class="bg-image hover-overlay">
+            <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" />
+            <a href="infoProducto.html" class="view-product" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}" data-image="${p.imagen}" data-description="${p.descripcion}">
+              <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+            </a>
           </div>
-        `;
-        container.appendChild(col);
-      });
-    }
-
-    function addToCart(name, price) {
-      const existing = cart.find(item => item.name === name);
-      if (existing) {
-        existing.quantity++;
-        existing.subtotal = existing.quantity * price;
-      } else {
-        cart.push({ name, price, quantity: 1, subtotal: price });
-      }
-      localStorage.setItem('cart', JSON.stringify(cart));
-      alert(`${name} añadido al carrito`);
-    }
-
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('add-to-cart')) {
-        const name = e.target.dataset.name;
-        const price = parseFloat(e.target.dataset.price);
-        addToCart(name, price);
-      }
-      if (e.target.closest('.view-product')) {
-        const link = e.target.closest('.view-product');
-        e.preventDefault();
-        const product = {
-          name: link.dataset.name,
-          price: link.dataset.price,
-          image: link.dataset.image,
-          description: link.dataset.description
-        };
-        localStorage.setItem('selectedProduct', JSON.stringify(product));
-        window.location.href = link.href;
-      }
+          <div class="card-body">
+            <h5 class="card-title">${p.nombre}</h5>
+            <p class="card-text fw-bold">${p.precio} €</p>
+            <button class="btn btn-primary add-to-cart" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
+          </div>
+        </div>
+      `;
+      container.appendChild(col);
     });
+  }
 
-    document.addEventListener('DOMContentLoaded', loadProductos);
-  </script>
-    
+  function addToCart(id, name, price) {
+    const existing = cart.find(item => item.id === id);
+    if (existing) {
+      existing.quantity++;
+      existing.subtotal = existing.quantity * price;
+    } else {
+      cart.push({ id, name, price, quantity: 1, subtotal: price });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert(`${name} añadido al carrito`);
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('add-to-cart')) {
+      const id = e.target.dataset.id;
+      const name = e.target.dataset.name;
+      const price = parseFloat(e.target.dataset.price);
+      addToCart(id, name, price);
+    }
+    if (e.target.closest('.view-product')) {
+      const link = e.target.closest('.view-product');
+      e.preventDefault();
+      const product = {
+        name: link.dataset.name,
+        price: link.dataset.price,
+        image: link.dataset.image,
+        description: link.dataset.description
+      };
+      localStorage.setItem('selectedProduct', JSON.stringify(product));
+      window.location.href = link.href;
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', loadProductos);
+</script>
+
 </body>
 </html>
