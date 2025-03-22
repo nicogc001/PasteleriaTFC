@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Pedidos, ProductosPedidos, Producto } = require('../models');
+const { Pedidos, ProductosPedidos, Productos } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // 🔹 Obtener los pedidos del usuario autenticado
@@ -8,7 +8,7 @@ router.get('/', authMiddleware, async (req, res) => {
   try {
     const pedidos = await Pedidos.findAll({
       where: { usuarioId: req.user.id },
-      include: [{ model: ProductosPedidos, include: [Producto] }],
+      include: [{ model: ProductosPedidos, include: [Productos] }],
       order: [['fecha', 'DESC']]
     });
 
@@ -101,7 +101,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
       },
       include: [{
         model: ProductosPedidos,
-        include: [Producto]
+        include: [Productos]
       }]
     });
 
