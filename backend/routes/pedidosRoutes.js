@@ -32,8 +32,11 @@ router.post('/', authMiddleware, async (req, res) => {
     const productosParaActualizar = [];
 
     for (const item of items) {
-      const producto = await Producto.findByPk(item.productoId);
-      if (!producto) return res.status(404).json({ error: `Producto con ID ${item.productoId} no encontrado` });
+      const producto = await Productos.findByPk(item.productoId); // ✅ CORREGIDO
+
+      if (!producto) {
+        return res.status(404).json({ error: `Producto con ID ${item.productoId} no encontrado` });
+      }
 
       if (producto.stock < item.cantidad) {
         return res.status(400).json({ error: `No hay suficiente stock de ${producto.nombre}` });
@@ -101,7 +104,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
       },
       include: [{
         model: ProductosPedidos,
-        include: [Productos]
+        include: [Productos] // ✅ CORREGIDO
       }]
     });
 
@@ -127,6 +130,5 @@ router.get('/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el detalle del pedido' });
   }
 });
-
 
 module.exports = router;
