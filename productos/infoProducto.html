@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Información del producto</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/producto.css" />
+</head>
+<body>
+
+<header>
+  <!-- Navbar aquí si lo necesitas -->
+</header>
+
+<main>
+  <div class="container mt-5 mb-5">
+    <div class="card shadow-lg">
+      <div class="row g-0">
+        <!-- Imagen del producto -->
+        <div class="col-md-6 border-end d-flex align-items-center">
+          <div class="d-flex flex-column justify-content-center w-100">
+            <div class="main_image text-center">
+              <img id="main_product_image" src="" class="img-fluid rounded mx-auto d-block" alt="Imagen del producto" style="max-width: 100%; height: auto;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Detalles del producto -->
+        <div class="col-md-6">
+          <div class="p-4 right-side">
+            <h3 id="product-name" class="fw-bold"></h3>
+            <p id="product-description" class="text-muted fs-5"></p>
+            <h3 id="product-price" class="text-primary fw-bold"></h3>
+
+            <!-- Cantidad -->
+            <div class="quantity-selector mt-4">
+              <label for="quantity" class="form-label fw-bold">Cantidad:</label>
+              <input type="number" id="quantity" class="form-control w-50" value="1" min="1">
+            </div>
+
+            <!-- Opciones especiales (café / infusión) -->
+            <div class="picklist-container mt-3" style="display: none;">
+              <label for="product-options" class="form-label fw-bold">Selecciona una opción:</label>
+              <select id="product-options" class="form-select"></select>
+            </div>
+
+            <!-- Botón añadir al carrito -->
+            <div class="mt-4">
+              <button id="add-to-cart" class="btn btn-orange btn-lg w-100 rounded-pill shadow-sm">
+                <i class="fas fa-shopping-cart"></i> Añadir a la cesta
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="text-center text-muted mt-5">
+  <!-- Footer aquí si lo necesitas -->
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const product = JSON.parse(localStorage.getItem('selectedProduct'));
+
+  if (product && product.id && product.name && product.price && product.image) {
+    document.getElementById('product-name').textContent = product.name;
+    document.getElementById('product-price').textContent = `${product.price} €`;
+    document.getElementById('product-description').textContent = product.description;
+    document.getElementById('main_product_image').src = product.image;
+
+    if (product.name.toLowerCase().includes('café') || product.name.toLowerCase().includes('infusión')) {
+      document.querySelector('.picklist-container').style.display = 'block';
+
+      const selectElement = document.getElementById('product-options');
+      selectElement.innerHTML = product.name.toLowerCase().includes('café')
+        ? `<option value="solo">Solo</option>
+           <option value="cortado">Cortado</option>
+           <option value="con_leche">Con leche</option>
+           <option value="capuchino">Capuchino</option>`
+        : `<option value="menta">Menta</option>
+           <option value="manzanilla">Manzanilla</option>
+           <option value="té_verde">Té Verde</option>
+           <option value="rooibos">Rooibos</option>`;
+    }
+
+    console.log('✅ Producto cargado:', product);
+  } else {
+    alert('No se ha seleccionado un producto correctamente.');
+    window.history.back();
+  }
+});
+
+document.getElementById('add-to-cart').addEventListener('click', () => {
+  const quantity = parseInt(document.getElementById('quantity').value) || 1;
+  const product = JSON.parse(localStorage.getItem('selectedProduct'));
+  const selectElement = document.getElementById('product-options');
+  const selectedOption = selectElement ? selectElement.value : null;
+
+  if (document.querySelector('.picklist-container')?.style.display === 'block' && (!selectedOption || selectedOption === "")) {
+    alert("Por favor, selecciona una opción antes de añadir al carrito.");
+    return;
+  }
+
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  cart.push({
+    id: product.id,
+    name: product.name,
+    price: parseFloat(product.price),
+    option: selectedOption || 'N/A',
+    quantity: quantity,
+    subtotal: parseFloat(product.price) * quantity
+  });
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  alert(`${product.name} (${selectedOption || 'sin opción'}) se ha añadido a la cesta.`);
+});
+</script>
+
+</body>
+</html>
