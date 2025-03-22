@@ -91,4 +91,42 @@ router.put('/:id/confirmar', authMiddleware, async (req, res) => {
   }
 });
 
+// 🔹 Obtener detalle de un pedido por ID (para el modal)
+router.get('/:id', authMiddleware, async (req, res) => {
+  try {
+    const pedido = await Pedidos.findOne({
+      where: {
+        id: req.params.id,
+        usuarioId: req.user.id
+      },
+      include: [{
+        model: ProductosPedidos,
+        include: [Producto]
+      }]
+    });
+
+    if (!pedido) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+
+    const productos = pedido.ProductosPedidos.map(item => ({
+      nombre: item.Producto.nombre,
+      cantidad: item.cantidad,
+      subtotal: item.Producto.precio * item.cantidad
+    }));
+
+    res.json({
+      id: pedido.id,
+      fecha: pedido.fecha,
+      estado: pedido.estado,
+      total: pedido.total,
+      productos
+    });
+  } catch (err) {
+    console.error('❌ Error al obtener detalle del pedido:', err);
+    res.status(500).json({ error: 'Error al obtener el detalle del pedido' });
+  }
+});
+
+
 module.exports = router;

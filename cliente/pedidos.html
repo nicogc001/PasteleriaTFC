@@ -55,6 +55,28 @@
     <!-- Aquí tu footer si lo necesitas -->
   </footer>
 
+
+  <!-- Modal para detalle de pedido -->
+<div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pedidoModalLabel">Detalle del Pedido</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
+        <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
+        <p><strong>Total:</strong> <span id="detalle-total"></span></p>
+        <hr />
+        <h6>Productos:</h6>
+        <ul id="detalle-productos" class="list-group"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
   <script>
     const token = localStorage.getItem('token');
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
@@ -141,6 +163,43 @@
       localStorage.removeItem('cart');
       window.location.href = 'login.html';
     }
+
+    async function verPedido(id) {
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      credentials: 'include'
+    });
+
+    if (!res.ok) throw new Error("No se pudo obtener el detalle del pedido.");
+
+    const pedido = await res.json();
+
+    // Rellenar los datos en el modal
+    document.getElementById('detalle-fecha').textContent = new Date(pedido.fecha).toLocaleDateString('es-ES');
+    document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
+    document.getElementById('detalle-estado').textContent = pedido.estado;
+
+    const lista = document.getElementById('detalle-productos');
+    lista.innerHTML = '';
+    pedido.productos.forEach(prod => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.innerHTML = `
+        <span>${prod.nombre} x${prod.cantidad}</span>
+        <span>${prod.subtotal.toFixed(2)} €</span>
+      `;
+      lista.appendChild(li);
+    });
+
+    const modal = new mdb.Modal(document.getElementById('pedidoModal'));
+    modal.show();
+  } catch (err) {
+    console.error("❌ Error cargando detalle:", err);
+    alert("No se pudo cargar el detalle del pedido.");
+  }
+}
+
   </script>
 
 </body>
