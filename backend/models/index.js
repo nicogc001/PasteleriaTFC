@@ -10,7 +10,7 @@ const ProductosPedidos = require('./ProductosPedidos');
 const Ofertas = require('./Ofertas');
 const RegistroHorarios = require('./RegistroHorarios');
 const Direccion = require('./Direccion');
-
+//
 // Relaciones
 Usuario.hasOne(Carrito, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
 Carrito.belongsTo(Usuario, { foreignKey: 'usuarioId' });
