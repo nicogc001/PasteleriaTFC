@@ -64,63 +64,96 @@
 </footer>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const product = JSON.parse(localStorage.getItem('selectedProduct'));
-
-  if (product && product.id && product.name && product.price && product.image) {
-    document.getElementById('product-name').textContent = product.name;
-    document.getElementById('product-price').textContent = `${product.price} €`;
-    document.getElementById('product-description').textContent = product.description;
-    document.getElementById('main_product_image').src = product.image;
-
-    if (product.name.toLowerCase().includes('café') || product.name.toLowerCase().includes('infusión')) {
-      document.querySelector('.picklist-container').style.display = 'block';
-
-      const selectElement = document.getElementById('product-options');
-      selectElement.innerHTML = product.name.toLowerCase().includes('café')
-        ? `<option value="solo">Solo</option>
-           <option value="cortado">Cortado</option>
-           <option value="con_leche">Con leche</option>
-           <option value="capuchino">Capuchino</option>`
-        : `<option value="menta">Menta</option>
-           <option value="manzanilla">Manzanilla</option>
-           <option value="té_verde">Té Verde</option>
-           <option value="rooibos">Rooibos</option>`;
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos?categoria=tartas';
+    const container = document.getElementById('productos-container');
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
+    async function loadProductos() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error("Error al cargar productos");
+        const productos = await res.json();
+        renderProductos(productos);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p class="text-danger">No se pudieron cargar los productos.</p>';
+      }
     }
-
-    console.log('✅ Producto cargado:', product);
-  } else {
-    alert('No se ha seleccionado un producto correctamente.');
-    window.history.back();
-  }
-});
-
-document.getElementById('add-to-cart').addEventListener('click', () => {
-  const quantity = parseInt(document.getElementById('quantity').value) || 1;
-  const product = JSON.parse(localStorage.getItem('selectedProduct'));
-  const selectElement = document.getElementById('product-options');
-  const selectedOption = selectElement ? selectElement.value : null;
-
-  if (document.querySelector('.picklist-container')?.style.display === 'block' && (!selectedOption || selectedOption === "")) {
-    alert("Por favor, selecciona una opción antes de añadir al carrito.");
-    return;
-  }
-
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-  cart.push({
-    id: product.id,
-    name: product.name,
-    price: parseFloat(product.price),
-    option: selectedOption || 'N/A',
-    quantity: quantity,
-    subtotal: parseFloat(product.price) * quantity
-  });
-
-  localStorage.setItem('cart', JSON.stringify(cart));
-  alert(`${product.name} (${selectedOption || 'sin opción'}) se ha añadido a la cesta.`);
-});
-</script>
+  
+    function renderProductos(productos) {
+      container.innerHTML = '';
+      productos.forEach(p => {
+        const col = document.createElement('div');
+        col.className = 'col-md-3';
+        col.innerHTML = `
+          <div class="card text-center mb-4">
+            <div class="bg-image hover-overlay">
+              <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" />
+              <a href="infoProducto.html" class="view-product"
+                 data-id="${p.id}"
+                 data-name="${p.nombre}"
+                 data-price="${p.precio}"
+                 data-image="${p.imagen}"
+                 data-description="${p.descripcion}">
+                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+              </a>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">${p.nombre}</h5>
+              <p class="card-text fw-bold">${p.precio} €</p>
+              <button class="btn btn-primary add-to-cart"
+                      data-id="${p.id}"
+                      data-name="${p.nombre}"
+                      data-price="${p.precio}">
+                Añadir al carrito
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(col);
+      });
+    }
+  
+    function addToCart(id, name, price) {
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.quantity++;
+        existing.subtotal = existing.quantity * price;
+      } else {
+        cart.push({ id, name, price, quantity: 1, subtotal: price });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(`${name} añadido al carrito`);
+    }
+  
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('add-to-cart')) {
+        const id = e.target.dataset.id;
+        const name = e.target.dataset.name;
+        const price = parseFloat(e.target.dataset.price);
+        addToCart(id, name, price);
+      }
+  
+      if (e.target.closest('.view-product')) {
+        const link = e.target.closest('.view-product');
+        e.preventDefault();
+  
+        const product = {
+          id: link.dataset.id,
+          name: link.dataset.name,
+          price: link.dataset.price,
+          image: link.dataset.image,
+          description: link.dataset.description
+        };
+  
+        localStorage.setItem('selectedProduct', JSON.stringify(product));
+        window.location.href = link.href;
+      }
+    });
+  
+    document.addEventListener('DOMContentLoaded', loadProductos);
+  </script>
+  
 
 </body>
 </html>
