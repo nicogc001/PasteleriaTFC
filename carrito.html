@@ -137,48 +137,48 @@
         }
     
         async function saveOrder() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const token = localStorage.getItem('token');
-    
-            if (!token) {
-                alert("Debes iniciar sesión para realizar una compra.");
-                return window.location.href = "login.html";
-            }
-    
-            if (cart.length === 0) {
-                alert("Tu carrito está vacío.");
-                return;
-            }
-    
-            // ✅ Corregido: asegurarse de que cada producto tenga un id válido
-            const items = cart.map(p => ({
-                productoId: p.id,
-                cantidad: p.quantity
-            }));
-    
-            try {
-                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ items }),
-                    credentials: 'include'
-                });
-    
-                const data = await res.json();
-    
-                if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
-    
-                alert("✅ Pedido realizado correctamente.");
-                localStorage.removeItem('cart');
-                window.location.href = "cliente/pedidos.html";
-            } catch (error) {
-                console.error('❌ Error al enviar pedido:', error);
-                alert("Error al crear el pedido.");
-            }
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            alert("Debes iniciar sesión para realizar una compra.");
+            return window.location.href = "login.html";
         }
+
+        if (cart.length === 0) {
+            alert("Tu carrito está vacío.");
+            return;
+        }
+
+        const items = cart.map(p => ({
+            productoId: p.id,
+            cantidad: p.quantity
+        }));
+
+        try {
+            const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ items }),
+            credentials: 'include'
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
+
+            alert("✅ Pedido realizado correctamente.");
+            localStorage.removeItem('cart');
+            window.location.href = "cliente/pedidos.html";
+        } catch (error) {
+            console.error('❌ Error al enviar pedido:', error);
+            alert("Error al crear el pedido.");
+        }
+        }
+
     
         function recalculateTotals() {
             let total = 0;

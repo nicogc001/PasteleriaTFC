@@ -1,136 +1,147 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Pedidos - Pastelería El Caballo Goloso</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="styles/main.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mis Pedidos - Pastelería El Caballo Goloso</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <link href="styles/main.css" rel="stylesheet"/>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">[...]</nav>
-    
-    <main class="container mt-5">
-        <h1 class="text-center" id="welcome-message">Mis Pedidos</h1>
-        <div class="d-flex">
-            <nav class="me-4">
-                <h3 class="text-danger">Menú</h3>
-                <ul class="list-unstyled">
-                    <li><strong>Pedidos</strong></li>
-                    <li><a href="facturas.html">Facturas</a></li>
-                    <li><a href="perfil.html">Perfil</a></li>
-                    <li><a href="direcciones.html">Direcciones</a></li>
-                    <li><a href="tarjetas.html">Tarjetas</a></li>
-                    <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-                </ul>
-            </nav>
-            <div class="w-100">
-              <div class="mt-4">
-                <h3>Historial de Pedidos</h3>
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Fecha</th>
-                      <th>Total</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody id="lista-pedidos">
-                    <!-- JS insertará los pedidos aquí -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </main>
-    
-    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">[...]</footer>
-    
-    <script>
- 
-  const token = localStorage.getItem('token');
-  const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    if (!token) {
-      alert("Debes iniciar sesión.");
-      return window.location.href = 'login.html';
-    }
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+    <!-- Aquí tu navbar si lo tienes -->
+  </nav>
 
-    try {
-      const res = await fetch(API_URL, {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include'
-      });
+  <main class="container mt-5">
+    <h1 class="text-center" id="welcome-message">Mis Pedidos</h1>
+    <div class="d-flex">
+      <nav class="me-4">
+        <h3 class="text-danger">Menú</h3>
+        <ul class="list-unstyled">
+          <li><strong>Pedidos</strong></li>
+          <li><a href="facturas.html">Facturas</a></li>
+          <li><a href="perfil.html">Perfil</a></li>
+          <li><a href="direcciones.html">Direcciones</a></li>
+          <li><a href="tarjetas.html">Tarjetas</a></li>
+          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+        </ul>
+      </nav>
 
-      if (!res.ok) throw new Error("Error al obtener pedidos");
+      <div class="w-100">
+        <div class="mt-4">
+          <h3>Historial de Pedidos</h3>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="lista-pedidos">
+              <!-- Los pedidos se insertarán aquí con JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
 
-      const pedidos = await res.json();
-      renderPedidos(pedidos);
-    } catch (error) {
-      console.error(error);
-      alert("No se pudieron cargar los pedidos.");
-    }
-  });
+  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+    <!-- Aquí tu footer si lo necesitas -->
+  </footer>
 
-  function renderPedidos(pedidos) {
-    const contenedor = document.getElementById('lista-pedidos');
-    contenedor.innerHTML = '';
-
-    if (pedidos.length === 0) {
-      contenedor.innerHTML = '<tr><td colspan="5" class="text-center">No tienes pedidos aún.</td></tr>';
-      return;
-    }
-
-    pedidos.forEach(p => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${p.id}</td>
-        <td>${new Date(p.fecha).toLocaleDateString()}</td>
-        <td>${p.total.toFixed(2)} €</td>
-        <td>${p.estado}</td>
-        <td>
-          <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
-          ${p.estado === 'pendiente' ? `<button class="btn btn-sm btn-success" onclick="confirmarPago(${p.id})">Confirmar</button>` : ''}
-        </td>
-      `;
-      contenedor.appendChild(row);
-    });
-  }
-
-  function verPedido(id) {
-    alert(`Mostrando detalles del pedido ${id}`);
-    // Aquí podrías abrir un modal o redirigir a otra página con el detalle
-  }
-
-  async function confirmarPago(pedidoId) {
+  <script>
     const token = localStorage.getItem('token');
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
 
-    try {
-      const res = await fetch(`${API_URL}/${pedidoId}/confirmar`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        credentials: 'include'
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!token) {
+        alert("Debes iniciar sesión.");
+        return window.location.href = 'login.html';
+      }
+
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
+
+        if (!res.ok) {
+          const errorMsg = await res.text();
+          throw new Error(errorMsg || "Error al obtener pedidos");
+        }
+
+        const pedidos = await res.json();
+        renderPedidos(pedidos);
+      } catch (error) {
+        console.error(error);
+        alert("No se pudieron cargar los pedidos.");
+      }
+    });
+
+    function renderPedidos(pedidos) {
+      const contenedor = document.getElementById('lista-pedidos');
+      contenedor.innerHTML = '';
+
+      if (!pedidos.length) {
+        contenedor.innerHTML = '<tr><td colspan="5" class="text-center">No tienes pedidos aún.</td></tr>';
+        return;
+      }
+
+      pedidos.forEach(p => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${p.id}</td>
+          <td>${new Date(p.fecha).toLocaleDateString('es-ES')}</td>
+          <td>${p.total.toFixed(2)} €</td>
+          <td>${p.estado}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
+            ${p.estado?.toLowerCase() === 'pendiente' ? 
+              `<button class="btn btn-sm btn-success" onclick="confirmarPago(${p.id})">Confirmar</button>` : ''}
+          </td>
+        `;
+        contenedor.appendChild(row);
       });
-
-      if (!res.ok) throw new Error('No se pudo confirmar el pedido.');
-
-      alert("✅ Pedido confirmado correctamente.");
-      location.reload();
-    } catch (err) {
-      console.error("❌ Error confirmando pedido:", err);
-      alert("Error al confirmar el pedido.");
     }
-  }
 
+    function verPedido(id) {
+      alert(`Mostrando detalles del pedido ${id}`);
+      // Aquí podrías abrir un modal o redirigir a otra página
+    }
 
-      </script>
-      
+    async function confirmarPago(pedidoId) {
+      try {
+        const res = await fetch(`${API_URL}/${pedidoId}/confirmar`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error('No se pudo confirmar el pedido.');
+
+        alert("✅ Pedido confirmado correctamente.");
+        location.reload();
+      } catch (err) {
+        console.error("❌ Error confirmando pedido:", err);
+        alert("Error al confirmar el pedido.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('cart');
+      window.location.href = 'login.html';
+    }
+  </script>
+
 </body>
 </html>
