@@ -240,21 +240,24 @@
             credentials: 'include'
           });
 
+          const data = await res.json();
 
-          if (!res.ok) throw new Error("Error al confirmar el pago");
+          if (!res.ok) {
+            throw new Error(data?.error || "❌ No se pudo confirmar el pedido");
+          }
 
           modalPago.hide();
           alert("✅ Pedido confirmado correctamente por: " + metodo);
 
-          // Abrir factura en una nueva pestaña
+          // Abrir la factura en nueva pestaña
           window.open(`https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${pedidoId}.pdf`, '_blank');
 
-          // Recargar para actualizar lista de pedidos
+          // Recargar la lista de pedidos
           setTimeout(() => location.reload(), 500);
 
         } catch (err) {
           console.error("❌ Error al procesar el pago:", err);
-          alert("Hubo un error al procesar el pago.");
+          alert(`❌ ${err.message}`);
         }
       });
 
@@ -283,30 +286,34 @@
       contenedor.innerHTML = '';
 
       pedidos.forEach(p => {
-        const row = document.createElement('tr');
-
         const estado = p.estado?.toLowerCase();
         const esPendiente = ['pendiente', 'pendiente_pago'].includes(estado);
+        const esConfirmado = estado === 'confirmado';
 
+        const row = document.createElement('tr');
         row.innerHTML = `
       <td>${p.id}</td>
       <td>${new Date(p.fecha).toLocaleDateString('es-ES')}</td>
       <td>${p.total.toFixed(2)} €</td>
       <td>
-        <span class="badge rounded-pill bg-${esPendiente ? 'warning text-dark' : 'secondary'}">
+        <span class="badge rounded-pill bg-${esPendiente ? 'warning text-dark' : esConfirmado ? 'success' : 'secondary'
+          }">
           ${p.estado}
         </span>
       </td>
       <td>
         <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
         ${esPendiente ?
-            `<button class="btn btn-sm btn-success" onclick="abrirModalPago(${p.id})">Confirmar</button>` : ''}
+            `<button class="btn btn-sm btn-success me-1" onclick="abrirModalPago(${p.id})">Confirmar</button>` : ''}
+        ${esConfirmado ?
+            `<button class="btn btn-sm btn-outline-secondary" onclick="window.open('https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${p.id}.pdf', '_blank')">
+            Ver factura
+          </button>` : ''}
       </td>
     `;
         contenedor.appendChild(row);
       });
     }
-
 
 
     async function verPedido(id) {
@@ -330,9 +337,9 @@
           const li = document.createElement('li');
           li.className = 'list-group-item d-flex justify-content-between align-items-center';
           li.innerHTML = `
-          <span>${prod.nombre} x${prod.cantidad}</span>
-          <span>${prod.subtotal.toFixed(2)} €</span>
-        `;
+            <span>${prod.nombre} x${prod.cantidad}</span>
+            <span>${prod.subtotal.toFixed(2)} €</span>
+          `;
           lista.appendChild(li);
         });
 
@@ -357,9 +364,6 @@
       window.location.href = 'login.html';
     }
   </script>
-
-
-
 </body>
 
 </html>
