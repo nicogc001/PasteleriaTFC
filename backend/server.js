@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 const { syncDB } = require('./models');
 const db = require('./config/db');
 
@@ -13,11 +14,10 @@ app.use(express.json());
 
 // ✅ CORS flexible para múltiples versiones del frontend
 const allowedOrigins = [
-  'https://pasteleriatfc.vercel.app', // producción fija
-  'http://localhost:5500'             // desarrollo local
+  'https://pasteleriatfc.vercel.app', // producción
+  'http://localhost:5500'             // desarrollo
 ];
 
-// 🔁 Regex para aceptar cualquier subdominio de Vercel de tu cuenta
 const vercelSubdomainRegex = /^https:\/\/[\w-]+-nicogc001s-projects\.vercel\.app$/;
 
 const corsOptions = {
@@ -34,12 +34,13 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
-// ✅ Aplica CORS y responde a preflights
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
-
 app.use(helmet());
 app.use(morgan('dev'));
+
+// 📂 Servir archivos PDF generados desde /facturas
+app.use('/facturas', express.static(path.join(__dirname, 'facturas')));
 
 // 📦 Rutas del proyecto
 app.use('/api/auth', require('./routes/authRoutes'));
@@ -51,7 +52,7 @@ app.use('/api/direcciones', require('./routes/direccionesRoutes'));
 app.use('/api/tartas', require('./routes/tartasRoutes'));
 app.use('/api/facturas', require('./routes/facturasRoutes'));
 
-// 🧾 ACTIVA el job de facturación diaria automática
+// 🧾 Activar job de facturación diaria automática
 require('./jobs/facturacionDiaria');
 
 // 🧪 Ruta base de prueba
@@ -70,7 +71,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-// 🚀 Conexión a BD y arranque del servidor
+// 🚀 Conexión a la base de datos y arranque del servidor
 (async () => {
   try {
     await db.authenticate();

@@ -245,7 +245,13 @@
 
           modalPago.hide();
           alert("✅ Pedido confirmado correctamente por: " + metodo);
-          location.reload();
+
+          // Abrir factura en una nueva pestaña
+          window.open(`https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${pedidoId}.pdf`, '_blank');
+
+          // Recargar para actualizar lista de pedidos
+          setTimeout(() => location.reload(), 500);
+
         } catch (err) {
           console.error("❌ Error al procesar el pago:", err);
           alert("Hubo un error al procesar el pago.");
