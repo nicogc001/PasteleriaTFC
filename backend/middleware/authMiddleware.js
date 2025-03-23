@@ -12,8 +12,11 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
-    // ✅ Asegúrate de que req.user.id esté disponible
-    req.user = { id: decoded.id };
+    // ✅ Añadir el rol además del id
+    req.user = {
+      id: decoded.id,
+      rol: decoded.rol
+    };
 
     next();
   } catch (error) {

@@ -73,8 +73,9 @@
                 if (!userRes.ok) throw new Error('Error obteniendo datos del usuario');
       
                 const user = await userRes.json();
+                localStorage.setItem('rol', user.rol); 
                 alert(`Inicio de sesión exitoso. Bienvenido, ${user.nombre}`);
-      
+
                 // 🔁 Redirigir según el rol
                 switch (user.rol) {
                   case 'admin':

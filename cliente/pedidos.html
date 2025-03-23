@@ -76,131 +76,178 @@
   </div>
 </div>
 
+<!-- MODAL DE PAGO -->
+<div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalPagoLabel">Selecciona un método de pago</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formPago">
+          <input type="hidden" id="pedidoIdSeleccionado" />
+          <div class="mb-3">
+            <label for="metodoPago" class="form-label">Método de pago:</label>
+            <select class="form-select" id="metodoPago" required>
+              <option value="">Selecciona una opción</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="paypal">PayPal</option>
+              <option value="bizum">Bizum</option>
+              <option value="efectivo">Pagar en tienda (efectivo)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-success w-100">Finalizar pago</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <script>
-    const token = localStorage.getItem('token');
-    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      if (!token) {
-        alert("Debes iniciar sesión.");
-        return window.location.href = 'login.html';
+<!-- Justo antes de cerrar </body> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+
+<script>
+  const token = localStorage.getItem('token');
+  const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
+  let modalPago;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!token) {
+      alert("Debes iniciar sesión.");
+      return window.location.href = 'login.html';
+    }
+
+    // Inicializar modal de pago
+    modalPago = new mdb.Modal(document.getElementById('modalPago'));
+
+    // Listener del formulario de pago
+    document.getElementById('formPago').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const pedidoId = document.getElementById('pedidoIdSeleccionado').value;
+      const metodo = document.getElementById('metodoPago').value;
+
+      if (!metodo) {
+        alert("Selecciona un método de pago.");
+        return;
       }
 
       try {
-        const res = await fetch(API_URL, {
+        const res = await fetch(`${API_URL}/${pedidoId}/confirmar`, {
+          method: 'PUT',
           headers: { 'Authorization': `Bearer ${token}` },
           credentials: 'include'
         });
 
-        if (!res.ok) {
-          const errorMsg = await res.text();
-          throw new Error(errorMsg || "Error al obtener pedidos");
-        }
+        if (!res.ok) throw new Error("Error al confirmar el pago");
 
-        const pedidos = await res.json();
-        renderPedidos(pedidos);
-      } catch (error) {
-        console.error(error);
-        alert("No se pudieron cargar los pedidos.");
-      }
-    });
-
-    function renderPedidos(pedidos) {
-      const contenedor = document.getElementById('lista-pedidos');
-      contenedor.innerHTML = '';
-
-      if (!pedidos.length) {
-        contenedor.innerHTML = '<tr><td colspan="5" class="text-center">No tienes pedidos aún.</td></tr>';
-        return;
-      }
-
-      pedidos.forEach(p => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${p.id}</td>
-          <td>${new Date(p.fecha).toLocaleDateString('es-ES')}</td>
-          <td>${p.total.toFixed(2)} €</td>
-          <td>${p.estado}</td>
-          <td>
-            <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
-            ${p.estado?.toLowerCase() === 'pendiente' ? 
-              `<button class="btn btn-sm btn-success" onclick="confirmarPago(${p.id})">Confirmar</button>` : ''}
-          </td>
-        `;
-        contenedor.appendChild(row);
-      });
-    }
-
-    function verPedido(id) {
-      alert(`Mostrando detalles del pedido ${id}`);
-      // Aquí podrías abrir un modal o redirigir a otra página
-    }
-
-    async function confirmarPago(pedidoId) {
-      try {
-        const res = await fetch(`${API_URL}/${pedidoId}/confirmar`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          credentials: 'include'
-        });
-
-        if (!res.ok) throw new Error('No se pudo confirmar el pedido.');
-
-        alert("✅ Pedido confirmado correctamente.");
+        modalPago.hide();
+        alert("✅ Pedido confirmado correctamente por: " + metodo);
         location.reload();
       } catch (err) {
-        console.error("❌ Error confirmando pedido:", err);
-        alert("Error al confirmar el pedido.");
+        console.error("❌ Error al procesar el pago:", err);
+        alert("Hubo un error al procesar el pago.");
       }
-    }
-
-    function logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('cart');
-      window.location.href = 'login.html';
-    }
-
-    async function verPedido(id) {
-  try {
-    const res = await fetch(`${API_URL}/${id}`, {
-      headers: { 'Authorization': `Bearer ${token}` },
-      credentials: 'include'
     });
 
-    if (!res.ok) throw new Error("No se pudo obtener el detalle del pedido.");
+    // Cargar pedidos al iniciar
+    try {
+      const res = await fetch(API_URL, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
 
-    const pedido = await res.json();
+      if (!res.ok) {
+        const errorMsg = await res.text();
+        throw new Error(errorMsg || "Error al obtener pedidos");
+      }
 
-    // Rellenar los datos en el modal
-    document.getElementById('detalle-fecha').textContent = new Date(pedido.fecha).toLocaleDateString('es-ES');
-    document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
-    document.getElementById('detalle-estado').textContent = pedido.estado;
+      const pedidos = await res.json();
+      renderPedidos(pedidos);
+    } catch (error) {
+      console.error('❌ Error cargando pedidos:', error);
+      alert("No se pudieron cargar los pedidos.");
+    }
+  });
 
-    const lista = document.getElementById('detalle-productos');
-    lista.innerHTML = '';
-    pedido.productos.forEach(prod => {
-      const li = document.createElement('li');
-      li.className = 'list-group-item d-flex justify-content-between align-items-center';
-      li.innerHTML = `
-        <span>${prod.nombre} x${prod.cantidad}</span>
-        <span>${prod.subtotal.toFixed(2)} €</span>
-      `;
-      lista.appendChild(li);
-    });
+  function renderPedidos(pedidos) {
+  const contenedor = document.getElementById('lista-pedidos');
+  contenedor.innerHTML = '';
 
-    const modal = new mdb.Modal(document.getElementById('pedidoModal'));
-    modal.show();
-  } catch (err) {
-    console.error("❌ Error cargando detalle:", err);
-    alert("No se pudo cargar el detalle del pedido.");
-  }
+  pedidos.forEach(p => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${p.id}</td>
+      <td>${new Date(p.fecha).toLocaleDateString('es-ES')}</td>
+      <td>${p.total.toFixed(2)} €</td>
+      <td>
+        <span class="badge rounded-pill bg-${p.estado === 'pendiente_pago' ? 'warning text-dark' : 'secondary'}">
+          ${p.estado}
+        </span>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
+        ${p.estado?.toLowerCase() === 'pendiente_pago' ? 
+          `<button class="btn btn-sm btn-success" onclick="abrirModalPago(${p.id})">Confirmar</button>` : ''}
+      </td>
+    `;
+    contenedor.appendChild(row);
+  });
 }
 
-  </script>
+
+  async function verPedido(id) {
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error("No se pudo obtener el detalle del pedido.");
+
+      const pedido = await res.json();
+
+      document.getElementById('detalle-fecha').textContent = new Date(pedido.fecha).toLocaleDateString('es-ES');
+      document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
+      document.getElementById('detalle-estado').textContent = pedido.estado;
+
+      const lista = document.getElementById('detalle-productos');
+      lista.innerHTML = '';
+      pedido.productos.forEach(prod => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.innerHTML = `
+          <span>${prod.nombre} x${prod.cantidad}</span>
+          <span>${prod.subtotal.toFixed(2)} €</span>
+        `;
+        lista.appendChild(li);
+      });
+
+      const modal = new mdb.Modal(document.getElementById('pedidoModal'));
+      modal.show();
+    } catch (err) {
+      console.error("❌ Error cargando detalle:", err);
+      alert("No se pudo cargar el detalle del pedido.");
+    }
+  }
+
+  function abrirModalPago(pedidoId) {
+    document.getElementById('pedidoIdSeleccionado').value = pedidoId;
+    document.getElementById('metodoPago').value = "";
+    modalPago.show();
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('cart');
+    window.location.href = 'login.html';
+  }
+</script>
+
+
 
 </body>
 </html>

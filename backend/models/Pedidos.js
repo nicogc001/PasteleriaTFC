@@ -25,7 +25,16 @@ const Pedido = db.define('Pedido', {
     total: {
         type: DataTypes.FLOAT,
         allowNull: false
-    }
+    },
+    estado: { 
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'pendiente_pago'
+      },
+      metodoPago: {
+        type: DataTypes.STRING,
+        allowNull: true
+      }
 }, {
     tableName: 'Pedidos',
     timestamps: false

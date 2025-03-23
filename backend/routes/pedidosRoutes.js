@@ -1,14 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { Pedidos, ProductosPedidos, Productos } = require('../models');
+const { Pedidos, ProductosPedidos, Productos, Usuario } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // 🔹 Obtener los pedidos del usuario autenticado
 router.get('/', authMiddleware, async (req, res) => {
   try {
+    const esCliente = req.user.rol === 'cliente';
+
     const pedidos = await Pedidos.findAll({
-      where: { usuarioId: req.user.id },
-      include: [{ model: ProductosPedidos, include: [Productos] }],
+      where: esCliente ? { usuarioId: req.user.id } : {},
+      include: [
+        { model: ProductosPedidos, include: [Productos] },
+        ...(esCliente ? [] : [{ model: Usuario, attributes: ['id', 'nombre', 'email'] }])
+      ],
       order: [['fecha', 'DESC']]
     });
 
@@ -18,6 +23,7 @@ router.get('/', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error al obtener pedidos' });
   }
 });
+
 
 // 🔹 Crear un nuevo pedido
 router.post('/', authMiddleware, async (req, res) => {
