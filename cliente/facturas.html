@@ -1,127 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facturas - Pastelería El Caballo Goloso</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="styles/main.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facturas - Pastelería El Caballo Goloso</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="styles/main.css" rel="stylesheet" />
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="index.html">El Caballo Goloso</a>
-        <div class="d-flex align-items-center">
-          <a class="btn btn-outline-dark me-2" href="pedidos.html">Mis Pedidos</a>
-          <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">El Caballo Goloso</a>
+      <div class="d-flex align-items-center">
+        <a class="btn btn-outline-dark me-2" href="pedidos.html">Mis Pedidos</a>
+        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mt-5">
+    <h1 class="text-center">Facturas</h1>
+    <div class="d-flex">
+      <nav class="me-4">
+        <h4 class="text-danger">Mi cuenta</h4>
+        <ul class="list-unstyled">
+          <li><a href="pedidos.html">Pedidos</a></li>
+          <li><strong>Facturas</strong></li>
+          <li><a href="perfil.html">Perfil</a></li>
+          <li><a href="misDirecciones.html">Direcciones</a></li>
+          <li><a href="tarjetas.html">Tarjetas</a></li>
+          <li><a href="#" onclick="logout()">Salir</a></li>
+        </ul>
+      </nav>
+
+      <div class="w-100">
+        <div class="mt-4">
+          <h3>Historial de Facturas</h3>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="lista-facturas">
+              <!-- Las facturas se cargarán aquí por JavaScript -->
+            </tbody>
+          </table>
         </div>
       </div>
-    </nav>
-  
-    <main class="container mt-5">
-      <h1 class="text-center">Facturas</h1>
-      <div class="d-flex">
-        <nav class="me-4">
-          <h4 class="text-danger">Mi cuenta</h4>
-          <ul class="list-unstyled">
-            <li><a href="pedidos.html">Pedidos</a></li>
-            <li><strong>Facturas</strong></li>
-            <li><a href="perfil.html">Perfil</a></li>
-            <li><a href="misDirecciones.html">Direcciones</a></li>
-            <li><a href="tarjetas.html">Tarjetas</a></li>
-            <li><a href="#" onclick="logout()">Salir</a></li>
-          </ul>
-        </nav>
-  
-        <div class="w-100">
-          <div class="mt-4">
-            <h3>Historial de Facturas</h3>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Fecha</th>
-                  <th>Total</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="lista-facturas">
-                <!-- Las facturas se cargarán aquí por JavaScript -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </main>
-  
-    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-      <div class="text-center p-4">
-        © 2025 El Caballo Goloso
-      </div>
-    </footer>
-  
-    <script>
-      const token = localStorage.getItem('token');
-  
-      document.addEventListener('DOMContentLoaded', async () => {
-        if (!token) {
-          alert("Debes iniciar sesión.");
-          return window.location.href = 'login.html';
-        }
-  
-        try {
-          const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/facturas', {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}` },
-            credentials: 'include'
-          });
-  
-          if (!res.ok) throw new Error('Error obteniendo facturas');
-  
-          const facturas = await res.json();
-          renderFacturas(facturas);
-        } catch (error) {
-          console.error("❌ Error cargando facturas:", error);
-          alert("No se pudieron cargar las facturas.");
-        }
-      });
-  
-      function renderFacturas(facturas) {
-        const contenedor = document.getElementById("lista-facturas");
-        contenedor.innerHTML = "";
-  
-        if (!facturas.length) {
-          contenedor.innerHTML = "<tr><td colspan='4' class='text-center'>No tienes facturas disponibles aún.</td></tr>";
-          return;
-        }
-  
-        facturas.forEach(f => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${f.id}</td>
-            <td>${new Date(f.fecha).toLocaleDateString('es-ES')}</td>
-            <td>${f.total.toFixed(2)} €</td>
-            <td>
-              ${
-                f.archivo
-                  ? `<a class="btn btn-sm btn-primary" href="${f.archivo}" target="_blank" download>Descargar</a>`
-                  : `<span class="text-muted">No disponible</span>`
-              }
-            </td>
-          `;
-          contenedor.appendChild(row);
+    </div>
+  </main>
+
+  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+    <div class="text-center p-4">
+      © 2025 El Caballo Goloso
+    </div>
+  </footer>
+
+  <script>
+    const token = localStorage.getItem('token');
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!token) {
+        alert("Debes iniciar sesión.");
+        return window.location.href = 'login.html';
+      }
+
+      try {
+        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/facturas', {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
         });
+
+        if (!res.ok) throw new Error('Error obteniendo facturas');
+
+        const facturas = await res.json();
+        renderFacturas(facturas);
+      } catch (error) {
+        console.error("❌ Error cargando facturas:", error);
+        alert("No se pudieron cargar las facturas.");
       }
-  
-      function logout() {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('rol');
-        window.location.href = "login.html";
+    });
+
+    async function renderFacturas(facturas) {
+      const contenedor = document.getElementById("lista-facturas");
+      contenedor.innerHTML = "";
+
+      if (!facturas.length) {
+        contenedor.innerHTML = "<tr><td colspan='4' class='text-center'>No tienes facturas disponibles aún.</td></tr>";
+        return;
       }
-    </script>
-  </body>
-  
+
+      for (const f of facturas) {
+        const facturaUrl = `https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${f.id}.pdf`;
+        const row = document.createElement("tr");
+
+        let accionesHTML = `<span class="text-muted">No disponible</span>`;
+
+        try {
+          const headRes = await fetch(facturaUrl, { method: 'HEAD' });
+          if (headRes.ok) {
+            accionesHTML = `
+              <a class="btn btn-sm btn-primary" href="${facturaUrl}" target="_blank" download>
+                Descargar
+              </a>
+            `;
+          }
+        } catch (e) {
+          console.warn(`No se pudo verificar factura ${f.id}`);
+        }
+
+        row.innerHTML = `
+          <td>${f.id}</td>
+          <td>${new Date(f.fecha).toLocaleDateString('es-ES')}</td>
+          <td>${f.total.toFixed(2)} €</td>
+          <td>${accionesHTML}</td>
+        `;
+
+        contenedor.appendChild(row);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('rol');
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
 </html>
