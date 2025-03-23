@@ -82,8 +82,11 @@ router.post('/', authMiddleware, async (req, res) => {
 // 🔹 Confirmar un pedido (marcar como pagado)
 router.put('/:id/confirmar', authMiddleware, async (req, res) => {
   try {
+    const { metodoPago } = req.body;
+
     const pedido = await Pedidos.findOne({
-      where: { id: req.params.id, usuarioId: req.user.id }
+      where: { id: req.params.id, usuarioId: req.user.id },
+      include: [{ model: ProductosPedidos, include: [Productos] }, { model: Usuario }]
     });
 
     if (!pedido) {
@@ -91,14 +94,21 @@ router.put('/:id/confirmar', authMiddleware, async (req, res) => {
     }
 
     pedido.estado = 'confirmado';
+    pedido.metodoPago = metodoPago || 'N/A';
     await pedido.save();
 
-    res.json({ message: 'Pedido confirmado correctamente' });
+    // 🧾 Generar factura PDF
+    const rutaFactura = await generarFacturaPDF(pedido);
+    console.log('✅ Factura generada en:', rutaFactura);
+
+    res.json({ message: 'Pedido confirmado y factura generada', factura: rutaFactura });
+
   } catch (err) {
     console.error('❌ Error confirmando pedido:', err);
     res.status(500).json({ error: 'Error al confirmar pedido' });
   }
 });
+
 
 // 🔹 Obtener detalle de un pedido por ID (para el modal)
 router.get('/:id', authMiddleware, async (req, res) => {

@@ -11,152 +11,117 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-        <div class="container-fluid">
-            <!-- Toggle button -->
-            <button
-                data-mdb-collapse-init
-                class="navbar-toggler"
-                type="button"
-                data-mdb-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <!-- Collapsible wrapper -->
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Navbar brand -->
-                <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                    <img
-                        src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
-                        height="15"
-                        alt="MDB Logo"
-                        loading="lazy"
-                    />
-                </a>
-                <!-- Left links -->
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" href="dashboard.html">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="registroHorario.html">Registro Horario</a></li>
-                        <li class="nav-item"><a class="nav-link" href="pedidosEmpleado.html">Pedidos</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Right elements -->
-            <div class="d-flex align-items-center">
-                
-
-                <!-- Avatar -->
-                <div class="dropdown">
-                    <a
-                        data-mdb-dropdown-init
-                        class="dropdown-toggle d-flex align-items-center hidden-arrow"
-                        href="login.html"
-                        id="navbarDropdownMenuAvatar"
-                        role="button"
-                        aria-expanded="false"
-                    >
-                        <img
-                            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                            class="rounded-circle"
-                            height="25"
-                            alt="User Avatar"
-                            loading="lazy"
-                        />
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                        <li>
-                            <a class="dropdown-item" href="#">My profile</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Settings</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Logout</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">El Caballo Goloso</a>
+        <div class="d-flex align-items-center">
+          <a class="btn btn-outline-dark me-2" href="pedidos.html">Mis Pedidos</a>
+          <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
         </div>
+      </div>
     </nav>
-    
+  
     <main class="container mt-5">
-        <h1 class="text-center">Facturas</h1>
-        <div class="d-flex">
-            <nav class="me-4">
-                <h3 class="text-danger">Sección</h3>
-                <ul class="list-unstyled">
-                    <li><a href="pedidos.html">Pedidos</a></li>
-                    <li><strong>Facturas</strong></li>
-                    <li><a href="perfil.html">Perfil</a></li>
-                    <li><a href="misDirecciones.html">Direcciones</a></li>
-                    <li><a href="tarjetas.html">Tarjetas</a></li>
-                    <li><a href="#">Darme de baja</a></li>
-                    <li><a href="#">Salir</a></li>
-                </ul>
-            </nav>
-            <div class="w-100">
-                <div class="mt-4">
-                    <h3>Historial de Facturas</h3>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Fecha</th>
-                                <th>Total</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lista-facturas">
-                            <tr>
-                                <td>001</td>
-                                <td>10/03/2025</td>
-                                <td>45.00€</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" onclick="descargarFactura(1)">Descargar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>002</td>
-                                <td>15/03/2025</td>
-                                <td>30.50€</td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary" onclick="descargarFactura(2)">Descargar</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      <h1 class="text-center">Facturas</h1>
+      <div class="d-flex">
+        <nav class="me-4">
+          <h4 class="text-danger">Mi cuenta</h4>
+          <ul class="list-unstyled">
+            <li><a href="pedidos.html">Pedidos</a></li>
+            <li><strong>Facturas</strong></li>
+            <li><a href="perfil.html">Perfil</a></li>
+            <li><a href="misDirecciones.html">Direcciones</a></li>
+            <li><a href="tarjetas.html">Tarjetas</a></li>
+            <li><a href="#" onclick="logout()">Salir</a></li>
+          </ul>
+        </nav>
+  
+        <div class="w-100">
+          <div class="mt-4">
+            <h3>Historial de Facturas</h3>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Fecha</th>
+                  <th>Total</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="lista-facturas">
+                <!-- Las facturas se cargarán aquí por JavaScript -->
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </main>
-    
-    <!-- Footer -->
+  
     <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-        <div class="container text-center text-md-start mt-5">
-            <div class="row">
-                <div class="col-md-4 col-lg-3 mx-auto mb-4">
-                    <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-                    <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
-                    <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
-                    <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-                </div>
-            </div>
-        </div>
-        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-            © 2025 Copyright:
-            <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
-        </div>
+      <div class="text-center p-4">
+        © 2025 El Caballo Goloso
+      </div>
     </footer>
-    
+  
     <script>
-        function descargarFactura(id) {
-            alert("Descargando factura " + id);
+      const token = localStorage.getItem('token');
+  
+      document.addEventListener('DOMContentLoaded', async () => {
+        if (!token) {
+          alert("Debes iniciar sesión.");
+          return window.location.href = 'login.html';
         }
+  
+        try {
+          const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/facturas', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include'
+          });
+  
+          if (!res.ok) throw new Error('Error obteniendo facturas');
+  
+          const facturas = await res.json();
+          renderFacturas(facturas);
+        } catch (error) {
+          console.error("❌ Error cargando facturas:", error);
+          alert("No se pudieron cargar las facturas.");
+        }
+      });
+  
+      function renderFacturas(facturas) {
+        const contenedor = document.getElementById("lista-facturas");
+        contenedor.innerHTML = "";
+  
+        if (!facturas.length) {
+          contenedor.innerHTML = "<tr><td colspan='4' class='text-center'>No tienes facturas disponibles aún.</td></tr>";
+          return;
+        }
+  
+        facturas.forEach(f => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${f.id}</td>
+            <td>${new Date(f.fecha).toLocaleDateString('es-ES')}</td>
+            <td>${f.total.toFixed(2)} €</td>
+            <td>
+              ${
+                f.archivo
+                  ? `<a class="btn btn-sm btn-primary" href="${f.archivo}" target="_blank" download>Descargar</a>`
+                  : `<span class="text-muted">No disponible</span>`
+              }
+            </td>
+          `;
+          contenedor.appendChild(row);
+        });
+      }
+  
+      function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('rol');
+        window.location.href = "login.html";
+      }
     </script>
-</body>
+  </body>
+  
 </html>

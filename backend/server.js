@@ -49,6 +49,7 @@ app.use('/api/registro-horario', require('./routes/registroHorarioRoutes'));
 app.use('/api/usuario', require('./routes/usuariosRoutes'));
 app.use('/api/direcciones', require('./routes/direccionesRoutes'));
 app.use('/api/tartas', require('./routes/tartasRoutes'));
+app.use('/api/facturas', require('./routes/facturasRoutes')); 
 
 // 🧪 Ruta base de prueba
 app.get('/', (req, res) => {
