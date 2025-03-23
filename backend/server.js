@@ -49,7 +49,10 @@ app.use('/api/registro-horario', require('./routes/registroHorarioRoutes'));
 app.use('/api/usuario', require('./routes/usuariosRoutes'));
 app.use('/api/direcciones', require('./routes/direccionesRoutes'));
 app.use('/api/tartas', require('./routes/tartasRoutes'));
-app.use('/api/facturas', require('./routes/facturasRoutes')); 
+app.use('/api/facturas', require('./routes/facturasRoutes'));
+
+// 🧾 ACTIVA el job de facturación diaria automática
+require('./jobs/facturacionDiaria');
 
 // 🧪 Ruta base de prueba
 app.get('/', (req, res) => {
@@ -67,7 +70,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-// 🚀 Conexión a BD y arranque
+// 🚀 Conexión a BD y arranque del servidor
 (async () => {
   try {
     await db.authenticate();

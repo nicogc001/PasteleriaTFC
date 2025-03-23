@@ -3,6 +3,9 @@ const router = express.Router();
 const { Pedidos, ProductosPedidos, Productos, Usuario } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
 
+const generarFacturaPDF = require('../utils/generarFacturaPDF');
+const enviarFacturaEmail = require('../utils/enviarFacturaEmail');
+
 // 🔹 Obtener los pedidos del usuario autenticado
 router.get('/', authMiddleware, async (req, res) => {
   try {
@@ -24,7 +27,6 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-
 // 🔹 Crear un nuevo pedido
 router.post('/', authMiddleware, async (req, res) => {
   try {
@@ -33,12 +35,11 @@ router.post('/', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'El pedido no contiene productos.' });
     }
 
-    // Calcular total
     let total = 0;
     const productosParaActualizar = [];
 
     for (const item of items) {
-      const producto = await Productos.findByPk(item.productoId); // ✅ CORREGIDO
+      const producto = await Productos.findByPk(item.productoId);
 
       if (!producto) {
         return res.status(404).json({ error: `Producto con ID ${item.productoId} no encontrado` });
@@ -52,7 +53,6 @@ router.post('/', authMiddleware, async (req, res) => {
       productosParaActualizar.push({ producto, cantidad: item.cantidad });
     }
 
-    // Crear el pedido
     const pedido = await Pedidos.create({
       usuarioId: req.user.id,
       fecha: new Date(),
@@ -60,7 +60,6 @@ router.post('/', authMiddleware, async (req, res) => {
       total
     });
 
-    // Crear los ProductosPedidos y actualizar stock
     for (const { producto, cantidad } of productosParaActualizar) {
       await ProductosPedidos.create({
         pedidoId: pedido.id,
@@ -79,7 +78,7 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// 🔹 Confirmar un pedido (marcar como pagado)
+// 🔹 Confirmar un pedido (marcar como pagado, generar factura y enviarla)
 router.put('/:id/confirmar', authMiddleware, async (req, res) => {
   try {
     const { metodoPago } = req.body;
@@ -101,16 +100,19 @@ router.put('/:id/confirmar', authMiddleware, async (req, res) => {
     const rutaFactura = await generarFacturaPDF(pedido);
     console.log('✅ Factura generada en:', rutaFactura);
 
-    res.json({ message: 'Pedido confirmado y factura generada', factura: rutaFactura });
+    // 📧 Enviar la factura al cliente
+    await enviarFacturaEmail(pedido.Usuario.email, rutaFactura);
+    console.log('📧 Factura enviada a:', pedido.Usuario.email);
+
+    res.json({ message: 'Pedido confirmado, factura generada y enviada', factura: rutaFactura });
 
   } catch (err) {
     console.error('❌ Error confirmando pedido:', err);
-    res.status(500).json({ error: 'Error al confirmar pedido' });
+    res.status(500).json({ error: 'Error al confirmar pedido o enviar factura' });
   }
 });
 
-
-// 🔹 Obtener detalle de un pedido por ID (para el modal)
+// 🔹 Obtener detalle de un pedido por ID
 router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const pedido = await Pedidos.findOne({
@@ -120,7 +122,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
       },
       include: [{
         model: ProductosPedidos,
-        include: [Productos] // ✅ CORREGIDO
+        include: [Productos]
       }]
     });
 
