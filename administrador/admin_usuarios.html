@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Usuarios - Administrador</title>
@@ -8,6 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="styles/main.css" rel="stylesheet" />
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">[...]</nav>
     <main class="container mt-5">
@@ -44,9 +48,9 @@
             </div>
         </div>
     </main>
-    
+
     <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">[...]</footer>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -54,19 +58,19 @@
                     method: 'GET',
                     credentials: 'include'
                 });
-                
+
                 if (!response.ok) {
                     throw new Error('Error obteniendo usuarios');
                 }
-                
+
                 const usuarios = await response.json();
                 const usersTable = document.getElementById("lista-usuarios");
                 usersTable.innerHTML = "";
-                
+
                 if (usuarios.length === 0) {
                     usersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No hay usuarios disponibles.</td></tr>";
                 }
-                
+
                 usuarios.forEach(user => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -85,15 +89,15 @@
                 console.error('Error cargando usuarios:', error);
             }
         });
-        
+
         function cambiarRol(id) {
             alert(`Funcionalidad para cambiar el rol del usuario ${id} en desarrollo`);
         }
-        
+
         function eliminarUsuario(id) {
             alert(`Funcionalidad para eliminar al usuario ${id} en desarrollo`);
         }
-        
+
         function logout() {
             fetch('https://pasteleriatfc-back.onrender.com/api/auth/logout', { method: 'POST', credentials: 'include' })
                 .then(() => {
@@ -104,4 +108,5 @@
         }
     </script>
 </body>
+
 </html>
