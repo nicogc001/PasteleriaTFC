@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Productos - Admin</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="../styles/main.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar de navegación -->
+      <nav class="col-md-3 col-lg-2 d-md-block bg-primary sidebar text-white vh-100 p-3">
+        <h4 class="text-white">Admin</h4>
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link text-white" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link text-white active" href="productos.html">Productos</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="pedidos.html">Pedidos</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="usuarios.html">Usuarios</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="logout()">Cerrar sesión</a></li>
+        </ul>
+      </nav>
+
+      <!-- Contenido principal -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-5">
+        <h1 class="text-center mb-4">Agregar nuevo producto</h1>
+
+        <form id="formNuevoProducto" class="row g-3">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre del producto</label>
+            <input type="text" class="form-control" id="nombre" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="precio" class="form-label">Precio</label>
+            <input type="number" step="0.01" class="form-control" id="precio" required>
+          </div>
+
+          <div class="col-12">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" rows="2" required></textarea>
+          </div>
+
+          <div class="col-md-6">
+            <label for="stock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="stock" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="imagen" class="form-label">URL de la imagen</label>
+            <input type="url" class="form-control" id="imagen" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="categoria" class="form-label">Categoría</label>
+            <select class="form-select" id="categoria" required>
+              <option value="">Selecciona una categoría</option>
+              <option value="tartas">Tartas</option>
+              <option value="bolleria">Bollería</option>
+              <option value="salado">Salado</option>
+              <option value="pasteleria">Pastelería</option>
+              <option value="cafeteria">Cafetería</option>
+            </select>
+          </div>
+
+          <div class="col-12 text-center">
+            <button type="submit" class="btn btn-success">Crear producto</button>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
+
+    document.getElementById('formNuevoProducto').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nuevoProducto = {
+        nombre: document.getElementById('nombre').value,
+        precio: parseFloat(document.getElementById('precio').value),
+        descripcion: document.getElementById('descripcion').value,
+        stock: parseInt(document.getElementById('stock').value),
+        imagen: document.getElementById('imagen').value,
+        categoria: document.getElementById('categoria').value
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(nuevoProducto)
+        });
+
+        if (!res.ok) throw new Error('Error al crear el producto');
+
+        alert('✅ Producto creado correctamente');
+        document.getElementById('formNuevoProducto').reset();
+      } catch (err) {
+        console.error(err);
+        alert('❌ Error al crear el producto');
+      }
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
+</body>
+</html>
