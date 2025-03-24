@@ -72,6 +72,7 @@ app.use((err, req, res, next) => {
 });
 
 // 🚀 Conexión a la base de datos y arranque del servidor
+
 (async () => {
   try {
     await db.authenticate();
