@@ -1,88 +1,163 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrador - Pastelería El Caballo Goloso</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="styles/main.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Usuarios - Administrador</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="styles/main.css" rel="stylesheet" />
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">[...]</nav>
-    <main class="container mt-5">
-        <h1 class="text-center">Panel de Administración</h1>
-        <div class="d-flex">
-            <nav class="me-4">
-                <h3 class="text-danger">Menú</h3>
-                <ul class="list-unstyled">
-                    <li><strong>Dashboard</strong></li>
-                    <li><a href="admin_pedidos.html">Pedidos</a></li>
-                    <li><a href="admin_usuarios.html">Usuarios</a></li>
-                    <li><a href="admin_productos.html">Productos</a></li>
-                    <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-                </ul>
-            </nav>
-            <div class="w-100">
-                <div class="mt-4">
-                    <h3>Resumen General</h3>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card text-center p-3">
-                                <h5>Total Pedidos</h5>
-                                <p id="total-pedidos">0</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-center p-3">
-                                <h5>Total Usuarios</h5>
-                                <p id="total-usuarios">0</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-center p-3">
-                                <h5>Total Productos</h5>
-                                <p id="total-productos">0</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-    
-    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">[...]</footer>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('https://pasteleriatfc-back.onrender.com/api/admin/resumen', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Error obteniendo resumen');
-                }
-                
-                const data = await response.json();
-                document.getElementById('total-pedidos').textContent = data.totalPedidos;
-                document.getElementById('total-usuarios').textContent = data.totalUsuarios;
-                document.getElementById('total-productos').textContent = data.totalProductos;
-            } catch (error) {
-                console.error("Error obteniendo datos:", error);
-            }
-        });
-        
-        function logout() {
-            fetch('https://pasteleriatfc-back.onrender.com/api/auth/logout', { method: 'POST', credentials: 'include' })
-                .then(() => {
-                    alert("Has cerrado sesión correctamente.");
-                    window.location.href = "/login.html";
-                })
-                .catch(error => console.error('Error al cerrar sesión:', error));
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">El Caballo Goloso</a>
+      <div class="d-flex align-items-center">
+        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
+        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mt-5">
+    <h1 class="text-center">Gestión de Usuarios</h1>
+    <div class="d-flex justify-content-end mb-3">
+      <span class="badge bg-info text-dark p-2">Total usuarios: <span id="contador-usuarios">0</span></span>
+    </div>
+    <div class="mt-4">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="lista-usuarios">
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+    <div class="text-center p-3">
+      © 2025 El Caballo Goloso | Administración
+    </div>
+  </footer>
+
+  <script>
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api';
+    const token = localStorage.getItem('token');
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const [resUsuarios, resResumen] = await Promise.all([
+          fetch(`${API_URL}/admin/usuarios`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include'
+          }),
+          fetch(`${API_URL}/admin/resumen`, {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include'
+          })
+        ]);
+
+        if (!resUsuarios.ok) throw new Error('Error obteniendo usuarios');
+
+        const usuarios = await resUsuarios.json();
+        const usersTable = document.getElementById("lista-usuarios");
+        const contador = document.getElementById("contador-usuarios");
+        usersTable.innerHTML = "";
+        contador.textContent = usuarios.length;
+
+        if (usuarios.length === 0) {
+          usersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No hay usuarios disponibles.</td></tr>";
         }
-    </script>
+
+        usuarios.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.nombre}</td>
+            <td>${user.email}</td>
+            <td>
+              <select onchange="cambiarRol(${user.id}, this.value)" class="form-select form-select-sm">
+                <option value="cliente" ${user.rol === 'cliente' ? 'selected' : ''}>cliente</option>
+                <option value="admin" ${user.rol === 'admin' ? 'selected' : ''}>admin</option>
+              </select>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-danger" onclick="eliminarUsuario(${user.id})">Eliminar</button>
+            </td>
+          `;
+          usersTable.appendChild(row);
+        });
+
+        if (resResumen.ok) {
+          const resumen = await resResumen.json();
+          console.log('📊 Resumen cargado:', resumen);
+          // Aquí podrías hacer algo como actualizar otros contadores o gráficas si los tienes
+        }
+
+      } catch (error) {
+        console.error('Error cargando usuarios o resumen:', error);
+      }
+    });
+
+    function cambiarRol(id, nuevoRol) {
+      if (!confirm(`¿Seguro que deseas cambiar el rol del usuario #${id} a '${nuevoRol}'?`)) return;
+
+      fetch(`${API_URL}/admin/usuarios/${id}/rol`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ rol: nuevoRol })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Error actualizando rol');
+          alert('✅ Rol actualizado correctamente');
+        })
+        .catch(error => {
+          console.error('❌ Error actualizando rol:', error);
+          alert('Error actualizando rol');
+        });
+    }
+
+    function eliminarUsuario(id) {
+      if (!confirm(`¿Estás seguro de que deseas eliminar al usuario #${id}?`)) return;
+
+      fetch(`${API_URL}/admin/usuarios/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Error eliminando usuario');
+          alert('✅ Usuario eliminado correctamente');
+          location.reload();
+        })
+        .catch(error => {
+          console.error('❌ Error eliminando usuario:', error);
+          alert('Error eliminando usuario');
+        });
+    }
+
+    function logout() {
+      fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' })
+        .then(() => {
+          alert("Has cerrado sesión correctamente.");
+          window.location.href = "../login.html";
+        })
+        .catch(error => console.error('Error al cerrar sesión:', error));
+    }
+  </script>
 </body>
+
 </html>
