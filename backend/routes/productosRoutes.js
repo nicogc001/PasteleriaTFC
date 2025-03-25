@@ -3,16 +3,24 @@ const Productos = require('../models/Productos');
 const router = express.Router();
 
 // Crear un nuevo producto
+// Crear un nuevo producto
 router.post('/', async (req, res) => {
     try {
-        const { nombre, descripcion, precio, stock, imagen } = req.body;
+        const { nombre, descripcion, precio, stock, imagen, categoria } = req.body;
 
-        // Validar que todos los campos obligatorios estén presentes
-        if (!nombre || !descripcion || !precio || stock === undefined) {
+        // Validar campos obligatorios
+        if (!nombre || !descripcion || !precio || stock === undefined || !imagen || !categoria) {
             return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
 
-        const nuevoProducto = await Productos.create({ nombre, descripcion, precio, stock, imagen });
+        const nuevoProducto = await Productos.create({
+            nombre,
+            descripcion,
+            precio,
+            stock,
+            imagen,
+            categoria
+        });
 
         res.status(201).json({
             message: 'Producto creado correctamente',
@@ -24,6 +32,7 @@ router.post('/', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
+
 
 // Obtener todos los productos
 // Obtener productos (con filtro opcional por categoría)

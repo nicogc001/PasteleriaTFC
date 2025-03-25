@@ -51,6 +51,7 @@ app.use('/api/usuario', require('./routes/usuariosRoutes'));
 app.use('/api/direcciones', require('./routes/direccionesRoutes'));
 app.use('/api/tartas', require('./routes/tartasRoutes'));
 app.use('/api/facturas', require('./routes/facturasRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
 
 // 🧾 Activar job de facturación diaria automática
 require('./jobs/facturacionDiaria');
