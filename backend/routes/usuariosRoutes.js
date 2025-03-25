@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { Usuario } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
+const bcrypt = require('bcryptjs');
 
 // 🧠 Obtener datos del usuario autenticado
-// 🧠 Ruta protegida para obtener datos del usuario autenticado
 router.get('/', authMiddleware, async (req, res) => {
     try {
         const user = await Usuario.findByPk(req.user.id, {
@@ -43,9 +43,7 @@ router.put('/update', authMiddleware, async (req, res) => {
     }
 });
 
-const bcrypt = require('bcryptjs');
-
-// Cambiar contraseña del usuario logueado
+// 🔐 Cambiar contraseña del usuario logueado
 router.put('/password', authMiddleware, async (req, res) => {
     try {
         const { actual, nueva } = req.body;
@@ -60,13 +58,11 @@ router.put('/password', authMiddleware, async (req, res) => {
             return res.status(404).json({ error: 'Usuario no encontrado' });
         }
 
-        // Verificar que la contraseña actual sea correcta
         const esCorrecta = await bcrypt.compare(actual, usuario.password);
         if (!esCorrecta) {
             return res.status(401).json({ error: 'Contraseña actual incorrecta' });
         }
 
-        // Encriptar y guardar la nueva contraseña
         const hashedNueva = await bcrypt.hash(nueva, 10);
         usuario.password = hashedNueva;
         await usuario.save();
@@ -78,5 +74,34 @@ router.put('/password', authMiddleware, async (req, res) => {
     }
 });
 
+// ➕ Crear nuevo usuario (registro por admin)
+router.post('/', async (req, res) => {
+    try {
+        const { nombre, email, password, rol } = req.body;
+
+        if (!nombre || !email || !password) {
+            return res.status(400).json({ error: 'Faltan campos obligatorios' });
+        }
+
+        const existente = await Usuario.findOne({ where: { email } });
+        if (existente) {
+            return res.status(409).json({ error: 'El email ya está registrado' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const nuevoUsuario = await Usuario.create({
+            nombre,
+            email,
+            password: hashedPassword,
+            rol: rol || 'empleado'
+        });
+
+        res.status(201).json({ message: 'Usuario creado correctamente', usuario: nuevoUsuario });
+    } catch (err) {
+        console.error('❌ Error creando usuario:', err);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
 
 module.exports = router;
