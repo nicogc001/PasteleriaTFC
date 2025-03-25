@@ -37,7 +37,7 @@
       <section class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <h1 class="text-center">Gestión de Usuarios</h1>
         <div class="d-flex justify-content-end mb-3">
-          <span class="badge bg-info text-dark p-2">Total usuarios: <span id="contador-usuarios">0</span></span>
+          <span class="badge bg-info text-dark p-2">Total usuarios: <strong><span id="contador-usuarios">0</span></strong></span>
         </div>
         <div class="mt-4">
           <table class="table table-striped">
@@ -115,7 +115,9 @@
 
         if (resResumen.ok) {
           const resumen = await resResumen.json();
-          console.log('📊 Resumen cargado:', resumen);
+          document.getElementById('total-pedidos').textContent = resumen.totalPedidos;
+document.getElementById('total-usuarios').textContent = resumen.totalUsuarios;
+document.getElementById('total-productos').textContent = resumen.totalProductos;
         }
       } catch (error) {
         console.error('Error cargando usuarios o resumen:', error);
