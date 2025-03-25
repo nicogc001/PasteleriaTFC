@@ -21,25 +21,39 @@
     </div>
   </nav>
 
-  <main class="container mt-5">
-    <h1 class="text-center">Gestión de Usuarios</h1>
-    <div class="d-flex justify-content-end mb-3">
-      <span class="badge bg-info text-dark p-2">Total usuarios: <span id="contador-usuarios">0</span></span>
-    </div>
-    <div class="mt-4">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="lista-usuarios">
-        </tbody>
-      </table>
+  <main class="container-fluid mt-5">
+    <div class="row">
+      <nav class="col-md-3 col-lg-2 d-md-block bg-primary sidebar text-white p-3">
+        <h4 class="text-white">Admin</h4>
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link text-white" href="admin_dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="admin_pedidos.html">Pedidos</a></li>
+          <li class="nav-item"><a class="nav-link text-white active" href="admin_usuarios.html">Usuarios</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="admin_productos.html">Productos</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="logout()">Cerrar sesión</a></li>
+        </ul>
+      </nav>
+
+      <section class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h1 class="text-center">Gestión de Usuarios</h1>
+        <div class="d-flex justify-content-end mb-3">
+          <span class="badge bg-info text-dark p-2">Total usuarios: <span id="contador-usuarios">0</span></span>
+        </div>
+        <div class="mt-4">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="lista-usuarios"></tbody>
+          </table>
+        </div>
+      </section>
     </div>
   </main>
 
@@ -102,9 +116,7 @@
         if (resResumen.ok) {
           const resumen = await resResumen.json();
           console.log('📊 Resumen cargado:', resumen);
-          // Aquí podrías hacer algo como actualizar otros contadores o gráficas si los tienes
         }
-
       } catch (error) {
         console.error('Error cargando usuarios o resumen:', error);
       }
