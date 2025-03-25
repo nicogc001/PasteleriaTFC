@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,70 +9,82 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   <link href="../styles/main.css" rel="stylesheet" />
 </head>
+
 <body>
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Sidebar de navegación -->
-      <nav class="col-md-3 col-lg-2 d-md-block bg-primary sidebar text-white vh-100 p-3">
-        <h4 class="text-white">Admin</h4>
-        <ul class="nav flex-column">
-          <li class="nav-item"><a class="nav-link text-white" href="dashboard.html">Dashboard</a></li>
-          <li class="nav-item"><a class="nav-link text-white active" href="productos.html">Productos</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="pedidos.html">Pedidos</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="usuarios.html">Usuarios</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="#" onclick="logout()">Cerrar sesión</a></li>
-        </ul>
-      </nav>
-
-      <!-- Contenido principal -->
-      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-5">
-        <h1 class="text-center mb-4">Agregar nuevo producto</h1>
-
-        <form id="formNuevoProducto" class="row g-3">
-          <div class="col-md-6">
-            <label for="nombre" class="form-label">Nombre del producto</label>
-            <input type="text" class="form-control" id="nombre" required>
-          </div>
-
-          <div class="col-md-6">
-            <label for="precio" class="form-label">Precio</label>
-            <input type="number" step="0.01" class="form-control" id="precio" required>
-          </div>
-
-          <div class="col-12">
-            <label for="descripcion" class="form-label">Descripción</label>
-            <textarea class="form-control" id="descripcion" rows="2" required></textarea>
-          </div>
-
-          <div class="col-md-6">
-            <label for="stock" class="form-label">Stock</label>
-            <input type="number" class="form-control" id="stock" required>
-          </div>
-
-          <div class="col-md-6">
-            <label for="imagen" class="form-label">URL de la imagen</label>
-            <input type="url" class="form-control" id="imagen" required>
-          </div>
-
-          <div class="col-md-6">
-            <label for="categoria" class="form-label">Categoría</label>
-            <select class="form-select" id="categoria" required>
-              <option value="">Selecciona una categoría</option>
-              <option value="tartas">Tartas</option>
-              <option value="bolleria">Bollería</option>
-              <option value="salado">Salado</option>
-              <option value="pasteleria">Pastelería</option>
-              <option value="cafeteria">Cafetería</option>
-            </select>
-          </div>
-
-          <div class="col-12 text-center">
-            <button type="submit" class="btn btn-success">Crear producto</button>
-          </div>
-        </form>
-      </main>
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">El Caballo Goloso</a>
+      <div class="d-flex align-items-center">
+        <a class="btn btn-outline-dark me-2" href="dashboard.html">Dashboard</a>
+        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+      </div>
     </div>
-  </div>
+  </nav>
+
+  <main class="container mt-5">
+    <h1 class="text-center mb-4">Agregar nuevo producto</h1>
+
+    <form id="formNuevoProducto" class="row g-3">
+      <div class="col-md-6">
+        <label for="nombre" class="form-label">Nombre del producto</label>
+        <input type="text" class="form-control" id="nombre" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="precio" class="form-label">Precio</label>
+        <input type="number" step="0.01" class="form-control" id="precio" required>
+      </div>
+
+      <div class="col-12">
+        <label for="descripcion" class="form-label">Descripción</label>
+        <textarea class="form-control" id="descripcion" rows="2" required></textarea>
+      </div>
+
+      <div class="col-md-6">
+        <label for="stock" class="form-label">Stock</label>
+        <input type="number" class="form-control" id="stock" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="imagen" class="form-label">URL de la imagen</label>
+        <input type="url" class="form-control" id="imagen" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="categoria" class="form-label">Categoría</label>
+        <select class="form-select" id="categoria" required>
+          <option value="">Selecciona una categoría</option>
+          <option value="tartas">Tartas</option>
+          <option value="bolleria">Bollería</option>
+          <option value="salado">Salado</option>
+          <option value="pasteleria">Pastelería</option>
+          <option value="cafeteria">Cafetería</option>
+        </select>
+      </div>
+
+      <div class="col-12 text-center">
+        <button type="submit" class="btn btn-success">Crear producto</button>
+      </div>
+    </form>
+
+    <hr class="my-5">
+
+    <h2 class="text-center mb-4">Listado de productos</h2>
+    <div class="table-responsive">
+      <table class="table table-bordered" id="tablaProductos">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Stock</th>
+            <th>Actualizar Stock</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
 
   <script>
     const token = localStorage.getItem('token');
@@ -103,16 +116,71 @@
 
         alert('✅ Producto creado correctamente');
         document.getElementById('formNuevoProducto').reset();
+        cargarProductos();
       } catch (err) {
         console.error(err);
         alert('❌ Error al crear el producto');
       }
     });
 
+    async function cargarProductos() {
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        const productos = await res.json();
+        const tbody = document.querySelector('#tablaProductos tbody');
+        tbody.innerHTML = '';
+
+        productos.forEach(p => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${p.id}</td>
+            <td>${p.nombre}</td>
+            <td>${p.categoria}</td>
+            <td>${p.stock}</td>
+            <td>
+              <input type="number" min="0" class="form-control form-control-sm" id="stock-${p.id}" value="${p.stock}" style="width: 80px; display: inline-block;">
+              <button class="btn btn-sm btn-primary" onclick="actualizarStock(${p.id})">Actualizar</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error('❌ Error al cargar productos:', err);
+      }
+    }
+
+    async function actualizarStock(id) {
+      const nuevoStock = document.getElementById(`stock-${id}`).value;
+      try {
+        const res = await fetch(`${API_URL}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ stock: parseInt(nuevoStock) })
+        });
+
+        if (!res.ok) throw new Error('Error al actualizar el stock');
+
+        alert('✅ Stock actualizado');
+        cargarProductos();
+      } catch (err) {
+        console.error(err);
+        alert('❌ Error actualizando stock');
+      }
+    }
+
     function logout() {
       localStorage.clear();
       window.location.href = '../login.html';
     }
+
+    // Cargar productos al cargar la página
+    document.addEventListener('DOMContentLoaded', cargarProductos);
   </script>
 </body>
+
 </html>
