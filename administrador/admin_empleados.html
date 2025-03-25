@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Empleados - Administrador</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="../styles/main.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">El Caballo Goloso</a>
+      <div class="d-flex align-items-center">
+        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
+        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mt-5">
+    <h1 class="text-center">Gestión de Empleados</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4>Lista de Empleados</h4>
+      <button class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#modalNuevoEmpleado">
+        <i class="fas fa-user-plus"></i> Nuevo Empleado
+      </button>
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-empleados">
+        <!-- Empleados cargados por JS -->
+      </tbody>
+    </table>
+  </main>
+
+  <!-- Modal para nuevo empleado -->
+  <div class="modal fade" id="modalNuevoEmpleado" tabindex="-1" aria-labelledby="modalNuevoEmpleadoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalNuevoEmpleadoLabel">Nuevo Empleado</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formNuevoEmpleado">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="rol" class="form-label">Rol</label>
+              <select id="rol" class="form-select" required>
+                <option value="empleado">Empleado</option>
+                <option value="administrador">Administrador</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Crear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+    <div class="text-center p-3">
+      © 2025 El Caballo Goloso | Administración
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+  <script>
+    const token = localStorage.getItem('token');
+    const API_URL = 'https://pasteleriatfc-back.onrender.com/api/usuario';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error('Error al cargar empleados');
+
+        const empleados = await res.json();
+        const tabla = document.getElementById('tabla-empleados');
+        tabla.innerHTML = '';
+
+        empleados.forEach(emp => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${emp.id}</td>
+            <td>${emp.nombre}</td>
+            <td>${emp.email}</td>
+            <td>${emp.rol}</td>
+            <td>
+              <button class="btn btn-sm btn-warning">Editar</button>
+            </td>
+          `;
+          tabla.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('❌ Error al cargar empleados:', err);
+      }
+    });
+
+    document.getElementById('formNuevoEmpleado').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nuevoEmpleado = {
+        nombre: document.getElementById('nombre').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        rol: document.getElementById('rol').value
+      };
+
+      try {
+        const res = await fetch(API_URL + '/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(nuevoEmpleado)
+        });
+
+        if (!res.ok) throw new Error('Error al crear empleado');
+
+        alert('✅ Empleado creado correctamente');
+        document.getElementById('formNuevoEmpleado').reset();
+        mdb.Modal.getInstance(document.getElementById('modalNuevoEmpleado')).hide();
+        location.reload();
+      } catch (err) {
+        console.error('❌ Error al crear empleado:', err);
+        alert('No se pudo crear el empleado');
+      }
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
+</body>
+</html>
