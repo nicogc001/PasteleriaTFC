@@ -122,11 +122,12 @@ router.put('/:id/confirmar', authMiddleware, async (req, res) => {
 // 🔹 Obtener detalle de un pedido por ID
 router.get('/:id', authMiddleware, async (req, res) => {
   try {
+    const condicion = req.user.rol === 'cliente'
+      ? { id: req.params.id, usuarioId: req.user.id }
+      : { id: req.params.id };
+
     const pedido = await Pedidos.findOne({
-      where: {
-        id: req.params.id,
-        usuarioId: req.user.id
-      },
+      where: condicion,
       include: [{
         model: ProductosPedidos,
         include: [Productos]
@@ -155,6 +156,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error al obtener el detalle del pedido' });
   }
 });
+
 
 // ✅ Cambiar el estado de un pedido
 router.put('/:id/estado', authMiddleware, async (req, res) => {
