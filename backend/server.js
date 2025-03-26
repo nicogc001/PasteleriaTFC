@@ -14,8 +14,8 @@ app.use(express.json());
 
 // ✅ CORS flexible para múltiples versiones del frontend
 const allowedOrigins = [
-  'https://pasteleriatfc.vercel.app', // producción
-  'http://localhost:5500'             // desarrollo
+  'https://pasteleriatfc.vercel.app',         // producción
+  'http://localhost:5500'                     // desarrollo local
 ];
 
 const vercelSubdomainRegex = /^https:\/\/[\w-]+-nicogc001s-projects\.vercel\.app$/;
@@ -23,9 +23,10 @@ const vercelSubdomainRegex = /^https:\/\/[\w-]+-nicogc001s-projects\.vercel\.app
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin) || vercelSubdomainRegex.test(origin)) {
+      console.log('✅ CORS permitido para:', origin);
       callback(null, true);
     } else {
-      console.warn('⚠️ Origen no permitido por CORS:', origin);
+      console.warn('❌ CORS bloqueado para:', origin);
       callback(new Error('No permitido por CORS'));
     }
   },
@@ -35,7 +36,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); // preflight requests
+
 app.use(helmet());
 app.use(morgan('dev'));
 
@@ -73,7 +75,6 @@ app.use((err, req, res, next) => {
 });
 
 // 🚀 Conexión a la base de datos y arranque del servidor
-
 (async () => {
   try {
     await db.authenticate();

@@ -75,7 +75,7 @@ router.put('/password', authMiddleware, async (req, res) => {
 });
 
 // ➕ Crear nuevo usuario (registro por admin)
-router.post('/', async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         const { nombre, email, password, rol } = req.body;
 
@@ -103,5 +103,6 @@ router.post('/', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
+
 
 module.exports = router;
