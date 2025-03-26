@@ -2,20 +2,15 @@ const express = require('express');
 const router = express.Router();
 const { Pedidos, Productos, Usuario } = require('../models');
 const { Op } = require('sequelize');
+const authMiddleware = require('../middleware/authMiddleware');
 
 // GET /api/admin/resumen
 router.get('/resumen', async (req, res) => {
   try {
-    // Total de pedidos
     const totalPedidos = await Pedidos.count();
-
-    // Total de usuarios
     const totalUsuarios = await Usuario.count();
-
-    // Total de productos
     const totalProductos = await Productos.count();
 
-    // Facturación total del día (desde las 00:00)
     const facturacionHoy = await Pedidos.sum('total', {
       where: {
         fecha: {
@@ -24,7 +19,6 @@ router.get('/resumen', async (req, res) => {
       }
     });
 
-    // Productos con stock < 5
     const stockCritico = await Productos.count({
       where: {
         stock: {
@@ -44,6 +38,24 @@ router.get('/resumen', async (req, res) => {
   } catch (error) {
     console.error('❌ Error en /admin/resumen:', error);
     res.status(500).json({ error: 'Error obteniendo resumen' });
+  }
+});
+
+// ✅ GET /api/admin/usuarios → Solo admins
+router.get('/usuarios', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.rol !== 'administrador') {
+      return res.status(403).json({ error: 'Acceso denegado' });
+    }
+
+    const usuarios = await Usuario.findAll({
+      attributes: ['id', 'nombre', 'email', 'rol']
+    });
+
+    res.json(usuarios);
+  } catch (err) {
+    console.error('❌ Error en /admin/usuarios:', err);
+    res.status(500).json({ error: 'Error al obtener usuarios' });
   }
 });
 

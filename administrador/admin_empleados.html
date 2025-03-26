@@ -89,13 +89,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>
     const token = localStorage.getItem('token');
-    const API_BASE = 'https://pasteleriatfc-back.onrender.com/api/usuario';
+    const API_BASE = 'https://pasteleriatfc-back.onrender.com/api';
   
-    // ✅ Obtener todos los empleados
+    // ✅ Cargar todos los empleados
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const res = await fetch(`${API_BASE}/all`, {
-          headers: { 'Authorization': `Bearer ${token}` },
+        const res = await fetch(`${API_BASE}/admin/usuarios`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           credentials: 'include'
         });
   
@@ -112,9 +115,7 @@
             <td>${emp.nombre}</td>
             <td>${emp.email}</td>
             <td>${emp.rol}</td>
-            <td>
-              <button class="btn btn-sm btn-warning">Editar</button>
-            </td>
+            <td><button class="btn btn-sm btn-warning">Editar</button></td>
           `;
           tabla.appendChild(tr);
         });
@@ -136,13 +137,12 @@
       };
   
       try {
-        const res = await fetch(API_BASE, {
+        const res = await fetch(`${API_BASE}/usuario`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          credentials: 'include',
           body: JSON.stringify(nuevoEmpleado)
         });
   
@@ -162,9 +162,6 @@
       localStorage.clear();
       window.location.href = '../login.html';
     }
-  </script>
-  
-  
-  
+  </script>  
 </body>
 </html>
