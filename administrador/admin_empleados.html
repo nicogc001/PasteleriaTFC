@@ -89,12 +89,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>
     const token = localStorage.getItem('token');
-    const API_URL = 'https://pasteleriatfc-back.onrender.com/api/usuario/all';
+    const API_BASE = 'https://pasteleriatfc-back.onrender.com/api/usuario';
   
+    // ✅ Obtener todos los empleados
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const res = await fetch(API_URL, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await fetch(`${API_BASE}/all`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
         });
   
         if (!res.ok) throw new Error('Error al cargar empleados');
@@ -122,6 +124,7 @@
       }
     });
   
+    // ✅ Crear nuevo empleado
     document.getElementById('formNuevoEmpleado').addEventListener('submit', async (e) => {
       e.preventDefault();
   
@@ -133,12 +136,13 @@
       };
   
       try {
-        const res = await fetch('https://pasteleriatfc-back.onrender.com/api/usuario', {
+        const res = await fetch(API_BASE, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
+          credentials: 'include',
           body: JSON.stringify(nuevoEmpleado)
         });
   
@@ -159,6 +163,7 @@
       window.location.href = '../login.html';
     }
   </script>
+  
   
   
 </body>
