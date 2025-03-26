@@ -1,48 +1,38 @@
 const express = require('express');
 const Productos = require('../models/Productos');
+const Pedidos = require('../models/Pedidos');
+const authMiddleware = require('../middleware/authMiddleware'); // ✅ IMPORTADO
 const router = express.Router();
 
-// Crear un nuevo producto
 // Crear un nuevo producto
 router.post('/', async (req, res) => {
     try {
         const { nombre, descripcion, precio, stock, imagen, categoria } = req.body;
 
-        // Validar campos obligatorios
         if (!nombre || !descripcion || !precio || stock === undefined || !imagen || !categoria) {
             return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
 
         const nuevoProducto = await Productos.create({
-            nombre,
-            descripcion,
-            precio,
-            stock,
-            imagen,
-            categoria
+            nombre, descripcion, precio, stock, imagen, categoria
         });
 
         res.status(201).json({
             message: 'Producto creado correctamente',
             producto: nuevoProducto
         });
-
     } catch (error) {
         console.error('❌ Error al crear producto:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
 
-
-// Obtener todos los productos
 // Obtener productos (con filtro opcional por categoría)
 router.get('/', async (req, res) => {
     try {
         const { categoria } = req.query;
 
-        const whereClause = categoria
-            ? { categoria: categoria.toLowerCase() }
-            : {};
+        const whereClause = categoria ? { categoria: categoria.toLowerCase() } : {};
 
         const productos = await Productos.findAll({
             where: whereClause,
@@ -86,21 +76,20 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Cambiar el estado de un pedido
+// ✅ Cambiar el estado de un pedido
 router.put('/:id/estado', authMiddleware, async (req, res) => {
     try {
-      const pedido = await Pedidos.findByPk(req.params.id);
-      if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
-  
-      pedido.estado = req.body.estado;
-      await pedido.save();
-  
-      res.json({ message: 'Estado actualizado correctamente', pedido });
+        const pedido = await Pedidos.findByPk(req.params.id);
+        if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
+
+        pedido.estado = req.body.estado;
+        await pedido.save();
+
+        res.json({ message: 'Estado actualizado correctamente', pedido });
     } catch (err) {
-      console.error("❌ Error actualizando estado:", err);
-      res.status(500).json({ error: 'Error en el servidor' });
+        console.error("❌ Error actualizando estado:", err);
+        res.status(500).json({ error: 'Error en el servidor' });
     }
-  });
-  
+});
 
 module.exports = router;
