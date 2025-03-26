@@ -89,15 +89,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>
     const token = localStorage.getItem('token');
-    const API_URL = 'https://pasteleriatfc-back.onrender.com/api/usuario';
+    const API_URL = 'https://pasteleriatfc-back.onrender.com/api/usuario/all';
   
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const res = await fetch(API_URL + '/all', {
-          headers: { 'Authorization': `Bearer ${token}` },
-          credentials: 'include'
+        const res = await fetch(API_URL, {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-
   
         if (!res.ok) throw new Error('Error al cargar empleados');
   
@@ -120,6 +118,7 @@
         });
       } catch (err) {
         console.error('❌ Error al cargar empleados:', err);
+        alert("No se pudieron cargar los empleados.");
       }
     });
   
@@ -134,7 +133,7 @@
       };
   
       try {
-        const res = await fetch(API_URL, {
+        const res = await fetch('https://pasteleriatfc-back.onrender.com/api/usuario', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -160,6 +159,7 @@
       window.location.href = '../login.html';
     }
   </script>
+  
   
 </body>
 </html>
