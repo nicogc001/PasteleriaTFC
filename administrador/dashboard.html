@@ -67,99 +67,44 @@
     <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">[...]</footer>
 
     <script>
-        const token = localStorage.getItem('token');
-        const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
+      const token = localStorage.getItem('token');
+      const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/admin/resumen';
     
-        document.getElementById('formNuevoProducto').addEventListener('submit', async (e) => {
-          e.preventDefault();
-    
-          const nuevoProducto = {
-            nombre: document.getElementById('nombre').value,
-            precio: parseFloat(document.getElementById('precio').value),
-            descripcion: document.getElementById('descripcion').value,
-            stock: parseInt(document.getElementById('stock').value),
-            imagen: document.getElementById('imagen').value,
-            categoria: document.getElementById('categoria').value
-          };
-    
-          try {
-            const res = await fetch(API_URL, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(nuevoProducto)
-            });
-    
-            if (!res.ok) throw new Error('Error al crear el producto');
-    
-            alert('✅ Producto creado correctamente');
-            document.getElementById('formNuevoProducto').reset();
-            cargarProductos();
-          } catch (err) {
-            console.error(err);
-            alert('❌ Error al crear el producto');
-          }
-        });
-    
-        async function cargarProductos() {
-          try {
-            const res = await fetch(API_URL, {
-              headers: { 'Authorization': `Bearer ${token}` },
-            });
-            const productos = await res.json();
-            const tbody = document.querySelector('#tablaProductos tbody');
-            tbody.innerHTML = '';
-    
-            productos.forEach(p => {
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td>${p.id}</td>
-                <td>${p.nombre}</td>
-                <td>${p.categoria}</td>
-                <td>${p.stock}</td>
-                <td>
-                  <input type="number" min="0" class="form-control form-control-sm" id="stock-${p.id}" value="${p.stock}" style="width: 80px; display: inline-block;">
-                  <button class="btn btn-sm btn-primary" onclick="actualizarStock(${p.id})">Actualizar</button>
-                </td>
-              `;
-              tbody.appendChild(row);
-            });
-          } catch (err) {
-            console.error('❌ Error al cargar productos:', err);
-          }
+      document.addEventListener('DOMContentLoaded', async () => {
+        if (!token) {
+          alert("Debes iniciar sesión.");
+          return window.location.href = '../login.html';
         }
     
-        async function actualizarStock(id) {
-          const nuevoStock = document.getElementById(`stock-${id}`).value;
-          try {
-            const res = await fetch(`${API_URL}/${id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify({ stock: parseInt(nuevoStock) })
-            });
+        try {
+          const res = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include'
+          });
     
-            if (!res.ok) throw new Error('Error al actualizar el stock');
+          if (!res.ok) throw new Error('Error al obtener resumen');
     
-            alert('✅ Stock actualizado');
-            cargarProductos();
-          } catch (err) {
-            console.error(err);
-            alert('❌ Error actualizando stock');
-          }
+          const data = await res.json();
+    
+          document.getElementById('total-pedidos').textContent = data.totalPedidos;
+          document.getElementById('total-usuarios').textContent = data.totalUsuarios;
+          document.getElementById('total-productos').textContent = data.totalProductos;
+          document.getElementById('facturacion-dia').textContent = `${data.facturacionHoy.toFixed(2)} €`;
+          document.getElementById('stock-critico').textContent = data.stockCritico;
+        } catch (err) {
+          console.error('❌ Error cargando datos del dashboard:', err);
+          alert('No se pudo cargar el resumen.');
         }
+      });
     
-        function logout() {
-          localStorage.clear();
-          window.location.href = '../login.html';
-        }
+      function logout() {
+        localStorage.clear();
+        window.location.href = '../login.html';
+      }
+    </script>
     
-        // Cargar productos al cargar la página
-        document.addEventListener('DOMContentLoaded', cargarProductos);
-      </script>
 </body>
 </html>
