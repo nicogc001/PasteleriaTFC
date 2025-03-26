@@ -12,19 +12,18 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// ✅ CORS flexible para múltiples versiones del frontend
+// ✅ CORS: permitir solo orígenes específicos (no comodines si hay credenciales)
 const allowedOrigins = [
-  'https://pasteleriatfc.vercel.app',         // Producción principal
-  'http://localhost:5500'                     // Desarrollo local
+  'https://pasteleriatfc.vercel.app',
+  'http://localhost:5500'
 ];
-
 const vercelSubdomainRegex = /^https:\/\/[\w-]+-nicogc001s-projects\.vercel\.app$/;
 
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin) || vercelSubdomainRegex.test(origin)) {
       console.log('✅ CORS permitido para:', origin);
-      callback(null, origin); // Importante: devolver el origin exacto si credentials: true
+      callback(null, origin); // 🔥 Devuelve el origin en vez de '*'
     } else {
       console.warn('❌ CORS bloqueado para:', origin);
       callback(new Error('No permitido por CORS'));
@@ -38,7 +37,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // Preflight requests
 
-// ✅ Cabecera explícita para permitir cookies o tokens con credentials: true
+// ✅ Cabecera manual para habilitar credenciales
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
@@ -47,10 +46,10 @@ app.use((req, res, next) => {
 app.use(helmet());
 app.use(morgan('dev'));
 
-// 📂 Servir archivos PDF generados desde /facturas
+// 📂 Archivos estáticos: facturas PDF
 app.use('/facturas', express.static(path.join(__dirname, 'facturas')));
 
-// 📦 Rutas del proyecto
+// 📦 Rutas de la API
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/pedidos', require('./routes/pedidosRoutes'));
 app.use('/api/productos', require('./routes/productosRoutes'));
@@ -61,15 +60,15 @@ app.use('/api/tartas', require('./routes/tartasRoutes'));
 app.use('/api/facturas', require('./routes/facturasRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 
-// 🧾 Activar job de facturación diaria automática
+// 🧾 Facturación diaria automática
 require('./jobs/facturacionDiaria');
 
-// 🧪 Ruta base de prueba
+// 🧪 Ruta de prueba
 app.get('/', (req, res) => {
   res.send('🚀 Backend funcionando correctamente');
 });
 
-// 🔍 Ruta no encontrada
+// ❌ Ruta no encontrada
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });
@@ -80,7 +79,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
-// 🚀 Conexión a la base de datos y arranque del servidor
+// 🚀 Inicializar servidor
 (async () => {
   try {
     await db.authenticate();
