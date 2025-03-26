@@ -24,7 +24,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin) || vercelSubdomainRegex.test(origin)) {
       console.log('✅ CORS permitido para:', origin);
-      callback(null, true);
+      callback(null, origin); // ✅ Devuelve el origin exacto para credentials:true
     } else {
       console.warn('❌ CORS bloqueado para:', origin);
       callback(new Error('No permitido por CORS'));
@@ -36,7 +36,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // preflight requests
+app.options('*', cors(corsOptions)); // Preflight requests
 
 app.use(helmet());
 app.use(morgan('dev'));
