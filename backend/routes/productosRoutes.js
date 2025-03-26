@@ -76,20 +76,6 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// ✅ Cambiar el estado de un pedido
-router.put('/:id/estado', authMiddleware, async (req, res) => {
-    try {
-        const pedido = await Pedidos.findByPk(req.params.id);
-        if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
 
-        pedido.estado = req.body.estado;
-        await pedido.save();
-
-        res.json({ message: 'Estado actualizado correctamente', pedido });
-    } catch (err) {
-        console.error("❌ Error actualizando estado:", err);
-        res.status(500).json({ error: 'Error en el servidor' });
-    }
-});
 
 module.exports = router;
