@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Pedidos, Productos, Usuarios } = require('../models');
+const { Pedidos, Productos, Usuario } = require('../models');
 const { Op } = require('sequelize');
 
 // GET /api/admin/resumen
@@ -10,7 +10,7 @@ router.get('/resumen', async (req, res) => {
     const totalPedidos = await Pedidos.count();
 
     // Total de usuarios
-    const totalUsuarios = await Usuarios.count();
+    const totalUsuarios = await Usuario.count();
 
     // Total de productos
     const totalProductos = await Productos.count();
