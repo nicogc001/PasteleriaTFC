@@ -14,8 +14,8 @@ app.use(express.json());
 
 // ✅ CORS flexible para múltiples versiones del frontend
 const allowedOrigins = [
-  'https://pasteleriatfc.vercel.app',         // producción
-  'http://localhost:5500'                     // desarrollo local
+  'https://pasteleriatfc.vercel.app',         // Producción principal
+  'http://localhost:5500'                     // Desarrollo local
 ];
 
 const vercelSubdomainRegex = /^https:\/\/[\w-]+-nicogc001s-projects\.vercel\.app$/;
@@ -24,7 +24,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin) || vercelSubdomainRegex.test(origin)) {
       console.log('✅ CORS permitido para:', origin);
-      callback(null, origin); // devuelve el origin exacto para credentials:true
+      callback(null, origin); // Importante: devolver el origin exacto si credentials: true
     } else {
       console.warn('❌ CORS bloqueado para:', origin);
       callback(new Error('No permitido por CORS'));
@@ -38,7 +38,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions)); // Preflight requests
 
-// ✅ Añadir cabecera manual para permitir credenciales (cookies, token)
+// ✅ Cabecera explícita para permitir cookies o tokens con credentials: true
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   next();

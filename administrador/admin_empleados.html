@@ -89,21 +89,20 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>
     const token = localStorage.getItem('token');
-    const API_BASE = 'https://pasteleriatfc-back.onrender.com/api/usuario';
+    const API_LISTAR = 'https://pasteleriatfc-back.onrender.com/api/usuario/all';
+    const API_CREAR = 'https://pasteleriatfc-back.onrender.com/api/usuario';
   
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const res = await fetch(`${API_BASE}/all`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
+        const res = await fetch(API_LISTAR, {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include' // 👈 Importante para cookies/session
         });
   
         if (!res.ok) throw new Error('Error al cargar empleados');
-  
         const empleados = await res.json();
+  
         const tabla = document.getElementById('tabla-empleados');
         tabla.innerHTML = '';
   
@@ -120,9 +119,10 @@
           `;
           tabla.appendChild(tr);
         });
+  
       } catch (err) {
         console.error('❌ Error al cargar empleados:', err);
-        alert('No se pudieron cargar los empleados.');
+        alert("No se pudieron cargar los empleados.");
       }
     });
   
@@ -137,13 +137,13 @@
       };
   
       try {
-        const res = await fetch(API_BASE, {
+        const res = await fetch(API_CREAR, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           },
-          credentials: 'include',
+          credentials: 'include', // 👈 También aquí
           body: JSON.stringify(nuevoEmpleado)
         });
   
@@ -163,7 +163,6 @@
       localStorage.clear();
       window.location.href = '../login.html';
     }
-  </script>
-  
+  </script>  
 </body>
 </html>
