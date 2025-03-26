@@ -93,10 +93,11 @@
   
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const res = await fetch(API_URL, {
+        const res = await fetch(API_URL + '/all', {
           headers: { 'Authorization': `Bearer ${token}` },
           credentials: 'include'
         });
+
   
         if (!res.ok) throw new Error('Error al cargar empleados');
   

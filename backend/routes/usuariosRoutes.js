@@ -104,5 +104,24 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// Obtener todos los usuarios (solo admin)
+router.get('/all', authMiddleware, async (req, res) => {
+    try {
+      if (req.user.rol !== 'administrador') {
+        return res.status(403).json({ error: 'Acceso denegado' });
+      }
+  
+      const usuarios = await Usuario.findAll({
+        attributes: ['id', 'nombre', 'email', 'rol']
+      });
+  
+      res.json(usuarios);
+    } catch (err) {
+      console.error('❌ Error al obtener usuarios:', err);
+      res.status(500).json({ error: 'Error al obtener usuarios' });
+    }
+  });
+  
+
 
 module.exports = router;
