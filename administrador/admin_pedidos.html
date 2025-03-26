@@ -23,6 +23,17 @@
 
   <main class="container mt-5">
     <h1 class="text-center">Gestión de Pedidos</h1>
+    <nav class="me-4">
+      <h3 class="text-danger">Menú</h3>
+      <ul class="list-unstyled">
+          <li><strong>Dashboard</strong></li>
+          <li><a href="admin_pedidos.html">Pedidos</a></li>
+          <li><a href="admin_usuarios.html">Usuarios</a></li>
+          <li><a href="admin_productos.html">Productos</a></li>
+          <li><a href="admin_empleados.html">Empleados</a></li>
+          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+      </ul>
+  </nav>
     <div class="mt-4">
       <table class="table table-striped">
         <thead>
@@ -52,24 +63,25 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 
   <script>
-    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
     const token = localStorage.getItem('token');
-
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
+    let modalDetalle;
+  
     document.addEventListener('DOMContentLoaded', async () => {
       if (!token) {
         alert("Debes iniciar sesión como administrador.");
         return window.location.href = "../login.html";
       }
-
+  
+      modalDetalle = new mdb.Modal(document.getElementById('pedidoModal'));
+  
       try {
         const res = await fetch(API_URL, {
-          method: 'GET',
           headers: { 'Authorization': `Bearer ${token}` },
           credentials: 'include'
         });
-
+  
         if (!res.ok) throw new Error("Error obteniendo pedidos");
-
         const pedidos = await res.json();
         renderPedidos(pedidos);
       } catch (err) {
@@ -77,16 +89,16 @@
         alert("No se pudieron cargar los pedidos.");
       }
     });
-
+  
     function renderPedidos(pedidos) {
       const contenedor = document.getElementById("lista-pedidos");
       contenedor.innerHTML = '';
-
+  
       if (!pedidos.length) {
         contenedor.innerHTML = "<tr><td colspan='6' class='text-center'>No hay pedidos disponibles.</td></tr>";
         return;
       }
-
+  
       pedidos.forEach(p => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -102,17 +114,77 @@
             </span>
           </td>
           <td>
-            <button class="btn btn-sm btn-warning" onclick="cambiarEstado(${p.id})">Actualizar</button>
+            <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
+            <select onchange="cambiarEstado(${p.id}, this.value)" class="form-select form-select-sm d-inline w-auto">
+              <option selected disabled>Actualizar</option>
+              <option value="confirmado">Confirmado</option>
+              <option value="preparando">Preparando</option>
+              <option value="enviado">Enviado</option>
+              <option value="listo para recogida">Listo para recogida</option>
+              <option value="entregado">Entregado</option>
+            </select>
           </td>
         `;
         contenedor.appendChild(row);
       });
     }
-
-    function cambiarEstado(id) {
-      alert(`Funcionalidad para cambiar el estado del pedido ${id} en desarrollo.`);
+  
+    async function cambiarEstado(id, nuevoEstado) {
+      try {
+        const res = await fetch(`${API_URL}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          credentials: 'include',
+          body: JSON.stringify({ estado: nuevoEstado })
+        });
+  
+        if (!res.ok) throw new Error("Error actualizando estado del pedido");
+  
+        alert("✅ Estado actualizado correctamente");
+        location.reload();
+      } catch (err) {
+        console.error("❌ Error actualizando estado:", err);
+        alert("No se pudo actualizar el estado del pedido.");
+      }
     }
-
+  
+    async function verPedido(id) {
+      try {
+        const res = await fetch(`${API_URL}/${id}`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
+  
+        if (!res.ok) throw new Error("No se pudo obtener el detalle del pedido.");
+  
+        const pedido = await res.json();
+  
+        document.getElementById('detalle-fecha').textContent = new Date(pedido.fecha).toLocaleDateString('es-ES');
+        document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
+        document.getElementById('detalle-estado').textContent = pedido.estado;
+  
+        const lista = document.getElementById('detalle-productos');
+        lista.innerHTML = '';
+        pedido.productos.forEach(prod => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item d-flex justify-content-between align-items-center';
+          li.innerHTML = `
+            <span>${prod.nombre} x${prod.cantidad}</span>
+            <span>${prod.subtotal.toFixed(2)} €</span>
+          `;
+          lista.appendChild(li);
+        });
+  
+        modalDetalle.show();
+      } catch (err) {
+        console.error("❌ Error cargando detalle:", err);
+        alert("No se pudo cargar el detalle del pedido.");
+      }
+    }
+  
     function logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
@@ -120,6 +192,7 @@
       window.location.href = "../login.html";
     }
   </script>
+  
 </body>
 
 </html>
