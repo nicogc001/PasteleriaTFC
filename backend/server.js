@@ -46,7 +46,7 @@ app.use((req, res, next) => {
 app.use(helmet());
 app.use(morgan('dev'));
 
-// 📂 Archivos estáticos: facturas PDF
+// Archivos estáticos: facturas PDF
 app.use('/facturas', express.static(path.join(__dirname, 'facturas')));
 
 // 📦 Rutas de la API

@@ -36,17 +36,18 @@ const Pedido = db.define('Pedido', {
         allowNull: true
       },
       tipoEntrega: {
-        type: DataTypes.STRING, // 'enviar' o 'recoger'
+        type: DataTypes.STRING, 
         allowNull: false
       },
       tienda: {
         type: DataTypes.STRING,
-        allowNull: true // solo obligatorio si tipoEntrega === 'recoger'
+        allowNull: true 
       },      
 }, {
     tableName: 'Pedidos',
     timestamps: false
 });
+
 
 // Relaciones
 Usuario.hasMany(Pedido, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
