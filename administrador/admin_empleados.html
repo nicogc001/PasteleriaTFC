@@ -137,7 +137,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>
     const token = localStorage.getItem('token');
-    const API_BASE = 'https://pasteleriatfc-back.onrender.com/api/usuario';
+    const API_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/usuario';
+
 
     async function cargarEmpleados(filtro = '') {
       try {
@@ -214,13 +215,13 @@
 });
 
 
-function abrirEditar(id, nombre, email, rol) {
-  document.getElementById('edit-id').value = id;
-  document.getElementById('edit-nombre').value = nombre;
-  document.getElementById('edit-email').value = email;
-  document.getElementById('edit-rol').value = rol;
-  new mdb.Modal(document.getElementById('modalEditarEmpleado')).show();
-}
+    function abrirEditar(id, nombre, email, rol) {
+      document.getElementById('edit-id').value = id;
+      document.getElementById('edit-nombre').value = nombre;
+      document.getElementById('edit-email').value = email;
+      document.getElementById('edit-rol').value = rol;
+      new mdb.Modal(document.getElementById('modalEditarEmpleado')).show();
+    }
 
 
     document.getElementById('formEditarEmpleado').addEventListener('submit', async (e) => {
