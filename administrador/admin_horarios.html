@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Horarios - Admin</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="../styles/main.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="admin_dashboard.html">El Caballo Goloso</a>
+      <div class="d-flex align-items-center">
+        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
+        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mt-5">
+    <h1 class="text-center">Gestión de Horarios</h1>
+    <div class="d-flex">
+      <nav class="me-4">
+        <h4 class="text-danger">Menú</h4>
+        <ul class="list-unstyled">
+          <li><a href="admin_dashboard.html">Dashboard</a></li>
+          <li><a href="admin_pedidos.html">Pedidos</a></li>
+          <li><a href="admin_usuarios.html">Usuarios</a></li>
+          <li><a href="admin_productos.html">Productos</a></li>
+          <li><a href="admin_empleados.html">Empleados</a></li>
+          <li><strong>Horarios</strong></li>
+          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+        </ul>
+      </nav>
+
+      <div class="w-100">
+        <h4>Asignar Horario a Empleado</h4>
+        <form id="formHorario" class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label for="empleado" class="form-label">Empleado</label>
+            <select id="empleado" class="form-select" required></select>
+          </div>
+          <div class="col-md-4">
+            <label for="fecha" class="form-label">Fecha</label>
+            <input type="date" id="fecha" class="form-control" required>
+          </div>
+          <div class="col-md-2">
+            <label for="entrada" class="form-label">Entrada</label>
+            <input type="time" id="entrada" class="form-control" required>
+          </div>
+          <div class="col-md-2">
+            <label for="salida" class="form-label">Salida</label>
+            <input type="time" id="salida" class="form-control" required>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success" type="submit">Asignar horario</button>
+          </div>
+        </form>
+
+        <h4>Horarios Asignados</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Fecha</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-horarios"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+    <div class="text-center p-4">
+      © 2025 El Caballo Goloso
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+  <script>
+    const token = localStorage.getItem('token');
+    const API_USUARIOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/usuario/all';
+    const API_HORARIOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/horarios';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarEmpleados();
+      cargarHorarios();
+    });
+
+    async function cargarEmpleados() {
+      try {
+        const res = await fetch(API_USUARIOS, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const usuarios = await res.json();
+        const select = document.getElementById('empleado');
+        select.innerHTML = '';
+        usuarios
+          .filter(u => u.rol === 'empleado')
+          .forEach(u => {
+            const option = document.createElement('option');
+            option.value = u.id;
+            option.textContent = `${u.nombre} (${u.email})`;
+            select.appendChild(option);
+          });
+      } catch (err) {
+        alert("❌ Error al cargar empleados");
+      }
+    }
+
+    async function cargarHorarios() {
+      try {
+        const res = await fetch(API_HORARIOS, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const horarios = await res.json();
+        const tabla = document.getElementById('tabla-horarios');
+        tabla.innerHTML = '';
+        horarios.forEach(h => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${h.empleadoNombre}</td>
+            <td>${new Date(h.fecha).toLocaleDateString()}</td>
+            <td>${h.entrada}</td>
+            <td>${h.salida}</td>
+          `;
+          tabla.appendChild(tr);
+        });
+      } catch (err) {
+        alert("❌ Error al cargar horarios");
+      }
+    }
+
+    document.getElementById('formHorario').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        usuarioId: document.getElementById('empleado').value,
+        fecha: document.getElementById('fecha').value,
+        entrada: document.getElementById('entrada').value,
+        salida: document.getElementById('salida').value
+      };
+      try {
+        const res = await fetch(API_HORARIOS, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        if (!res.ok) throw new Error();
+        alert("✅ Horario asignado correctamente");
+        cargarHorarios();
+        document.getElementById('formHorario').reset();
+      } catch (err) {
+        alert("❌ No se pudo asignar el horario");
+      }
+    });
+
+    function logout() {
+      localStorage.clear();
+      location.href = '../login.html';
+    }
+  </script>
+</body>
+</html>
