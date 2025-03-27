@@ -43,6 +43,13 @@
             <select id="empleado" class="form-select" required></select>
           </div>
           <div class="col-md-4">
+            <label for="tienda" class="form-label">Tienda</label>
+            <select id="tienda" class="form-select" required>
+              <option value="Espacio Torrelodones">Espacio Torrelodones</option>
+              <option value="Torrelodones pueblo">Torrelodones pueblo</option>
+            </select>
+          </div>
+          <div class="col-md-4">
             <label for="fecha" class="form-label">Fecha</label>
             <input type="date" id="fecha" class="form-control" required>
           </div>
@@ -64,6 +71,7 @@
           <thead>
             <tr>
               <th>Empleado</th>
+              <th>Tienda</th>
               <th>Fecha</th>
               <th>Entrada</th>
               <th>Salida</th>
@@ -125,6 +133,7 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${h.empleadoNombre}</td>
+            <td>${h.tienda}</td>
             <td>${new Date(h.fecha).toLocaleDateString()}</td>
             <td>${h.entrada}</td>
             <td>${h.salida}</td>
@@ -140,6 +149,7 @@
       e.preventDefault();
       const data = {
         usuarioId: document.getElementById('empleado').value,
+        tienda: document.getElementById('tienda').value,
         fecha: document.getElementById('fecha').value,
         entrada: document.getElementById('entrada').value,
         salida: document.getElementById('salida').value
