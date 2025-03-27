@@ -310,8 +310,10 @@
             ${esPendiente ? `<button class="btn btn-sm btn-success me-1" onclick="abrirModalPago(${p.id})">Confirmar</button>` : ''}
             ${esConfirmado ? `<button class="btn btn-sm btn-outline-secondary" onclick="window.open('https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${p.id}.pdf', '_blank')">Ver factura</button>` : ''}
           </td>
+        </tr>`; 
 
         contenedor.appendChild(row);
+
       });
     }
 
@@ -331,7 +333,7 @@
         document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
         document.getElementById('detalle-estado').textContent = pedido.estado;
         document.getElementById('detalle-entrega').textContent = pedido.tipoEntrega;
-        document.getElementById('detalle-tienda').textContent = pedido.tipoEntrega === 'recoger' ? pedido.tienda : '-';
+      document.getElementById('detalle-tienda').textContent = pedido.tipoEntrega === 'recoger' ? pedido.tienda : '-';
 
         const lista = document.getElementById('detalle-productos');
         lista.innerHTML = '';
