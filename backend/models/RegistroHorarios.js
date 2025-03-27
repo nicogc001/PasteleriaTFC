@@ -35,7 +35,7 @@ const RegistroHorarios = db.define('RegistroHorarios', {
 });
 
 // Relaciones
-Usuario.hasMany(RegistroHorarios, { foreignKey: 'empleadoId', onDelete: 'CASCADE' });
 RegistroHorarios.belongsTo(Usuario, { foreignKey: 'empleadoId' });
+Usuario.hasMany(RegistroHorarios, { foreignKey: 'empleadoId' });
 
 module.exports = RegistroHorarios;
