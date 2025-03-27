@@ -214,13 +214,14 @@
 });
 
 
-    function abrirEditar(id, nombre, email, rol) {
-      edit-id.value = id;
-      edit-nombre.value = nombre;
-      edit-email.value = email;
-      edit-rol.value = rol;
-      new mdb.Modal(modalEditarEmpleado).show();
-    }
+function abrirEditar(id, nombre, email, rol) {
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-nombre').value = nombre;
+  document.getElementById('edit-email').value = email;
+  document.getElementById('edit-rol').value = rol;
+  new mdb.Modal(document.getElementById('modalEditarEmpleado')).show();
+}
+
 
     document.getElementById('formEditarEmpleado').addEventListener('submit', async (e) => {
       e.preventDefault();
