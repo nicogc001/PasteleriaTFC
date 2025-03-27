@@ -43,6 +43,7 @@
             <th>Fecha</th>
             <th>Total</th>
             <th>Estado</th>
+            <th>Entrega</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -70,6 +71,8 @@
       <div class="modal-body">
         <p><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
         <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
+        <p><strong>Tipo de entrega:</strong> <span id="detalle-entrega"></span></p>
+        <p><strong>Tienda:</strong> <span id="detalle-tienda"></span></p>
         <p><strong>Total:</strong> <span id="detalle-total"></span></p>
         <hr />
         <h6>Productos:</h6>
@@ -134,6 +137,10 @@
             </span>
           </td>
           <td>
+            ${p.tipoEntrega === 'recoger' ? `Recoger (${p.tienda || 'Sin tienda'})` : 'Enviar'}
+          </td>
+
+          <td>
             <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
             <select onchange="cambiarEstado(${p.id}, this.value)" class="form-select form-select-sm d-inline w-auto">
               <option selected disabled>Actualizar</option>
@@ -197,6 +204,8 @@
         document.getElementById('detalle-fecha').textContent = new Date(pedido.fecha).toLocaleDateString('es-ES');
         document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
         document.getElementById('detalle-estado').textContent = pedido.estado;
+        document.getElementById('detalle-entrega').textContent = pedido.tipoEntrega;
+        document.getElementById('detalle-tienda').textContent = pedido.tipoEntrega === 'recoger' ? pedido.tienda : '-';
   
         const lista = document.getElementById('detalle-productos');
         lista.innerHTML = '';

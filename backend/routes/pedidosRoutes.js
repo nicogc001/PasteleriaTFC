@@ -30,9 +30,18 @@ router.get('/', authMiddleware, async (req, res) => {
 // 🔹 Crear un nuevo pedido
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { items } = req.body; // items: [{ productoId, cantidad }]
+    const { items, tipoEntrega, tienda } = req.body; // ✅ nuevos campos
+
     if (!items || items.length === 0) {
       return res.status(400).json({ error: 'El pedido no contiene productos.' });
+    }
+
+    if (!tipoEntrega || !['enviar', 'recoger'].includes(tipoEntrega)) {
+      return res.status(400).json({ error: 'Tipo de entrega inválido. Debe ser "enviar" o "recoger".' });
+    }
+
+    if (tipoEntrega === 'recoger' && !tienda) {
+      return res.status(400).json({ error: 'Debes especificar la tienda para la recogida.' });
     }
 
     let total = 0;
@@ -57,7 +66,9 @@ router.post('/', authMiddleware, async (req, res) => {
       usuarioId: req.user.id,
       fecha: new Date(),
       estado: 'pendiente',
-      total
+      total,
+      tipoEntrega,
+      tienda: tipoEntrega === 'recoger' ? tienda : null
     });
 
     for (const { producto, cantidad } of productosParaActualizar) {
@@ -149,6 +160,8 @@ router.get('/:id', authMiddleware, async (req, res) => {
       fecha: pedido.fecha,
       estado: pedido.estado,
       total: pedido.total,
+      tipoEntrega: pedido.tipoEntrega,
+      tienda: pedido.tienda,
       productos
     });
   } catch (err) {

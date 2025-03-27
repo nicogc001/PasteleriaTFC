@@ -34,7 +34,15 @@ const Pedido = db.define('Pedido', {
       metodoPago: {
         type: DataTypes.STRING,
         allowNull: true
-      }
+      },
+      tipoEntrega: {
+        type: DataTypes.STRING, // 'enviar' o 'recoger'
+        allowNull: false
+      },
+      tienda: {
+        type: DataTypes.STRING,
+        allowNull: true // solo obligatorio si tipoEntrega === 'recoger'
+      }      
 }, {
     tableName: 'Pedidos',
     timestamps: false
