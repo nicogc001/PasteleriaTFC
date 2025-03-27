@@ -180,31 +180,39 @@
     document.addEventListener('DOMContentLoaded', () => cargarEmpleados());
 
     document.getElementById('formNuevoEmpleado').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const nuevo = {
-        nombre: nombre.value,
-        email: email.value,
-        password: password.value,
-        rol: rol.value
-      };
-      try {
-        const res = await fetch(API_BASE, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(nuevo)
-        });
-        if (!res.ok) throw new Error();
-        alert('✅ Empleado creado');
-        formNuevoEmpleado.reset();
-        mdb.Modal.getInstance(modalNuevoEmpleado).hide();
-        cargarEmpleados();
-      } catch {
-        alert('❌ Error al crear empleado');
-      }
+  e.preventDefault();
+  const nuevo = {
+    nombre: nombre.value,
+    email: email.value,
+    password: password.value,
+    rol: rol.value
+  };
+  try {
+    const res = await fetch(API_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(nuevo)
     });
+
+    const data = await res.json();
+    if (!res.ok) {
+      console.error('❌ Error al crear empleado:', data);
+      throw new Error(data?.msg || 'Error al crear empleado');
+    }
+
+    alert('✅ Empleado creado');
+    formNuevoEmpleado.reset();
+    mdb.Modal.getInstance(modalNuevoEmpleado).hide();
+    cargarEmpleados();
+  } catch (error) {
+    console.error('❌ Excepción al crear empleado:', error);
+    alert('No se pudo crear el empleado');
+  }
+});
+
 
     function abrirEditar(id, nombre, email, rol) {
       edit-id.value = id;
