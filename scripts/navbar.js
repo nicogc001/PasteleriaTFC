@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (profileLink && settingsLink && logoutLink) {
         if (userToken) {
             // Redirigir a la página correspondiente según el rol
-            if (userRole === "admin") {
+            if (userRole === "administrador") {
                 profileLink.href = "admin_dashboard.html";
             } else if (userRole === "empleado") {
                 profileLink.href = "empleado_dashboard.html";
