@@ -307,8 +307,9 @@
           <td>${p.tipoEntrega === 'recoger' ? `Recoger (${p.tienda || 'No especificada'})` : 'Enviar'}</td>
           <td>
             <button class="btn btn-sm btn-info me-1" onclick="verPedido(${p.id})">Ver</button>
+            ${esPendiente ? `<button class="btn btn-sm btn-success me-1" onclick="abrirModalPago(${p.id})">Confirmar</button>` : ''}
             ${esConfirmado ? `<button class="btn btn-sm btn-outline-secondary" onclick="window.open('https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${p.id}.pdf', '_blank')">Ver factura</button>` : ''}
-          </td>`;
+          </td>
 
         contenedor.appendChild(row);
       });
