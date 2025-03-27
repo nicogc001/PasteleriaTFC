@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Empleados - Administrador</title>
+  <title>Gestión de Empleados - Pastelería El Caballo Goloso</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   <link href="../styles/main.css" rel="stylesheet" />
@@ -11,7 +11,7 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">El Caballo Goloso</a>
+      <a class="navbar-brand" href="admin_dashboard.html">El Caballo Goloso</a>
       <div class="d-flex align-items-center">
         <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
         <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
@@ -21,36 +21,51 @@
 
   <main class="container mt-5">
     <h1 class="text-center">Gestión de Empleados</h1>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h4>Lista de Empleados</h4>
-      <button class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#modalNuevoEmpleado">
-        <i class="fas fa-user-plus"></i> Nuevo Empleado
-      </button>
-    </div>
+    <div class="d-flex">
+      <nav class="me-4">
+        <h4 class="text-danger">Menú</h4>
+        <ul class="list-unstyled">
+          <li><a href="admin_dashboard.html">Dashboard</a></li>
+          <li><a href="admin_pedidos.html">Pedidos</a></li>
+          <li><a href="admin_usuarios.html">Usuarios</a></li>
+          <li><a href="admin_productos.html">Productos</a></li>
+          <li><strong>Empleados</strong></li>
+          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+        </ul>
+      </nav>
 
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Rol</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tabla-empleados">
-        <!-- Empleados cargados por JS -->
-      </tbody>
-    </table>
+      <div class="w-100">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4>Lista de Empleados</h4>
+          <input type="text" id="filtroEmpleado" class="form-control w-25" placeholder="Buscar por nombre o email">
+          <button class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#modalNuevoEmpleado">
+            <i class="fas fa-user-plus"></i> Nuevo Empleado
+          </button>
+        </div>
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-empleados"></tbody>
+        </table>
+      </div>
+    </div>
   </main>
 
-  <!-- Modal para nuevo empleado -->
-  <div class="modal fade" id="modalNuevoEmpleado" tabindex="-1" aria-labelledby="modalNuevoEmpleadoLabel" aria-hidden="true">
+  <!-- Modal nuevo empleado -->
+  <div class="modal fade" id="modalNuevoEmpleado" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalNuevoEmpleadoLabel">Nuevo Empleado</h5>
-          <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+          <h5 class="modal-title">Nuevo Empleado</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <form id="formNuevoEmpleado">
@@ -71,7 +86,7 @@
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña</label>
-              <input type="password" class="form-control" id="password" required>
+              <input type="password" class="form-control" id="password" required minlength="6">
             </div>
             <button type="submit" class="btn btn-success w-100">Crear</button>
           </form>
@@ -80,89 +95,169 @@
     </div>
   </div>
 
+  <!-- Modal editar empleado -->
+  <div class="modal fade" id="modalEditarEmpleado" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Empleado</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formEditarEmpleado">
+            <input type="hidden" id="edit-id">
+            <div class="mb-3">
+              <label for="edit-nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="edit-nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="edit-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="edit-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="edit-rol" class="form-label">Rol</label>
+              <select id="edit-rol" class="form-select" required>
+                <option value="empleado">Empleado</option>
+                <option value="administrador">Administrador</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-warning w-100">Actualizar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-    <div class="text-center p-3">
-      © 2025 El Caballo Goloso | Administración
+    <div class="text-center p-4">
+      © 2025 El Caballo Goloso
     </div>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>
     const token = localStorage.getItem('token');
-    const API_LISTAR = 'https://pasteleriatfc-back.onrender.com/api/usuario/all';
-    const API_CREAR = 'https://pasteleriatfc-back.onrender.com/api/usuario';
-  
-    document.addEventListener('DOMContentLoaded', async () => {
+    const API_BASE = 'https://pasteleriatfc-back.onrender.com/api/usuario';
+
+    async function cargarEmpleados(filtro = '') {
       try {
-        const res = await fetch(API_LISTAR, {
+        const res = await fetch(`${API_BASE}/all`, {
           method: 'GET',
-          headers: { 'Authorization': `Bearer ${token}` },
-          credentials: 'include' // 👈 Importante para cookies/session
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-  
-        if (!res.ok) throw new Error('Error al cargar empleados');
+
         const empleados = await res.json();
-  
         const tabla = document.getElementById('tabla-empleados');
         tabla.innerHTML = '';
-  
-        empleados.forEach(emp => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${emp.id}</td>
-            <td>${emp.nombre}</td>
-            <td>${emp.email}</td>
-            <td>${emp.rol}</td>
-            <td>
-              <button class="btn btn-sm btn-warning">Editar</button>
-            </td>
-          `;
-          tabla.appendChild(tr);
-        });
-  
+
+        empleados
+          .filter(emp => emp.nombre.toLowerCase().includes(filtro) || emp.email.toLowerCase().includes(filtro))
+          .forEach(emp => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${emp.id}</td>
+              <td>${emp.nombre}</td>
+              <td>${emp.email}</td>
+              <td>${emp.rol}</td>
+              <td>
+                <button class="btn btn-sm btn-warning me-1" onclick="abrirEditar(${emp.id}, '${emp.nombre}', '${emp.email}', '${emp.rol}')">Editar</button>
+                <button class="btn btn-sm btn-danger" onclick="eliminarEmpleado(${emp.id})">Eliminar</button>
+              </td>
+            `;
+            tabla.appendChild(tr);
+          });
+
       } catch (err) {
-        console.error('❌ Error al cargar empleados:', err);
-        alert("No se pudieron cargar los empleados.");
+        console.error(err);
+        alert("Error al cargar empleados");
       }
+    }
+
+    document.getElementById('filtroEmpleado').addEventListener('input', (e) => {
+      cargarEmpleados(e.target.value.toLowerCase());
     });
-  
+
+    document.addEventListener('DOMContentLoaded', () => cargarEmpleados());
+
     document.getElementById('formNuevoEmpleado').addEventListener('submit', async (e) => {
       e.preventDefault();
-  
-      const nuevoEmpleado = {
-        nombre: document.getElementById('nombre').value,
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value,
-        rol: document.getElementById('rol').value
+      const nuevo = {
+        nombre: nombre.value,
+        email: email.value,
+        password: password.value,
+        rol: rol.value
       };
-  
       try {
-        const res = await fetch(API_CREAR, {
+        const res = await fetch(API_BASE, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          credentials: 'include', // 👈 También aquí
-          body: JSON.stringify(nuevoEmpleado)
+          body: JSON.stringify(nuevo)
         });
-  
-        if (!res.ok) throw new Error('Error al crear empleado');
-  
-        alert('✅ Empleado creado correctamente');
-        document.getElementById('formNuevoEmpleado').reset();
-        mdb.Modal.getInstance(document.getElementById('modalNuevoEmpleado')).hide();
-        location.reload();
-      } catch (err) {
-        console.error('❌ Error al crear empleado:', err);
-        alert('No se pudo crear el empleado');
+        if (!res.ok) throw new Error();
+        alert('✅ Empleado creado');
+        formNuevoEmpleado.reset();
+        mdb.Modal.getInstance(modalNuevoEmpleado).hide();
+        cargarEmpleados();
+      } catch {
+        alert('❌ Error al crear empleado');
       }
     });
-  
+
+    function abrirEditar(id, nombre, email, rol) {
+      edit-id.value = id;
+      edit-nombre.value = nombre;
+      edit-email.value = email;
+      edit-rol.value = rol;
+      new mdb.Modal(modalEditarEmpleado).show();
+    }
+
+    document.getElementById('formEditarEmpleado').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const editado = {
+        nombre: edit-nombre.value,
+        email: edit-email.value,
+        rol: edit-rol.value
+      };
+      try {
+        const res = await fetch(`${API_BASE}/${edit-id.value}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(editado)
+        });
+        if (!res.ok) throw new Error();
+        alert('✅ Empleado actualizado');
+        mdb.Modal.getInstance(modalEditarEmpleado).hide();
+        cargarEmpleados();
+      } catch {
+        alert('❌ Error al actualizar');
+      }
+    });
+
+    async function eliminarEmpleado(id) {
+      if (!confirm('¿Seguro que quieres eliminar este empleado?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error();
+        alert('🗑️ Empleado eliminado');
+        cargarEmpleados();
+      } catch {
+        alert('❌ No se pudo eliminar');
+      }
+    }
+
     function logout() {
       localStorage.clear();
       window.location.href = '../login.html';
     }
-  </script>  
+  </script>
 </body>
 </html>
