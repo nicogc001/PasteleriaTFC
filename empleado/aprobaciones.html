@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pedidos Pendientes de Aprobación</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet"/>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4 text-center">📝 Pedidos Pendientes de Aprobación</h2>
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-aprobaciones"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const API_PEDIDOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
+
+    document.addEventListener('DOMContentLoaded', cargarPedidosPendientes);
+
+    async function cargarPedidosPendientes() {
+      try {
+        const res = await fetch(API_PEDIDOS, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const pedidos = await res.json();
+        const tbody = document.getElementById('tabla-aprobaciones');
+        tbody.innerHTML = '';
+
+        const misPedidos = pedidos.filter(p => p.estado === 'pendiente' && (p.aprobadorId === getUserId() || p.segundoAprobadorId === getUserId()));
+
+        if (misPedidos.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center">No hay pedidos que necesiten tu aprobación</td></tr>`;
+          return;
+        }
+
+        misPedidos.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${p.id}</td>
+            <td>${new Date(p.fecha).toLocaleDateString()}</td>
+            <td>${p.Usuario?.nombre || '-'}</td>
+            <td>${p.total.toFixed(2)} €</td>
+            <td>${p.estado}</td>
+            <td>
+              <button class="btn btn-sm btn-success" onclick="aprobarPedido(${p.id})">Aprobar</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('❌ Error al cargar pedidos:', err);
+        alert('Error al cargar pedidos');
+      }
+    }
+
+    async function aprobarPedido(pedidoId) {
+      try {
+        const res = await fetch(`${API_PEDIDOS}/${pedidoId}/aprobar`, {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error();
+        alert('✅ Pedido aprobado correctamente');
+        cargarPedidosPendientes();
+      } catch (err) {
+        alert('❌ No tienes permiso o ya está aprobado');
+      }
+    }
+
+    function getUserId() {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.id;
+    }
+  </script>
+</body>
+</html>

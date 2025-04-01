@@ -110,12 +110,12 @@
 
     <script>
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
+    
         function loadCart() {
             const cartTableBody = document.querySelector('#cart tbody');
             cartTableBody.innerHTML = '';
             let total = 0;
-
+    
             cart.forEach((product, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -128,10 +128,10 @@
                 cartTableBody.appendChild(row);
                 total += product.subtotal;
             });
-
+    
             document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
         }
-
+    
         async function saveOrder() {
             const token = localStorage.getItem('token');
             if (!token) return (window.location.href = 'login.html');
@@ -140,30 +140,43 @@
             const tipoEntrega = document.getElementById('tipoEntrega').value;
             const tienda = tipoEntrega === 'recoger' ? document.getElementById('tienda').value : null;
 
+            const pedidoInfo = JSON.parse(localStorage.getItem('pedido'));
+            const fechaEntrega = pedidoInfo?.fecha;
+            if (!fechaEntrega) return alert("No se ha seleccionado la fecha del pedido.");
+
             const items = cart.map(p => ({ productoId: p.id, cantidad: p.quantity }));
 
             try {
                 const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ items, tipoEntrega, tienda }),
-                    credentials: 'include'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ items, tipoEntrega, tienda, fechaEntrega }),
+                credentials: 'include'
                 });
 
                 const data = await res.json();
+
                 if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
+
+                // ✅ Mostrar advertencias si existen
+                if (data.advertencias && data.advertencias.length > 0) {
+                alert("✅ Pedido realizado con advertencias:\n\n" + data.advertencias.join('\n'));
+                } else {
                 alert("✅ Pedido realizado correctamente.");
+                }
+
                 localStorage.removeItem('cart');
                 window.location.href = "cliente/pedidos.html";
             } catch (error) {
                 console.error('❌ Error al enviar pedido:', error);
                 alert("Error al crear el pedido.");
             }
-        }
+            }
 
+    
         function recalculateTotals() {
             let total = 0;
             document.querySelectorAll('#cart tbody tr').forEach(row => {
@@ -179,14 +192,14 @@
             localStorage.setItem('cart', JSON.stringify(cart));
             document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
         }
-
+    
         function removeProduct(e) {
             const index = parseInt(e.target.closest('.remove-product').dataset.index, 10);
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             loadCart();
         }
-
+    
         document.addEventListener('DOMContentLoaded', () => {
             loadCart();
             document.querySelector('#buy-btn').addEventListener('click', saveOrder);
@@ -200,11 +213,12 @@
                 document.getElementById('tiendaContainer').style.display = e.target.value === 'recoger' ? 'block' : 'none';
             });
         });
-
+    
         function goBack() {
             window.history.back();
         }
     </script>
+    
 </body>
 
 </html>

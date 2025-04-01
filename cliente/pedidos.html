@@ -74,6 +74,20 @@
               <i class="fas fa-store"></i> Volver a la tienda
             </a>
           </div>
+          <!-- 🔍 Filtro por fecha de entrega -->
+          <form id="filtroFechas" class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label for="fechaDesde" class="form-label">Desde</label>
+              <input type="date" id="fechaDesde" class="form-control" />
+            </div>
+            <div class="col-md-4">
+              <label for="fechaHasta" class="form-label">Hasta</label>
+              <input type="date" id="fechaHasta" class="form-control" />
+            </div>
+            <div class="col-md-4 align-self-end">
+              <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+            </div>
+          </form>
 
           <!-- ✅ Tabla de pedidos -->
           <table class="table table-striped">
@@ -83,6 +97,7 @@
                 <th>Fecha</th>
                 <th>Total</th>
                 <th>Estado</th>
+                <th>Fecha entrega</th> <!-- NUEVO -->
                 <th>Entrega</th> <!-- NUEVO -->
                 <th>Acciones</th>                
               </tr>
@@ -162,6 +177,7 @@
         </div>
         <div class="modal-body">
           <p><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
+          <p><strong>Fecha de entrega:</strong> <span id="detalle-fechaEntrega"></span></p>
           <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
           <p><strong>Total:</strong> <span id="detalle-total"></span></p>
           <p><strong>Tipo de entrega:</strong> <span id="detalle-entrega"></span></p> <!-- NUEVO -->
@@ -285,6 +301,31 @@
       }
     });
 
+    document.getElementById('filtroFechas').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const desde = document.getElementById('fechaDesde').value;
+      const hasta = document.getElementById('fechaHasta').value;
+
+      try {
+        const url = new URL(API_URL);
+        if (desde) url.searchParams.append('desde', desde);
+        if (hasta) url.searchParams.append('hasta', hasta);
+
+        const res = await fetch(url.toString(), {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
+
+        const pedidosFiltrados = await res.json();
+        renderPedidos(pedidosFiltrados);
+      } catch (err) {
+        console.error("❌ Error filtrando pedidos:", err);
+        alert("No se pudieron filtrar los pedidos.");
+      }
+    });
+
+
     function renderPedidos(pedidos) {
       const contenedor = document.getElementById('lista-pedidos');
       contenedor.innerHTML = '';
@@ -298,6 +339,7 @@
         row.innerHTML = `
           <td>${p.id}</td>
           <td>${new Date(p.fecha).toLocaleDateString('es-ES')}</td>
+          <td>${new Date(p.fechaEntrega).toLocaleDateString('es-ES')}</td>
           <td>${p.total.toFixed(2)} €</td>
           <td>
             <span class="badge rounded-pill bg-${esPendiente ? 'warning text-dark' : esConfirmado ? 'success' : 'secondary'}">
@@ -333,7 +375,8 @@
         document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
         document.getElementById('detalle-estado').textContent = pedido.estado;
         document.getElementById('detalle-entrega').textContent = pedido.tipoEntrega;
-      document.getElementById('detalle-tienda').textContent = pedido.tipoEntrega === 'recoger' ? pedido.tienda : '-';
+        document.getElementById('detalle-tienda').textContent = pedido.tipoEntrega === 'recoger' ? pedido.tienda : '-';
+        document.getElementById('detalle-fechaEntrega').textContent = new Date(pedido.fechaEntrega).toLocaleDateString('es-ES');
 
         const lista = document.getElementById('detalle-productos');
         lista.innerHTML = '';
