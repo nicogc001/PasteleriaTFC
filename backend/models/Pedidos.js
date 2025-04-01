@@ -74,12 +74,13 @@ const Pedido = db.define('Pedido', {
     allowNull: false
   },
   direccionId: {
-  type: DataTypes.INTEGER,
-  allowNull: true,
-  references: {
-    model: 'Direccions', // o 'Direcciones' si es el nombre correcto en tu migración
-    key: 'id'
-  }
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'Direcciones', // ✅ Correcto (según tu base de datos)
+      key: 'id'
+    }
+  }  
 }
 
 
