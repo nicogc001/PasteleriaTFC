@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 const Usuario = require('./Usuario');
-
+const Direccion = require('./Direccion');
 const Pedido = db.define('Pedido', {
   id: {
     type: DataTypes.INTEGER,
@@ -73,6 +73,16 @@ const Pedido = db.define('Pedido', {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
+  direccionId: {
+  type: DataTypes.INTEGER,
+  allowNull: true,
+  references: {
+    model: 'Direccions', // o 'Direcciones' si es el nombre correcto en tu migración
+    key: 'id'
+  }
+}
+
+
 }, {
   tableName: 'Pedidos',
   timestamps: false
@@ -88,5 +98,8 @@ Usuario.hasMany(Pedido, { foreignKey: 'segundoAprobadorId', as: 'AprobacionesAdm
 
 Pedido.belongsTo(Usuario, { foreignKey: 'aprobadorId', as: 'AprobadorEmpleado' });
 Pedido.belongsTo(Usuario, { foreignKey: 'segundoAprobadorId', as: 'AprobadorAdmin' });
+
+Pedido.belongsTo(Direccion, { foreignKey: 'direccionId' });
+Direccion.hasMany(Pedido, { foreignKey: 'direccionId' });
 
 module.exports = Pedido;

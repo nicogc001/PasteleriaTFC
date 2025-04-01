@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Pedidos, ProductosPedidos, Productos, Usuario } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
-
+const { Direccion } = require('../models');
 const generarFacturaPDF = require('../utils/generarFacturaPDF');
 const enviarFacturaEmail = require('../utils/enviarFacturaEmail');
 const buscarEmpleadoDisponible = require('../utils/buscarEmpleadoDisponible');
@@ -29,10 +29,9 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-// 🔹 Crear un nuevo pedido
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { items, tipoEntrega, tienda, metodoPago, fechaEntrega } = req.body;
+    const { items, tipoEntrega, tienda, metodoPago, fechaEntrega, direccionId } = req.body;
 
     if (!fechaEntrega) {
       return res.status(400).json({ error: 'Debe especificar la fecha de entrega.' });
@@ -48,6 +47,24 @@ router.post('/', authMiddleware, async (req, res) => {
 
     if (tipoEntrega === 'recoger' && !tienda) {
       return res.status(400).json({ error: 'Debes especificar la tienda para la recogida.' });
+    }
+
+    // ✅ Validar dirección si es envío
+    if (tipoEntrega === 'enviar') {
+      const direcciones = await Direccion.findAll({ where: { usuarioId: req.user.id } });
+
+      if (!direcciones || direcciones.length === 0) {
+        return res.status(400).json({ error: 'No tienes direcciones guardadas para la entrega.' });
+      }
+
+      if (!direccionId) {
+        return res.status(400).json({ error: 'Debes seleccionar una dirección para la entrega.' });
+      }
+
+      const direccionValida = direcciones.find(d => d.id === direccionId);
+      if (!direccionValida) {
+        return res.status(400).json({ error: 'La dirección seleccionada no es válida.' });
+      }
     }
 
     const esParaHoy = new Date().toISOString().split('T')[0] === fechaEntrega;
@@ -93,7 +110,8 @@ router.post('/', authMiddleware, async (req, res) => {
       metodoPago,
       aprobadorId,
       segundoAprobadorId,
-      fechaEntrega
+      fechaEntrega,
+      direccionId: tipoEntrega === 'enviar' ? direccionId : null
     });
 
     for (const { producto, cantidad } of productosParaActualizar) {
@@ -113,6 +131,7 @@ router.post('/', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error al crear pedido' });
   }
 });
+
 
 // 🔹 Confirmar un pedido (marcar como pagado, generar factura y enviarla)
 router.put('/:id/confirmar', authMiddleware, async (req, res) => {

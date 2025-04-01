@@ -191,36 +191,44 @@
     </div>
   </div>
 
-  <!-- MODAL DE PAGO -->
-  <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalPagoLabel">Selecciona un método de pago</h5>
-          <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body">
-          <form id="formPago">
-            <input type="hidden" id="pedidoIdSeleccionado" />
-            <div class="mb-3">
-              <label for="metodoPago" class="form-label">Método de pago:</label>
-              <select class="form-select" id="metodoPago" required>
-                <option value="">Selecciona una opción</option>
-                <option value="tarjeta">Tarjeta</option>
-                <option value="paypal">PayPal</option>
-                <option value="bizum">Bizum</option>
-                <option value="efectivo">Pagar en tienda (efectivo)</option>
-              </select>
-            </div>
-            <button type="submit" class="btn btn-success w-100">Finalizar pago</button>
-          </form>
-        </div>
+<!-- MODAL DE PAGO -->
+<div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalPagoLabel">Selecciona un método de pago</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formPago">
+          <input type="hidden" id="pedidoIdSeleccionado" />
+          
+          <div class="mb-3">
+            <label for="metodoPago" class="form-label">Método de pago:</label>
+            <select class="form-select" id="metodoPago" required>
+              <option value="">Selecciona una opción</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="paypal">PayPal</option>
+              <option value="bizum">Bizum</option>
+              <option value="efectivo">Pagar en tienda (efectivo)</option>
+            </select>
+          </div>
+
+          <!-- Dirección (solo visible si es tipoEntrega = enviar) -->
+          <div class="mb-3" id="direccion-wrapper" style="display: none;">
+            <label for="direccionId" class="form-label">Selecciona tu dirección:</label>
+            <select class="form-select" id="direccionId">
+              <option value="">Selecciona una dirección...</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-success w-100">Finalizar pago</button>
+        </form>
       </div>
     </div>
   </div>
+</div>
 
-
-  <!-- Justo antes de cerrar </body> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 
   <script>
@@ -243,6 +251,7 @@
 
         const pedidoId = document.getElementById('pedidoIdSeleccionado').value;
         const metodo = document.getElementById('metodoPago').value;
+        const direccionId = document.getElementById('direccionId').value || null;
 
         if (!metodo) {
           alert("Selecciona un método de pago.");
@@ -256,7 +265,7 @@
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ metodoPago: metodo }),
+            body: JSON.stringify({ metodoPago: metodo, direccionId }),
             credentials: 'include'
           });
 
@@ -280,6 +289,7 @@
           alert(`❌ ${err.message}`);
         }
       });
+
 
       // Cargar pedidos al iniciar
       try {
@@ -398,11 +408,47 @@
       }
     }
 
-    function abrirModalPago(pedidoId) {
-      document.getElementById('pedidoIdSeleccionado').value = pedidoId;
-      document.getElementById('metodoPago').value = "";
-      modalPago.show();
+    async function abrirModalPago(pedidoId) {
+  document.getElementById('pedidoIdSeleccionado').value = pedidoId;
+  document.getElementById('metodoPago').value = "";
+  document.getElementById('direccion-wrapper').style.display = "none";
+  document.getElementById('direccionId').innerHTML = `<option value="">Selecciona una dirección...</option>`;
+
+  // Obtener el pedido para saber el tipoEntrega
+  try {
+    const res = await fetch(`${API_URL}/${pedidoId}`, {
+      headers: { 'Authorization': `Bearer ${token}` },
+      credentials: 'include'
+    });
+
+    const pedido = await res.json();
+
+    if (pedido.tipoEntrega === 'enviar') {
+      const dirRes = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+
+      const direcciones = await dirRes.json();
+
+      const select = document.getElementById('direccionId');
+      direcciones.forEach(dir => {
+        const opcion = document.createElement('option');
+        opcion.value = dir.id;
+        opcion.textContent = `${dir.calle}, ${dir.localidad} (${dir.cp})`;
+        select.appendChild(opcion);
+      });
+
+      document.getElementById('direccion-wrapper').style.display = "block";
     }
+
+    modalPago.show();
+  } catch (err) {
+    console.error("❌ Error cargando direcciones:", err);
+    alert("No se pudo cargar la información del pedido o las direcciones.");
+  }
+}
+
 
     function logout() {
       localStorage.removeItem('token');
