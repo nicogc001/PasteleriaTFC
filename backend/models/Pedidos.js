@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 const Usuario = require('./Usuario');
 const Direccion = require('./Direccion');
+
 const Pedido = db.define('Pedido', {
   id: {
     type: DataTypes.INTEGER,
@@ -43,8 +44,6 @@ const Pedido = db.define('Pedido', {
     type: DataTypes.STRING,
     allowNull: true 
   },
-
-  // Aprobaciones
   aprobadorId: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -77,13 +76,10 @@ const Pedido = db.define('Pedido', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: 'Direcciones', // ✅ Correcto (según tu base de datos)
+      model: Direccion, // ✔️ Usamos el modelo importado
       key: 'id'
     }
-  }  
-}
-
-
+  }
 }, {
   tableName: 'Pedidos',
   timestamps: false
@@ -93,13 +89,14 @@ const Pedido = db.define('Pedido', {
 Usuario.hasMany(Pedido, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
 Pedido.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
-// ✅ Relaciones para aprobadores
+// Relaciones para aprobadores
 Usuario.hasMany(Pedido, { foreignKey: 'aprobadorId', as: 'AprobacionesEmpleado' });
 Usuario.hasMany(Pedido, { foreignKey: 'segundoAprobadorId', as: 'AprobacionesAdmin' });
 
 Pedido.belongsTo(Usuario, { foreignKey: 'aprobadorId', as: 'AprobadorEmpleado' });
 Pedido.belongsTo(Usuario, { foreignKey: 'segundoAprobadorId', as: 'AprobadorAdmin' });
 
+// Relación con Dirección
 Pedido.belongsTo(Direccion, { foreignKey: 'direccionId' });
 Direccion.hasMany(Pedido, { foreignKey: 'direccionId' });
 
