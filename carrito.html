@@ -77,6 +77,13 @@
                                         <option value="Torrelodones pueblo">Torrelodones pueblo</option>
                                     </select>
                                 </div>
+                                <div class="col-md-4" id="direccionContainer" style="display: none;">
+                                    <label for="direccionId" class="form-label">Seleccionar dirección de entrega</label>
+                                    <select id="direccionId" class="form-select" required>
+                                      <option value="">Selecciona una dirección...</option>
+                                    </select>
+                                  </div>
+                                  
                             </div>
                         </td>
                     </tr>
@@ -133,48 +140,53 @@
         }
     
         async function saveOrder() {
-            const token = localStorage.getItem('token');
-            if (!token) return (window.location.href = 'login.html');
-            if (cart.length === 0) return alert("Tu carrito está vacío.");
+  const token = localStorage.getItem('token');
+  if (!token) return (window.location.href = 'login.html');
+  if (cart.length === 0) return alert("Tu carrito está vacío.");
 
-            const tipoEntrega = document.getElementById('tipoEntrega').value;
-            const tienda = tipoEntrega === 'recoger' ? document.getElementById('tienda').value : null;
+  const tipoEntrega = document.getElementById('tipoEntrega').value;
+  const tienda = tipoEntrega === 'recoger' ? document.getElementById('tienda').value : null;
+  const direccionId = tipoEntrega === 'enviar' ? document.getElementById('direccionId').value : null;
 
-            const pedidoInfo = JSON.parse(localStorage.getItem('pedido'));
-            const fechaEntrega = pedidoInfo?.fecha;
-            if (!fechaEntrega) return alert("No se ha seleccionado la fecha del pedido.");
+  const pedidoInfo = JSON.parse(localStorage.getItem('pedido'));
+  const fechaEntrega = pedidoInfo?.fecha;
+  if (!fechaEntrega) return alert("No se ha seleccionado la fecha del pedido.");
 
-            const items = cart.map(p => ({ productoId: p.id, cantidad: p.quantity }));
+  if (tipoEntrega === 'enviar' && !direccionId) {
+    return alert("Debes seleccionar una dirección de entrega.");
+  }
 
-            try {
-                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({ items, tipoEntrega, tienda, fechaEntrega }),
-                credentials: 'include'
-                });
+  const items = cart.map(p => ({ productoId: p.id, cantidad: p.quantity }));
 
-                const data = await res.json();
+  try {
+    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ items, tipoEntrega, tienda, fechaEntrega, direccionId }),
+      credentials: 'include'
+    });
 
-                if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
+    const data = await res.json();
 
-                // ✅ Mostrar advertencias si existen
-                if (data.advertencias && data.advertencias.length > 0) {
-                alert("✅ Pedido realizado con advertencias:\n\n" + data.advertencias.join('\n'));
-                } else {
-                alert("✅ Pedido realizado correctamente.");
-                }
+    if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
 
-                localStorage.removeItem('cart');
-                window.location.href = "cliente/pedidos.html";
-            } catch (error) {
-                console.error('❌ Error al enviar pedido:', error);
-                alert("Error al crear el pedido.");
-            }
-            }
+    if (data.advertencias && data.advertencias.length > 0) {
+      alert("✅ Pedido realizado con advertencias:\n\n" + data.advertencias.join('\n'));
+    } else {
+      alert("✅ Pedido realizado correctamente.");
+    }
+
+    localStorage.removeItem('cart');
+    window.location.href = "cliente/pedidos.html";
+  } catch (error) {
+    console.error('❌ Error al enviar pedido:', error);
+    alert("Error al crear el pedido.");
+  }
+}
+
 
     
         function recalculateTotals() {
@@ -201,19 +213,70 @@
         }
     
         document.addEventListener('DOMContentLoaded', () => {
-            loadCart();
-            document.querySelector('#buy-btn').addEventListener('click', saveOrder);
-            document.querySelector('#cart').addEventListener('input', e => {
-                if (e.target.classList.contains('quantity-input')) recalculateTotals();
-            });
-            document.querySelector('#cart').addEventListener('click', e => {
-                if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) removeProduct(e);
-            });
-            document.getElementById('tipoEntrega').addEventListener('change', e => {
-                document.getElementById('tiendaContainer').style.display = e.target.value === 'recoger' ? 'block' : 'none';
-            });
-        });
+  loadCart();
+
+  document.querySelector('#buy-btn').addEventListener('click', saveOrder);
+
+  document.querySelector('#cart').addEventListener('input', e => {
+    if (e.target.classList.contains('quantity-input')) {
+      recalculateTotals();
+    }
+  });
+
+  document.querySelector('#cart').addEventListener('click', e => {
+    if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) {
+      removeProduct(e);
+    }
+  });
+
+  document.getElementById('tipoEntrega').addEventListener('change', async e => {
+    const tipo = e.target.value;
+
+    // Mostrar tienda o direcciones según el tipo de entrega
+    document.getElementById('tiendaContainer').style.display = tipo === 'recoger' ? 'block' : 'none';
+    document.getElementById('direccionContainer').style.display = tipo === 'enviar' ? 'block' : 'none';
+
+    if (tipo === 'enviar') {
+      await cargarDirecciones(); // Función que rellena el selector con las direcciones
+    }
+  });
+
+  // Llamada inicial por si ya hay valor seleccionado
+  const tipoInicial = document.getElementById('tipoEntrega').value;
+  if (tipoInicial === 'enviar') {
+    document.getElementById('direccionContainer').style.display = 'block';
+    cargarDirecciones();
+  } else {
+    document.getElementById('tiendaContainer').style.display = 'block';
+  }
+});
+
     
+        async function cargarDirecciones() {
+  const direccionContainer = document.getElementById('direccionContainer');
+  const direccionSelect = document.getElementById('direccionId');
+  direccionSelect.innerHTML = '<option value="">Selecciona una dirección...</option>';
+
+  try {
+    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+
+    if (!res.ok) throw new Error("No se pudieron obtener las direcciones");
+    const direcciones = await res.json();
+
+    direcciones.forEach(d => {
+      const option = document.createElement('option');
+      option.value = d.id;
+      option.textContent = `${d.calle}, ${d.cp}, ${d.provincia}`;
+      direccionSelect.appendChild(option);
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Error al cargar direcciones. Asegúrate de tener al menos una guardada.");
+  }
+}
+
         function goBack() {
             window.history.back();
         }

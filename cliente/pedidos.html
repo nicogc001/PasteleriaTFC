@@ -220,7 +220,13 @@
             <select class="form-select" id="direccionId">
               <option value="">Selecciona una dirección...</option>
             </select>
+            <div class="mt-2 text-end">
+              <button type="button" class="btn btn-sm btn-outline-primary" onclick="abrirModalDireccionDesdePago()">
+                <i class="fas fa-plus"></i> Añadir nueva dirección
+              </button>
+            </div>
           </div>
+          
 
           <button type="submit" class="btn btn-success w-100">Finalizar pago</button>
         </form>
@@ -228,6 +234,28 @@
     </div>
   </div>
 </div>
+<!-- Modal para agregar/modificar dirección -->
+<div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDireccionLabel">Dirección</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="inputCalle" class="form-control mb-2" placeholder="Calle" />
+        <input type="text" id="inputCP" class="form-control mb-2" placeholder="Código Postal" />
+        <input type="text" id="inputProvincia" class="form-control mb-2" placeholder="Provincia" />
+        <input type="text" id="inputLocalidad" class="form-control mb-2" placeholder="Localidad" />
+        <textarea id="inputNotas" class="form-control mb-2" placeholder="Notas (opcional)"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" onclick="guardarDireccion()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 
@@ -456,7 +484,94 @@
       localStorage.removeItem('cart');
       window.location.href = 'login.html';
     }
+
+    //Modal direcc
+    function abrirModalDireccionDesdePago() {
+      abrirModalAgregar(); // limpia los campos
+      new bootstrap.Modal(document.getElementById('modalDireccion')).show();
+    }
+    async function recargarDireccionesSelector() {
+  const select = document.getElementById('direccionId');
+  if (!select) return;
+
+  try {
+    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
+      headers: { 'Authorization': `Bearer ${token}` },
+      credentials: 'include'
+    });
+
+    const direcciones = await res.json();
+    select.innerHTML = '<option value="">Selecciona una dirección...</option>';
+
+    direcciones.forEach(d => {
+      const option = document.createElement('option');
+      option.value = d.id;
+      option.textContent = `${d.calle}, ${d.localidad}, ${d.cp}`;
+      select.appendChild(option);
+    });
+
+  } catch (err) {
+    console.error("❌ Error cargando direcciones:", err);
+    alert("No se pudieron cargar las direcciones");
+  }
+}
+
+
+    function abrirModalAgregar() {
+    direccionEditando = null;
+    document.getElementById('inputCalle').value = '';
+    document.getElementById('inputCP').value = '';
+    document.getElementById('inputProvincia').value = '';
+    document.getElementById('inputLocalidad').value = '';
+    document.getElementById('inputNotas').value = '';
+  }
+
+  async function guardarDireccion() {
+  const calle = document.getElementById('inputCalle').value;
+  const cp = document.getElementById('inputCP').value;
+  const provincia = document.getElementById('inputProvincia').value;
+  const localidad = document.getElementById('inputLocalidad').value;
+  const notas = document.getElementById('inputNotas').value;
+
+  if (!calle || !cp || !provincia || !localidad) {
+    return alert("Todos los campos obligatorios deben estar completos.");
+  }
+
+  const payload = { calle, cp, provincia, localidad, notas };
+
+  try {
+    const res = await fetch(direccionEditando ? `${API_URL}/${direccionEditando}` : API_URL, {
+      method: direccionEditando ? 'PUT' : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload),
+      credentials: 'include'
+    });
+
+    if (!res.ok) throw new Error("Error guardando dirección");
+
+    direccionEditando = null;
+
+    // 🔄 Recargar lista general
+    await cargarDirecciones();
+
+    // ✅ Recargar selector de direcciones (para modal de pago)
+    await recargarDireccionesSelector();
+
+    // 🔒 Cerrar modal
+    bootstrap.Modal.getInstance(document.getElementById('modalDireccion')).hide();
+
+  } catch (err) {
+    console.error(err);
+    alert("Error al guardar dirección");
+  }
+}
+
   </script>
+
+  
 </body>
 
 </html>
