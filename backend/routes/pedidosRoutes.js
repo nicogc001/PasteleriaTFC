@@ -61,7 +61,7 @@ router.post('/', authMiddleware, async (req, res) => {
         return res.status(400).json({ error: 'Debes seleccionar una dirección para la entrega.' });
       }
 
-      const direccionValida = direcciones.find(d => d.id === direccionId);
+      const direccionValida = direcciones.find(d => d.id === Number(direccionId));
       if (!direccionValida) {
         return res.status(400).json({ error: 'La dirección seleccionada no es válida.' });
       }

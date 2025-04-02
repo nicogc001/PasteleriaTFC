@@ -115,6 +115,28 @@
         </div>
     </footer>
 
+    <!-- Modal para agregar/modificar dirección -->
+    <div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="modalDireccionLabel">Dirección</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <input type="text" id="inputCalle" class="form-control mb-2" placeholder="Calle" />
+            <input type="text" id="inputCP" class="form-control mb-2" placeholder="Código Postal" />
+            <input type="text" id="inputProvincia" class="form-control mb-2" placeholder="Provincia" />
+            <input type="text" id="inputLocalidad" class="form-control mb-2" placeholder="Localidad" />
+            <textarea id="inputNotas" class="form-control mb-2" placeholder="Notas (opcional)"></textarea>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-success" onclick="guardarDireccion()">Guardar</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    
     <script>
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
     
@@ -140,54 +162,52 @@
         }
     
         async function saveOrder() {
-  const token = localStorage.getItem('token');
-  if (!token) return (window.location.href = 'login.html');
-  if (cart.length === 0) return alert("Tu carrito está vacío.");
+        const token = localStorage.getItem('token');
+        if (!token) return (window.location.href = 'login.html');
+        if (cart.length === 0) return alert("Tu carrito está vacío.");
 
-  const tipoEntrega = document.getElementById('tipoEntrega').value;
-  const tienda = tipoEntrega === 'recoger' ? document.getElementById('tienda').value : null;
-  const direccionId = tipoEntrega === 'enviar' ? document.getElementById('direccionId').value : null;
+        const tipoEntrega = document.getElementById('tipoEntrega').value;
+        const tienda = tipoEntrega === 'recoger' ? document.getElementById('tienda').value : null;
+        const direccionId = tipoEntrega === 'enviar' ? document.getElementById('direccionId').value : null;
 
-  const pedidoInfo = JSON.parse(localStorage.getItem('pedido'));
-  const fechaEntrega = pedidoInfo?.fecha;
-  if (!fechaEntrega) return alert("No se ha seleccionado la fecha del pedido.");
+        const pedidoInfo = JSON.parse(localStorage.getItem('pedido'));
+        const fechaEntrega = pedidoInfo?.fecha;
+        if (!fechaEntrega) return alert("No se ha seleccionado la fecha del pedido.");
 
-  if (tipoEntrega === 'enviar' && !direccionId) {
-    return alert("Debes seleccionar una dirección de entrega.");
-  }
+        if (tipoEntrega === 'enviar' && !direccionId) {
+            return alert("Debes seleccionar una dirección de entrega.");
+        }
 
-  const items = cart.map(p => ({ productoId: p.id, cantidad: p.quantity }));
+        const items = cart.map(p => ({ productoId: p.id, cantidad: p.quantity }));
 
-  try {
-    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ items, tipoEntrega, tienda, fechaEntrega, direccionId }),
-      credentials: 'include'
-    });
+        try {
+            const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ items, tipoEntrega, tienda, fechaEntrega, direccionId }),
+            credentials: 'include'
+            });
 
-    const data = await res.json();
+            const data = await res.json();
 
-    if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
+            if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
 
-    if (data.advertencias && data.advertencias.length > 0) {
-      alert("✅ Pedido realizado con advertencias:\n\n" + data.advertencias.join('\n'));
-    } else {
-      alert("✅ Pedido realizado correctamente.");
-    }
+            if (data.advertencias && data.advertencias.length > 0) {
+            alert("✅ Pedido realizado con advertencias:\n\n" + data.advertencias.join('\n'));
+            } else {
+            alert("✅ Pedido realizado correctamente.");
+            }
 
-    localStorage.removeItem('cart');
-    window.location.href = "cliente/pedidos.html";
-  } catch (error) {
-    console.error('❌ Error al enviar pedido:', error);
-    alert("Error al crear el pedido.");
-  }
-}
-
-
+            localStorage.removeItem('cart');
+            window.location.href = "cliente/pedidos.html";
+        } catch (error) {
+            console.error('❌ Error al enviar pedido:', error);
+            alert("Error al crear el pedido.");
+        }
+        }
     
         function recalculateTotals() {
             let total = 0;
@@ -213,69 +233,123 @@
         }
     
         document.addEventListener('DOMContentLoaded', () => {
-  loadCart();
+        loadCart();
 
-  document.querySelector('#buy-btn').addEventListener('click', saveOrder);
+        document.querySelector('#buy-btn').addEventListener('click', saveOrder);
 
-  document.querySelector('#cart').addEventListener('input', e => {
-    if (e.target.classList.contains('quantity-input')) {
-      recalculateTotals();
-    }
-  });
+        document.querySelector('#cart').addEventListener('input', e => {
+            if (e.target.classList.contains('quantity-input')) {
+            recalculateTotals();
+            }
+        });
 
-  document.querySelector('#cart').addEventListener('click', e => {
-    if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) {
-      removeProduct(e);
-    }
-  });
+        document.querySelector('#cart').addEventListener('click', e => {
+            if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) {
+            removeProduct(e);
+            }
+        });
 
-  document.getElementById('tipoEntrega').addEventListener('change', async e => {
-    const tipo = e.target.value;
+        document.getElementById('tipoEntrega').addEventListener('change', async e => {
+            const tipo = e.target.value;
 
-    // Mostrar tienda o direcciones según el tipo de entrega
-    document.getElementById('tiendaContainer').style.display = tipo === 'recoger' ? 'block' : 'none';
-    document.getElementById('direccionContainer').style.display = tipo === 'enviar' ? 'block' : 'none';
+            // Mostrar tienda o direcciones según el tipo de entrega
+            document.getElementById('tiendaContainer').style.display = tipo === 'recoger' ? 'block' : 'none';
+            document.getElementById('direccionContainer').style.display = tipo === 'enviar' ? 'block' : 'none';
 
-    if (tipo === 'enviar') {
-      await cargarDirecciones(); // Función que rellena el selector con las direcciones
-    }
-  });
+            if (tipo === 'enviar') {
+            await cargarDirecciones(); // Función que rellena el selector con las direcciones
+            }
+        });
 
-  // Llamada inicial por si ya hay valor seleccionado
-  const tipoInicial = document.getElementById('tipoEntrega').value;
-  if (tipoInicial === 'enviar') {
-    document.getElementById('direccionContainer').style.display = 'block';
-    cargarDirecciones();
-  } else {
-    document.getElementById('tiendaContainer').style.display = 'block';
-  }
-});
+        // Llamada inicial por si ya hay valor seleccionado
+        const tipoInicial = document.getElementById('tipoEntrega').value;
+        if (tipoInicial === 'enviar') {
+            document.getElementById('direccionContainer').style.display = 'block';
+            cargarDirecciones();
+        } else {
+            document.getElementById('tiendaContainer').style.display = 'block';
+        }
+        });
 
     
         async function cargarDirecciones() {
-  const direccionContainer = document.getElementById('direccionContainer');
-  const direccionSelect = document.getElementById('direccionId');
-  direccionSelect.innerHTML = '<option value="">Selecciona una dirección...</option>';
+            const direccionContainer = document.getElementById('direccionContainer');
+            const direccionSelect = document.getElementById('direccionId');
+            direccionSelect.innerHTML = '<option value="">Selecciona una dirección...</option>';
 
-  try {
-    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
+            try {
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                });
 
-    if (!res.ok) throw new Error("No se pudieron obtener las direcciones");
-    const direcciones = await res.json();
+                if (!res.ok) throw new Error("No se pudieron obtener las direcciones");
+                const direcciones = await res.json();
 
-    direcciones.forEach(d => {
-      const option = document.createElement('option');
-      option.value = d.id;
-      option.textContent = `${d.calle}, ${d.cp}, ${d.provincia}`;
-      direccionSelect.appendChild(option);
-    });
-  } catch (err) {
-    console.error(err);
-    alert("Error al cargar direcciones. Asegúrate de tener al menos una guardada.");
-  }
-}
+                if (direcciones.length === 0) {
+                // 👉 No hay direcciones, mostrar el modal para añadir
+                const modal = new bootstrap.Modal(document.getElementById('modalDireccion'));
+                modal.show();
+                return false;
+                }
+
+                direcciones.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d.id;
+                option.textContent = `${d.calle}, ${d.cp}, ${d.provincia}`;
+                direccionSelect.appendChild(option);
+                });
+
+                return true;
+            } catch (err) {
+                console.error(err);
+                alert("Error al cargar direcciones.");
+                return false;
+            }
+        }
+
+        async function guardarDireccion() {
+            const calle = document.getElementById('inputCalle').value;
+            const cp = document.getElementById('inputCP').value;
+            const provincia = document.getElementById('inputProvincia').value;
+            const localidad = document.getElementById('inputLocalidad').value;
+            const notas = document.getElementById('inputNotas').value;
+
+            if (!calle || !cp || !provincia || !localidad) {
+                return alert("Todos los campos obligatorios deben estar completos.");
+            }
+
+            const payload = { calle, cp, provincia, localidad, notas };
+
+            try {
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(payload),
+                credentials: 'include'
+                });
+
+                if (!res.ok) throw new Error("Error guardando dirección");
+
+                const nuevaDireccion = await res.json();
+
+                // Recargar direcciones y seleccionar automáticamente la nueva
+                await cargarDirecciones();
+
+                document.getElementById('direccionId').value = nuevaDireccion.id;
+
+                // Cerrar el modal
+                bootstrap.Modal.getInstance(document.getElementById('modalDireccion')).hide();
+
+            } catch (err) {
+                console.error(err);
+                alert("Error al guardar dirección");
+            }
+        }
+
+
 
         function goBack() {
             window.history.back();
