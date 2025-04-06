@@ -199,8 +199,11 @@
         type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
     ></script>
+
     <script>
-        const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos?categoria=Pastas';
+        const categoria = window.location.pathname.split('/').pop().replace('.html', '').toLowerCase();
+        const API_URL = `https://pasteleriatfc-back-igmg.onrender.com/api/productos?categoria=${categoria}`;
+
         const container = document.getElementById('productos-container');
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
       
