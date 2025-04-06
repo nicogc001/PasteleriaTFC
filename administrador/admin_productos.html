@@ -101,7 +101,7 @@
     const token = localStorage.getItem('token');
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
 
-    document.getElementById('formNuevoProducto').addEventListener('submit', async (e) => {
+    /*document.getElementById('formNuevoProducto').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const nuevoProducto = {
@@ -132,7 +132,7 @@
         console.error(err);
         alert('❌ Error al crear el producto');
       }
-    });
+    });*/
 
     async function eliminarProducto(id) {
     if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;

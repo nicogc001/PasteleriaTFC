@@ -93,5 +93,23 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// Eliminar un producto por ID
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const producto = await Productos.findByPk(id);
+        if (!producto) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+
+        await producto.destroy();
+
+        res.json({ message: 'Producto eliminado correctamente' });
+    } catch (error) {
+        console.error('❌ Error al eliminar producto:', error);
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
 
 module.exports = router;

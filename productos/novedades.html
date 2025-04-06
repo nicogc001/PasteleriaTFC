@@ -184,41 +184,6 @@
 ></script>
 
 <script>
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    // Event listeners para los botones "Añadir al carrito"
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', e => {
-            const productName = e.target.dataset.name;
-            const productPrice = parseFloat(e.target.dataset.price);
-            addToCart(productName, productPrice);
-        });
-    });
-
-    document.querySelectorAll('.view-product').forEach(button => {
-        button.addEventListener('click', e => {
-            e.preventDefault();
-
-            // Obtener datos directamente del enlace del producto
-            const product = {
-                name: e.currentTarget.dataset.name,
-                price: e.currentTarget.dataset.price,
-                image: e.currentTarget.dataset.image,
-                description: e.currentTarget.dataset.description
-            };
-
-            if (!product.name || !product.price || !product.image || !product.description) {
-                alert("Error: No se encontraron datos del producto.");
-                return;
-            }
-
-            console.log('Producto guardado:', product); // Verificar en consola
-
-            localStorage.setItem('selectedProduct', JSON.stringify(product)); // Guardar datos en localStorage
-            window.location.href = e.currentTarget.href; // Redirigir a la página del producto
-        });
-    });
-
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos?categoria=novedades';
   const container = document.getElementById('productos-container');
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
