@@ -88,7 +88,7 @@
             <th>Nombre</th>
             <th>Categoría</th>
             <th>Stock</th>
-            <th>Actualizar Stock</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -186,39 +186,39 @@
     }
 
     function crearProducto(e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const nuevoProducto = {
-      nombre: document.getElementById('nombre').value,
-      precio: parseFloat(document.getElementById('precio').value),
-      descripcion: document.getElementById('descripcion').value,
-      stock: parseInt(document.getElementById('stock').value),
-      imagen: document.getElementById('imagen').value,
-      categoria: document.getElementById('categoria').value
-    };
+  const nuevoProducto = {
+    nombre: document.getElementById('nombre').value,
+    precio: parseFloat(document.getElementById('precio').value),
+    descripcion: document.getElementById('descripcion').value,
+    stock: parseInt(document.getElementById('stock').value),
+    imagen: document.getElementById('imagen').value,
+    categoria: document.getElementById('categoria').value
+  };
 
-    fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(nuevoProducto)
-    })
-    .then(res => {
-      if (!res.ok) throw new Error('Error al crear el producto');
-      return res.json();
-    })
-    .then(() => {
-      alert('✅ Producto creado correctamente');
-      document.getElementById('formNuevoProducto').reset();
-      cargarProductos();
-    })
-    .catch(err => {
-      console.error(err);
-      alert('❌ Error al crear el producto');
-    });
-  }
+  fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(nuevoProducto)
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Error al crear producto');
+    return res.json();
+  })
+  .then(() => {
+    alert('✅ Producto creado correctamente');
+    document.getElementById('formNuevoProducto').reset();
+    cargarProductos();
+  })
+  .catch(err => {
+    console.error(err);
+    alert('❌ Error al crear el producto');
+  });
+}
 
   // Asegura que el submit inicial sea para crear
   document.getElementById('formNuevoProducto').onsubmit = crearProducto;
@@ -253,13 +253,17 @@
     document.addEventListener('DOMContentLoaded', cargarProductos);
 
     async function editarProducto(id) {
+  console.log("🔧 Editando producto con ID:", id);
+
   try {
     const res = await fetch(`${API_URL}/${id}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
+
+    if (!res.ok) throw new Error('No se pudo obtener el producto');
     const producto = await res.json();
 
-    // Rellena el formulario con los datos existentes
+    // Rellena el formulario
     document.getElementById('nombre').value = producto.nombre;
     document.getElementById('precio').value = producto.precio;
     document.getElementById('descripcion').value = producto.descripcion;
@@ -267,13 +271,13 @@
     document.getElementById('imagen').value = producto.imagen;
     document.getElementById('categoria').value = producto.categoria;
 
-    // Cambia el botón de crear por uno de guardar cambios
+    // Cambiar botón
     const btnCrear = document.querySelector('#formNuevoProducto button');
     btnCrear.textContent = 'Guardar cambios';
     btnCrear.classList.remove('btn-success');
     btnCrear.classList.add('btn-warning');
 
-    // Actualiza el evento submit para editar en vez de crear
+    // Reasignar onsubmit para guardar cambios
     document.getElementById('formNuevoProducto').onsubmit = async (e) => {
       e.preventDefault();
 
@@ -302,19 +306,24 @@
         document.getElementById('formNuevoProducto').reset();
         cargarProductos();
 
-        // Restaurar botón a "Crear producto"
+        // Restaurar botón y onsubmit original
         btnCrear.textContent = 'Crear producto';
         btnCrear.classList.remove('btn-warning');
         btnCrear.classList.add('btn-success');
         document.getElementById('formNuevoProducto').onsubmit = crearProducto;
+
       } catch (err) {
         console.error(err);
         alert('❌ Error al actualizar el producto');
       }
     };
+
+    // Hacer scroll al formulario
+    document.getElementById('formNuevoProducto').scrollIntoView({ behavior: 'smooth' });
+
   } catch (err) {
     console.error(err);
-    alert('❌ Error al obtener producto');
+    alert('❌ Error al obtener el producto');
   }
 }
 
