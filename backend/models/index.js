@@ -10,8 +10,31 @@ const ProductosPedidos = require('./ProductosPedidos');
 const Ofertas = require('./Ofertas');
 const RegistroHorarios = require('./RegistroHorarios');
 const Direccion = require('./Direccion');
-//
-// Relaciones
+const HistorialStock = require('./HistorialStock');
+
+// Reunimos todos los modelos
+const models = {
+  Usuario,
+  Rol,
+  Carrito,
+  Productos,
+  Pedidos,
+  ProductosCarrito,
+  ProductosPedidos,
+  Ofertas,
+  RegistroHorarios,
+  Direccion,
+  HistorialStock
+};
+
+// Asociaciones por separado (por si hay lógica en associate())
+Object.values(models).forEach(model => {
+  if (typeof model.associate === 'function') {
+    model.associate(models);
+  }
+});
+
+// Relaciones explícitas (puedes mantenerlas si quieres control extra)
 Usuario.hasOne(Carrito, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
 Carrito.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
@@ -36,6 +59,9 @@ ProductosPedidos.belongsTo(Productos, { foreignKey: 'productoId' });
 Productos.hasMany(Ofertas, { foreignKey: 'productoId', onDelete: 'CASCADE' });
 Ofertas.belongsTo(Productos, { foreignKey: 'productoId' });
 
+Productos.hasMany(HistorialStock, { foreignKey: 'productoId', onDelete: 'CASCADE' });
+HistorialStock.belongsTo(Productos, { foreignKey: 'productoId' });
+
 // Sync
 const syncDB = async () => {
   try {
@@ -49,14 +75,5 @@ const syncDB = async () => {
 module.exports = {
   db,
   syncDB,
-  Usuario,
-  Rol,
-  Carrito,
-  Productos,
-  Pedidos,
-  ProductosCarrito,
-  ProductosPedidos,
-  Ofertas,
-  RegistroHorarios,
-  Direccion
+  ...models
 };

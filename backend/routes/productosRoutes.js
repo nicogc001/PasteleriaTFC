@@ -51,6 +51,9 @@ router.get('/', async (req, res) => {
 });
 
 // Actualizar stock de un producto
+const HistorialStock = require('../models/HistorialStock'); // 👈 Asegúrate de importar esto también
+
+// Actualizar stock de un producto y registrar historial
 router.put('/:id', async (req, res) => {
     try {
         const { stock } = req.body;
@@ -65,16 +68,30 @@ router.put('/:id', async (req, res) => {
             return res.status(400).json({ error: 'El stock no puede ser negativo' });
         }
 
-        producto.stock = stock;
-        await producto.save();
+        const stockAnterior = producto.stock;
+        const diferencia = stock - stockAnterior;
 
-        res.json({ message: 'Stock actualizado correctamente', producto });
+        if (diferencia !== 0) {
+            await producto.update({ stock });
+
+            await HistorialStock.create({
+                productoId: producto.id,
+                stockAnterior,
+                stockNuevo: stock,
+                diferencia
+            });
+
+            res.json({ message: 'Stock actualizado y registrado en historial', producto });
+        } else {
+            res.json({ message: 'El stock no ha cambiado', producto });
+        }
 
     } catch (error) {
         console.error('❌ Error al actualizar stock:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
+
 
 // Obtener un producto por ID
 router.get('/:id', async (req, res) => {
@@ -111,5 +128,25 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
+
+// GET /api/productos/:id/historial
+router.get('/:id/historial', async (req, res) => {
+    try {
+      const historial = await HistorialStock.findAll({
+        where: { productoId: req.params.id },
+        order: [['fecha', 'DESC']]
+      });
+  
+      if (!historial.length) {
+        return res.status(404).json({ error: 'No hay historial de stock para este producto' });
+      }
+  
+      res.json(historial);
+    } catch (error) {
+      console.error('❌ Error al obtener historial:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
+    }
+  });
+  
 
 module.exports = router;

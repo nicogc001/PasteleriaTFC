@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/db'); // ✅ Esta línea soluciona el error
+const db = require('../config/db');
 
 const Producto = db.define('Producto', {
   id: {
@@ -31,10 +31,23 @@ const Producto = db.define('Producto', {
   categoria: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  fechaCreacion: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   }
 }, {
   tableName: 'Productos',
   timestamps: false
 });
+
+// Asociación
+Producto.associate = (models) => {
+  Producto.hasMany(models.HistorialStock, {
+    foreignKey: 'productoId',
+    as: 'historial'
+  });
+};
 
 module.exports = Producto;

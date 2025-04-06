@@ -84,6 +84,16 @@
     <h2 class="text-center mb-4">Listado de productos</h2>
     <div class="table-responsive">
       <div class="row mb-3">
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <label>Desde:</label>
+            <input type="date" id="filtroFechaInicio" class="form-control">
+          </div>
+          <div class="col-md-3">
+            <label>Hasta:</label>
+            <input type="date" id="filtroFechaFin" class="form-control">
+          </div>
+        </div>        
         <div class="col-md-6">
           <input type="text" id="buscadorNombre" class="form-control" placeholder="Buscar por nombre...">
         </div>
@@ -100,7 +110,10 @@
           </select>
         </div>
       </div>
-      <button class="btn btn-outline-danger" onclick="exportarPDF()">Exportar a PDF</button>
+      <div>
+        <button class="btn btn-outline-danger" onclick="exportarPDF()">Exportar a PDF</button>
+        <button class="btn btn-outline-success ms-2" onclick="exportarExcel()">Exportar a Excel</button>
+      </div>
       <table class="table table-bordered" id="tablaProductos">
         <thead class="table-light">
           <tr>
@@ -114,14 +127,46 @@
         <tbody></tbody>
       </table>
     </div>
-  </main>
+    <!-- Modal Historial de Stock -->
+    <div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="modalHistorialLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header d-flex justify-content-between align-items-center w-100">
+            <h5 class="modal-title" id="modalHistorialLabel">Historial de variaciones de stock</h5>
+            <div>
+              <button class="btn btn-success btn-sm me-2" id="btnExportarExcelHistorial">Exportar a Excel</button>
+              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+          </div>          
+          <div class="modal-body">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>Fecha</th>
+                  <th>Stock anterior</th>
+                  <th>Stock nuevo</th>
+                  <th>Diferencia</th>
+                </tr>
+              </thead>
+              <tbody id="tablaHistorialBody">
+                <!-- Aquí se insertarán las filas con JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   
   <script>
     const token = localStorage.getItem('token');
     let productosGlobal = [];
+    let historialActual = []; // Guardamos el historial para exportar
+    historialActual = historial; // Guardamos para usar en exportación
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
 
     /*document.getElementById('formNuevoProducto').addEventListener('submit', async (e) => {
@@ -220,7 +265,8 @@
     descripcion: document.getElementById('descripcion').value,
     stock: parseInt(document.getElementById('stock').value),
     imagen: document.getElementById('imagen').value,
-    categoria: document.getElementById('categoria').value
+    categoria: document.getElementById('categoria').value,
+    fechaCreacion: new Date() 
   };
 
   fetch(API_URL, {
@@ -281,6 +327,9 @@
 
       document.getElementById('buscadorNombre').addEventListener('input', filtrarProductos);
       document.getElementById('filtroCategoria').addEventListener('change', filtrarProductos);
+      document.getElementById('filtroFechaInicio').addEventListener('change', filtrarProductos);
+      document.getElementById('filtroFechaFin').addEventListener('change', filtrarProductos);
+
     });
 
 
@@ -362,6 +411,8 @@
 function filtrarProductos() {
   const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
   const categoria = document.getElementById('filtroCategoria').value;
+  const fechaInicio = document.getElementById('filtroFechaInicio').value;
+  const fechaFin = document.getElementById('filtroFechaFin').value;
 
   const tbody = document.querySelector('#tablaProductos tbody');
   tbody.innerHTML = '';
@@ -369,7 +420,14 @@ function filtrarProductos() {
   const filtrados = productosGlobal.filter(p => {
     const coincideNombre = p.nombre.toLowerCase().includes(nombre);
     const coincideCategoria = categoria === '' || p.categoria === categoria;
-    return coincideNombre && coincideCategoria;
+
+    const fechaProducto = new Date(p.fechaCreacion); // asegúrate que este campo existe
+    const desde = fechaInicio ? new Date(fechaInicio) : null;
+    const hasta = fechaFin ? new Date(fechaFin + 'T23:59:59') : null;
+
+    const dentroDeRango = (!desde || fechaProducto >= desde) && (!hasta || fechaProducto <= hasta);
+
+    return coincideNombre && coincideCategoria && dentroDeRango;
   });
 
   if (filtrados.length === 0) {
@@ -387,11 +445,13 @@ function filtrarProductos() {
       <td>
         <button class="btn btn-sm btn-warning" onclick="editarProducto(${p.id})">Editar</button>
         <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${p.id})">Eliminar</button>
+        <button class="btn btn-sm btn-info" onclick="verVariaciones(${p.id})">Ver variaciones</button>
       </td>
     `;
     tbody.appendChild(row);
   });
 }
+
 function exportarPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
@@ -417,6 +477,84 @@ function exportarPDF() {
   doc.save(`productos_${fecha}.pdf`);
 
 }
+
+function exportarExcel() {
+  const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+  const categoria = document.getElementById('filtroCategoria').value;
+
+  const filtrados = productosGlobal.filter(p => {
+    const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+    const coincideCategoria = categoria === '' || p.categoria === categoria;
+    return coincideNombre && coincideCategoria;
+  });
+
+  const data = filtrados.map(p => ({
+    ID: p.id,
+    Nombre: p.nombre,
+    Categoría: p.categoria,
+    Stock: p.stock
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Productos");
+
+  const hoy = new Date();
+  const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+  XLSX.writeFile(wb, `productos_${fecha}.xlsx`);
+}
+
+async function verVariaciones(productoId) {
+  try {
+    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${productoId}/historial`);
+    const historial = await res.json();
+
+    const tbody = document.getElementById('tablaHistorialBody');
+    tbody.innerHTML = '';
+
+    if (!historial.length) {
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center">No hay historial para este producto</td></tr>`;
+    } else {
+      historial.forEach(h => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${new Date(h.fecha).toLocaleString()}</td>
+          <td>${h.stockAnterior}</td>
+          <td>${h.stockNuevo}</td>
+          <td>${h.diferencia > 0 ? '+' : ''}${h.diferencia}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    const modal = new mdb.Modal(document.getElementById('modalHistorial'));
+    modal.show();
+
+  } catch (error) {
+    console.error('❌ Error al cargar historial:', error);
+    alert('❌ Error al obtener historial de stock');
+  }
+}
+
+document.getElementById('btnExportarExcelHistorial').addEventListener('click', () => {
+  if (!historialActual.length) {
+    alert('No hay historial para exportar');
+    return;
+  }
+
+  const data = historialActual.map(h => ({
+    Fecha: new Date(h.fecha).toLocaleString(),
+    'Stock anterior': h.stockAnterior,
+    'Stock nuevo': h.stockNuevo,
+    Diferencia: h.diferencia
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Historial");
+
+  XLSX.writeFile(wb, `historial_producto_${historialActual[0].productoId}.xlsx`);
+});
 
 
   </script>
