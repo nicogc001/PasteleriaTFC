@@ -508,6 +508,8 @@ async function verVariaciones(productoId) {
     const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${productoId}/historial`);
     const historial = await res.json();
 
+    historialActual = historial; // ahora sí, porque 'historial' ya está definido
+
     const tbody = document.getElementById('tablaHistorialBody');
     tbody.innerHTML = '';
 
@@ -534,6 +536,7 @@ async function verVariaciones(productoId) {
     alert('❌ Error al obtener historial de stock');
   }
 }
+
 
 document.getElementById('btnExportarExcelHistorial').addEventListener('click', () => {
   if (!historialActual.length) {
