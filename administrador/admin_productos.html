@@ -83,6 +83,24 @@
 
     <h2 class="text-center mb-4">Listado de productos</h2>
     <div class="table-responsive">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <input type="text" id="buscadorNombre" class="form-control" placeholder="Buscar por nombre...">
+        </div>
+        <div class="col-md-6">
+          <select id="filtroCategoria" class="form-select">
+            <option value="">Todas las categorías</option>
+            <option value="novedades">Novedades</option>
+            <option value="tartas">Tartas</option>
+            <option value="bolleria">Bollería</option>
+            <option value="salado">Salado</option>
+            <option value="pasteleria">Pastelería</option>
+            <option value="pastas">Pastas</option>
+            <option value="cafeteria">Cafetería</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-outline-danger" onclick="exportarPDF()">Exportar a PDF</button>
       <table class="table table-bordered" id="tablaProductos">
         <thead class="table-light">
           <tr>
@@ -98,8 +116,12 @@
     </div>
   </main>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  
   <script>
     const token = localStorage.getItem('token');
+    let productosGlobal = [];
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
 
     /*document.getElementById('formNuevoProducto').addEventListener('submit', async (e) => {
@@ -163,9 +185,11 @@
           headers: { 'Authorization': `Bearer ${token}` },
         });
         const productos = await res.json();
-        const tbody = document.querySelector('#tablaProductos tbody');
-        tbody.innerHTML = '';
+        productosGlobal = productos; // Guardamos todos los productos globalmente
+        filtrarProductos(); // Aplicamos filtros directamente
 
+        //tbody.innerHTML = '';
+/*
         productos.forEach(p => {
           const row = document.createElement('tr');
           row.innerHTML = `
@@ -181,7 +205,7 @@
 
 
           tbody.appendChild(row);
-        });
+        });*/
       } catch (err) {
         console.error('❌ Error al cargar productos:', err);
       }
@@ -252,7 +276,13 @@
     }
 
     // Cargar productos al cargar la página
-    document.addEventListener('DOMContentLoaded', cargarProductos);
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarProductos();
+
+      document.getElementById('buscadorNombre').addEventListener('input', filtrarProductos);
+      document.getElementById('filtroCategoria').addEventListener('change', filtrarProductos);
+    });
+
 
     async function editarProducto(id) {
   console.log("🔧 Editando producto con ID:", id);
@@ -328,6 +358,66 @@
     alert('❌ Error al obtener el producto');
   }
 }
+
+function filtrarProductos() {
+  const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+  const categoria = document.getElementById('filtroCategoria').value;
+
+  const tbody = document.querySelector('#tablaProductos tbody');
+  tbody.innerHTML = '';
+
+  const filtrados = productosGlobal.filter(p => {
+    const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+    const coincideCategoria = categoria === '' || p.categoria === categoria;
+    return coincideNombre && coincideCategoria;
+  });
+
+  if (filtrados.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No se encontraron productos</td></tr>';
+    return;
+  }
+
+  filtrados.forEach(p => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${p.id}</td>
+      <td>${p.nombre}</td>
+      <td>${p.categoria}</td>
+      <td>${p.stock}</td>
+      <td>
+        <button class="btn btn-sm btn-warning" onclick="editarProducto(${p.id})">Editar</button>
+        <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${p.id})">Eliminar</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+function exportarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+  const categoria = document.getElementById('filtroCategoria').value;
+
+  const filtrados = productosGlobal.filter(p => {
+    const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+    const coincideCategoria = categoria === '' || p.categoria === categoria;
+    return coincideNombre && coincideCategoria;
+  });
+
+  const filas = filtrados.map(p => [p.id, p.nombre, p.categoria, p.stock]);
+
+
+  doc.autoTable({
+    head: [['ID', 'Nombre', 'Categoría', 'Stock']],
+    body: filas
+  });
+
+  const hoy = new Date();
+  const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+  doc.save(`productos_${fecha}.pdf`);
+
+}
+
 
   </script>
 </body>
