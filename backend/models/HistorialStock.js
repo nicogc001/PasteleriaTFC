@@ -40,7 +40,7 @@ const HistorialStock = db.define('HistorialStock', {
 
 // Asociación
 HistorialStock.associate = (models) => {
-  HistorialStock.belongsTo(models.Producto, {
+  HistorialStock.belongsTo(models.Productos, {
     foreignKey: 'productoId',
     as: 'producto'
   });
