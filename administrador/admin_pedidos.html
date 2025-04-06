@@ -35,6 +35,22 @@
       </ul>
   </nav>
     <div class="mt-4">
+
+      <!-- 🔍 Filtro por fecha de entrega -->
+      <form id="filtroFechas" class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label for="fechaDesde" class="form-label">Desde</label>
+          <input type="date" id="fechaDesde" class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label for="fechaHasta" class="form-label">Hasta</label>
+          <input type="date" id="fechaHasta" class="form-control" />
+        </div>
+        <div class="col-md-4 align-self-end">
+          <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+      </form>
+
       <table class="table table-striped">
         <thead>
           <tr>
@@ -225,6 +241,33 @@
         alert("No se pudo cargar el detalle del pedido.");
       }
     }
+
+    document.getElementById('filtroFechas').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const desde = document.getElementById('fechaDesde').value;
+    const hasta = document.getElementById('fechaHasta').value;
+
+    try {
+      const url = new URL(API_URL);
+      if (desde) url.searchParams.append('desde', desde);
+      if (hasta) url.searchParams.append('hasta', hasta);
+
+      const res = await fetch(url.toString(), {
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include'
+      });
+
+      if (!res.ok) throw new Error("Error al filtrar pedidos");
+
+      const pedidosFiltrados = await res.json();
+      renderPedidos(pedidosFiltrados);
+    } catch (err) {
+      console.error("❌ Error filtrando pedidos:", err);
+      alert("No se pudieron filtrar los pedidos.");
+    }
+  });
+
   
     function logout() {
       localStorage.removeItem('token');
