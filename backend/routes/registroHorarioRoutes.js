@@ -56,25 +56,27 @@ router.put('/salida', authMiddleware, async (req, res) => {
 // ✅ Ruta GET para obtener todos los horarios (para administrador)
 router.get('/', authMiddleware, async (req, res) => {
     try {
-        const registros = await RegistroHorario.findAll({
-            include: [{ model: Usuario, attributes: ['nombre'] }],
-            order: [['fecha', 'DESC']]
-        });
-
-        const result = registros.map(r => ({
-            empleadoNombre: r.Usuario.nombre,
-            tienda: r.tienda,
-            fecha: r.fecha,
-            entrada: r.horaEntrada,
-            salida: r.horaSalida
-        }));
-
-        res.json(result);
+      const registros = await RegistroHorario.findAll({
+        include: [{ model: Usuario, attributes: ['nombre'] }],
+        order: [['fecha', 'DESC']]
+      });
+  
+      // Devuelve los datos completos, incluyendo Usuario.nombre y tienda sin renombrar manualmente
+      const result = registros.map(r => ({
+        empleadoNombre: r.Usuario?.nombre || 'Sin nombre',
+        tienda: r.tienda || 'Sin tienda',
+        fecha: r.fecha,
+        entrada: r.horaEntrada,
+        salida: r.horaSalida
+      }));
+  
+      res.json(result);
     } catch (error) {
-        console.error('❌ Error al obtener horarios:', error);
-        res.status(500).json({ error: 'Error en el servidor' });
+      console.error('❌ Error al obtener horarios:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
     }
-});
+  });
+  
 
 // ✅ Ruta POST para asignar horarios manualmente (por administrador)
 router.post('/', authMiddleware, async (req, res) => {
