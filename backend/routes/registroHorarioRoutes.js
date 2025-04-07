@@ -63,6 +63,7 @@ router.get('/', authMiddleware, async (req, res) => {
   
       // Devuelve los datos completos, incluyendo Usuario.nombre y tienda sin renombrar manualmente
       const result = registros.map(r => ({
+        id: r.id,
         empleadoNombre: r.Usuario?.nombre || 'Sin nombre',
         tienda: r.tienda || 'Sin tienda',
         fecha: r.fecha,
