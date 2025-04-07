@@ -95,37 +95,46 @@ router.put('/:id', async (req, res) => {
 // GET /api/productos/:id/historial
 router.get('/:id/historial', async (req, res) => {
     try {
+      const producto = await Productos.findByPk(req.params.id);
+      if (!producto) {
+        return res.status(404).json({ error: 'Producto no encontrado' });
+      }
+  
       const historial = await HistorialStock.findAll({
         where: { productoId: req.params.id },
         order: [['fecha', 'DESC']]
       });
   
-      if (!historial.length) {
-        return res.status(404).json({ error: 'No hay historial de stock para este producto' });
-      }
-  
-      res.json(historial);
+      res.json({
+        producto: {
+          id: producto.id,
+          nombre: producto.nombre
+        },
+        historial
+      });
     } catch (error) {
       console.error('❌ Error al obtener historial:', error);
       res.status(500).json({ error: 'Error en el servidor' });
     }
   });
+  
+
 // Obtener un producto por ID
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
-
         const producto = await Productos.findByPk(id);
         if (!producto) {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
-
         res.json(producto);
     } catch (error) {
         console.error('❌ Error al obtener producto por ID:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
+
+  
 
 // Eliminar un producto por ID
 router.delete('/:id', async (req, res) => {
