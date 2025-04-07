@@ -103,6 +103,40 @@
     </div>
   </div>
 
+  <div class="modal fade" id="modalEditarHorario" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formEditarHorario">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar Horario</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editar-id">
+            <div class="mb-3">
+              <label for="editar-tienda" class="form-label">Tienda</label>
+              <select id="editar-tienda" class="form-select">
+                <option value="Espacio Torrelodones">Espacio Torrelodones</option>
+                <option value="Torrelodones pueblo">Torrelodones pueblo</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="editar-entrada" class="form-label">Entrada</label>
+              <input type="time" id="editar-entrada" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="editar-salida" class="form-label">Salida</label>
+              <input type="time" id="editar-salida" class="form-control" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
   <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
     <div class="text-center p-4">
       © 2025 El Caballo Goloso
@@ -171,6 +205,9 @@
             <td>${new Date(h.fecha).toLocaleDateString()}</td>
             <td>${h.entrada}</td>
             <td>${h.salida}</td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick='abrirEditarHorario(${JSON.stringify(h)})'>Editar</button>
+            </td>
           `;
           tabla.appendChild(tr);
         });
@@ -227,6 +264,44 @@
       localStorage.clear();
       location.href = '../login.html';
     }
+
+    function abrirEditarHorario(horario) {
+          document.getElementById('editar-id').value = horario.id;
+          document.getElementById('editar-tienda').value = horario.tienda;
+          document.getElementById('editar-entrada').value = horario.entrada;
+          document.getElementById('editar-salida').value = horario.salida;
+
+          new mdb.Modal(document.getElementById('modalEditarHorario')).show();
+        }
+
+        document.getElementById('formEditarHorario').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editar-id').value;
+      const datos = {
+        tienda: document.getElementById('editar-tienda').value,
+        entrada: document.getElementById('editar-entrada').value,
+        salida: document.getElementById('editar-salida').value
+      };
+
+      try {
+        const res = await fetch(`${API_HORARIOS}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(datos)
+        });
+
+        if (!res.ok) throw new Error('Error al actualizar horario');
+        alert('✅ Horario actualizado correctamente');
+        cargarHorarios();
+        const modal = mdb.Modal.getInstance(document.getElementById('modalEditarHorario'));
+        modal.hide();
+      } catch (err) {
+        alert('❌ No se pudo actualizar el horario');
+      }
+    });
   </script>
 </body>
 </html>

@@ -50,6 +50,11 @@
           <button type="submit" class="btn btn-primary w-100">Filtrar</button>
         </div>
       </form>
+      <div class="mb-4 d-flex justify-content-end gap-2">
+        <button class="btn btn-outline-danger" onclick="exportarPedidosPDF()">Exportar PDF</button>
+        <button class="btn btn-outline-success" onclick="exportarPedidosExcel()">Exportar Excel</button>
+      </div>
+      
 
       <table class="table table-striped">
         <thead>
@@ -275,6 +280,44 @@
       localStorage.removeItem('rol');
       window.location.href = "../login.html";
     }
+
+    function exportarPedidosPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const filas = Array.from(document.querySelectorAll("#lista-pedidos tr")).map(row => {
+      return Array.from(row.querySelectorAll("td")).slice(0, 6).map(td => td.textContent.trim());
+    });
+
+    doc.autoTable({
+      head: [['ID', 'Cliente', 'Fecha', 'Total', 'Estado', 'Entrega']],
+      body: filas
+    });
+
+    const hoy = new Date().toISOString().split('T')[0];
+    doc.save(`pedidos_${hoy}.pdf`);
+  }
+
+  function exportarPedidosExcel() {
+    const filas = Array.from(document.querySelectorAll("#lista-pedidos tr")).map(row => {
+      const celdas = row.querySelectorAll("td");
+      return {
+        ID: celdas[0]?.textContent.trim(),
+        Cliente: celdas[1]?.textContent.trim(),
+        Fecha: celdas[2]?.textContent.trim(),
+        Total: celdas[3]?.textContent.trim(),
+        Estado: celdas[4]?.textContent.trim(),
+        Entrega: celdas[5]?.textContent.trim(),
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(filas);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Pedidos");
+
+    const hoy = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(wb, `pedidos_${hoy}.xlsx`);
+  }
   </script>
   
   
