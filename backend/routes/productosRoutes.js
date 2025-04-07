@@ -92,7 +92,24 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-
+// GET /api/productos/:id/historial
+router.get('/:id/historial', async (req, res) => {
+    try {
+      const historial = await HistorialStock.findAll({
+        where: { productoId: req.params.id },
+        order: [['fecha', 'DESC']]
+      });
+  
+      if (!historial.length) {
+        return res.status(404).json({ error: 'No hay historial de stock para este producto' });
+      }
+  
+      res.json(historial);
+    } catch (error) {
+      console.error('❌ Error al obtener historial:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
+    }
+  });
 // Obtener un producto por ID
 router.get('/:id', async (req, res) => {
     try {
@@ -129,24 +146,7 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-// GET /api/productos/:id/historial
-router.get('/:id/historial', async (req, res) => {
-    try {
-      const historial = await HistorialStock.findAll({
-        where: { productoId: req.params.id },
-        order: [['fecha', 'DESC']]
-      });
-  
-      if (!historial.length) {
-        return res.status(404).json({ error: 'No hay historial de stock para este producto' });
-      }
-  
-      res.json(historial);
-    } catch (error) {
-      console.error('❌ Error al obtener historial:', error);
-      res.status(500).json({ error: 'Error en el servidor' });
-    }
-  });
+
   
 
 module.exports = router;
