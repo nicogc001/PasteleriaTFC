@@ -302,6 +302,26 @@
         alert('❌ No se pudo actualizar el horario');
       }
     });
+
+    async function eliminarHorario(id) {
+      if (!confirm('¿Estás seguro de que deseas eliminar este horario?')) return;
+
+      try {
+        const res = await fetch(`${API_HORARIOS}/${id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error();
+        alert('✅ Horario eliminado correctamente');
+        cargarHorarios();
+      } catch (err) {
+        alert('❌ No se pudo eliminar el horario');
+      }
+    }
+
   </script>
 </body>
 </html>

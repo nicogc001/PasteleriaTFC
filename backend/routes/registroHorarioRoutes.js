@@ -129,5 +129,24 @@ router.put('/:id', authMiddleware, async (req, res) => {
       res.status(500).json({ error: 'Error al actualizar el horario' });
     }
   });
+
+  // ✅ Ruta DELETE para eliminar un horario (por administrador)
+router.delete('/:id', authMiddleware, async (req, res) => {
+    try {
+      const { id } = req.params;
+  
+      const horario = await RegistroHorario.findByPk(id);
+      if (!horario) {
+        return res.status(404).json({ error: 'Horario no encontrado' });
+      }
+  
+      await horario.destroy();
+      res.json({ message: 'Horario eliminado correctamente' });
+    } catch (error) {
+      console.error('❌ Error al eliminar horario:', error);
+      res.status(500).json({ error: 'Error al eliminar el horario' });
+    }
+  });
+  
   
 module.exports = router;
