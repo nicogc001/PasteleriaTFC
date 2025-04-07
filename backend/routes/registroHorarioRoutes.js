@@ -102,4 +102,31 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
+// ✅ Ruta PUT para actualizar horario (por administrador)
+router.put('/:id', authMiddleware, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { tienda, entrada, salida } = req.body;
+  
+      if (!tienda || !entrada || !salida) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+      }
+  
+      const horario = await RegistroHorario.findByPk(id);
+      if (!horario) {
+        return res.status(404).json({ error: 'Horario no encontrado' });
+      }
+  
+      horario.tienda = tienda;
+      horario.horaEntrada = entrada;
+      horario.horaSalida = salida;
+      await horario.save();
+  
+      res.json({ message: 'Horario actualizado correctamente', horario });
+    } catch (error) {
+      console.error('❌ Error al actualizar horario:', error);
+      res.status(500).json({ error: 'Error al actualizar el horario' });
+    }
+  });
+  
 module.exports = router;
