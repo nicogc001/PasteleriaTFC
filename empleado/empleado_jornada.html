@@ -1,0 +1,199 @@
+<!-- ACTUALIZADO: Registro de jornada separado de horarios asignados + añadir manualmente -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Jornada - Empleado</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="/styles/main.css" rel="stylesheet" />
+</head>
+<body>
+  <main class="container mt-5">
+    <h1 class="text-center">Mi Registro de Jornada</h1>
+
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card text-center bg-light p-3">
+          <h5>Estado de hoy</h5>
+          <p id="estado-entrada">Entrada: <span class="badge bg-secondary">Pendiente</span></p>
+          <p id="estado-salida">Salida: <span class="badge bg-secondary">Pendiente</span></p>
+        </div>
+      </div>
+      <div class="col-md-6 d-flex align-items-end justify-content-end">
+        <button class="btn btn-success me-2" onclick="registrarEntrada()">Registrar entrada</button>
+        <button class="btn btn-danger me-2" onclick="registrarSalida()">Registrar salida</button>
+        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalManual">Añadir jornada</button>
+      </div>
+    </div>
+
+    <h4 class="mb-3">Historial de jornada</h4>
+    <div class="table-responsive mb-4">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>Fecha</th>
+            <th>Entrada</th>
+            <th>Salida</th>
+            <th>Tiempo trabajado</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-jornada"></tbody>
+      </table>
+    </div>
+
+    <div class="text-center">
+      <button class="btn btn-secondary" onclick="logout()">Cerrar sesión</button>
+    </div>
+  </main>
+
+  <!-- Modal para añadir jornada manual -->
+  <div class="modal fade" id="modalManual" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formManual">
+          <div class="modal-header">
+            <h5 class="modal-title">Añadir jornada manual</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label">Fecha</label>
+            <input type="date" id="manual-fecha" class="form-control mb-3" required>
+            <label class="form-label">Hora entrada</label>
+            <input type="time" id="manual-entrada" class="form-control mb-3" required>
+            <label class="form-label">Hora salida</label>
+            <input type="time" id="manual-salida" class="form-control" required>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const API_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-horario';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!token) {
+        alert("Debes iniciar sesión.");
+        return window.location.href = '../login.html';
+      }
+      cargarJornada();
+    });
+
+    function calcularTiempo(hEntrada, hSalida) {
+      if (!hEntrada || !hSalida) return '-';
+      const [h1, m1] = hEntrada.split(':').map(Number);
+      const [h2, m2] = hSalida.split(':').map(Number);
+      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+      if (minutos < 0) return '-';
+      const horas = Math.floor(minutos / 60);
+      minutos %= 60;
+      return `${horas}h ${minutos}min`;
+    }
+
+    async function cargarJornada() {
+      try {
+        const res = await fetch(`${API_BASE}/mis-horarios`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Error cargando jornadas');
+
+        const jornadas = await res.json();
+        const hoy = new Date().toISOString().split('T')[0];
+        const tbody = document.getElementById('tabla-jornada');
+        tbody.innerHTML = '';
+
+        jornadas.forEach(j => {
+          if (j.fecha === hoy) {
+            document.getElementById('estado-entrada').innerHTML = `Entrada: <span class="badge bg-${j.horaEntrada ? 'success' : 'secondary'}">${j.horaEntrada || 'Pendiente'}</span>`;
+            document.getElementById('estado-salida').innerHTML = `Salida: <span class="badge bg-${j.horaSalida ? 'success' : 'secondary'}">${j.horaSalida || 'Pendiente'}</span>`;
+          }
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${j.fecha}</td>
+            <td>${j.horaEntrada || '-'}</td>
+            <td>${j.horaSalida || '-'}</td>
+            <td>${calcularTiempo(j.horaEntrada, j.horaSalida)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Error cargando jornada:', err);
+        alert('No se pudo cargar el historial de jornada.');
+      }
+    }
+
+    async function registrarEntrada() {
+      try {
+        const res = await fetch(`${API_BASE}/entrada`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error registrando entrada');
+        alert(data.message);
+        cargarJornada();
+      } catch (err) {
+        console.error('❌ Entrada:', err);
+        alert(err.message);
+      }
+    }
+
+    async function registrarSalida() {
+      try {
+        const res = await fetch(`${API_BASE}/salida`, {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error registrando salida');
+        alert(data.message);
+        cargarJornada();
+      } catch (err) {
+        console.error('❌ Salida:', err);
+        alert(err.message);
+      }
+    }
+
+    document.getElementById('formManual').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fecha = document.getElementById('manual-fecha').value;
+      const entrada = document.getElementById('manual-entrada').value;
+      const salida = document.getElementById('manual-salida').value;
+
+      try {
+        const res = await fetch(`${API_BASE}/manual`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ fecha, horaEntrada: entrada, horaSalida: salida })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error al guardar jornada');
+
+        bootstrap.Modal.getInstance(document.getElementById('modalManual')).hide();
+        alert(data.message);
+        cargarJornada();
+      } catch (err) {
+        console.error('❌ Error guardando jornada manual:', err);
+        alert(err.message);
+      }
+    });
+
+    function logout() {
+      localStorage.clear();
+      location.href = '../login.html';
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+</body>
+</html>

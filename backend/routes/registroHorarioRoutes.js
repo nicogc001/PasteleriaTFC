@@ -186,4 +186,26 @@ router.get('/mis-horarios', authMiddleware, async (req, res) => {
   }
 });
 
+router.post('/manual', authMiddleware, async (req, res) => {
+    const { fecha, horaEntrada, horaSalida } = req.body;
+    const empleadoId = req.user.id;
+  
+    try {
+      const existente = await RegistroHorario.findOne({ where: { empleadoId, fecha } });
+      if (existente) {
+        existente.horaEntrada = horaEntrada;
+        existente.horaSalida = horaSalida;
+        await existente.save();
+        return res.json({ message: 'Registro actualizado correctamente', registro: existente });
+      }
+  
+      const nuevo = await RegistroHorario.create({ empleadoId, fecha, horaEntrada, horaSalida });
+      res.status(201).json({ message: 'Registro creado correctamente', registro: nuevo });
+    } catch (error) {
+      console.error('❌ Error en registro manual:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
+    }
+  });
+  
+
 module.exports = router;
