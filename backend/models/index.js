@@ -62,6 +62,10 @@ Ofertas.belongsTo(Productos, { foreignKey: 'productoId' });
 Productos.hasMany(HistorialStock, { foreignKey: 'productoId', onDelete: 'CASCADE' });
 HistorialStock.belongsTo(Productos, { foreignKey: 'productoId' });
 
+Usuario.hasMany(RegistroHorarios, { foreignKey: 'empleadoId', onDelete: 'CASCADE' });
+RegistroHorarios.belongsTo(Usuario, { foreignKey: 'empleadoId' });
+
+
 // Sync
 const syncDB = async () => {
   try {

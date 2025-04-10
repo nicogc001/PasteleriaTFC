@@ -15,9 +15,23 @@
     <div class="row justify-content-center">
       <div class="col-md-10">
 
-        <div class="mb-4 text-end">
-          <label for="fechaFiltro" class="form-label">Filtrar por fecha:</label>
-          <input type="date" id="fechaFiltro" class="form-control" style="max-width: 200px; display: inline-block;">
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="card text-center bg-light p-3">
+              <h5>Estado de hoy</h5>
+              <p id="estado-entrada" class="mb-1">Entrada: <span class="badge bg-secondary">Pendiente</span></p>
+              <p id="estado-salida">Salida: <span class="badge bg-secondary">Pendiente</span></p>
+            </div>
+          </div>
+          <div class="col-md-6 d-flex align-items-end justify-content-end">
+            <button class="btn btn-success me-2" onclick="registrarEntrada()">Registrar entrada</button>
+            <button class="btn btn-danger" onclick="registrarSalida()">Registrar salida</button>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end mb-3">
+          <label for="fechaFiltro" class="form-label me-2">Filtrar por fecha:</label>
+          <input type="date" id="fechaFiltro" class="form-control" style="max-width: 200px;">
         </div>
 
         <div class="table-responsive">
@@ -25,8 +39,8 @@
             <thead class="table-dark">
               <tr>
                 <th>Fecha</th>
-                <th>Hora Inicio</th>
-                <th>Hora Fin</th>
+                <th>Hora Entrada</th>
+                <th>Hora Salida</th>
                 <th>Ubicación</th>
               </tr>
             </thead>
@@ -50,7 +64,9 @@
 
   <script>
     const token = localStorage.getItem('token');
-    const API_HORARIOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/horarios/mis-horarios';
+    const API_HORARIOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-horario/mis-horarios';
+    const API_ENTRADA = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-horario/entrada';
+    const API_SALIDA = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-horario/salida';
 
     document.addEventListener('DOMContentLoaded', async () => {
       if (!token) {
@@ -59,7 +75,6 @@
       }
 
       await cargarHorarios();
-
       document.getElementById('fechaFiltro').addEventListener('change', cargarHorarios);
     });
 
@@ -69,9 +84,7 @@
         const url = fecha ? `${API_HORARIOS}?fecha=${fecha}` : API_HORARIOS;
 
         const res = await fetch(url, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!res.ok) throw new Error('Error al obtener horarios');
@@ -80,19 +93,58 @@
         const tbody = document.getElementById('tabla-horarios');
         tbody.innerHTML = '';
 
+        let estadoHoy = horarios.find(h => h.fecha === new Date().toISOString().split('T')[0]);
+
+        document.getElementById('estado-entrada').innerHTML = `Entrada: <span class="badge bg-${estadoHoy?.horaEntrada ? 'success' : 'secondary'}">${estadoHoy?.horaEntrada || 'Pendiente'}</span>`;
+        document.getElementById('estado-salida').innerHTML = `Salida: <span class="badge bg-${estadoHoy?.horaSalida ? 'success' : 'secondary'}">${estadoHoy?.horaSalida || 'Pendiente'}</span>`;
+
         horarios.forEach(horario => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td>${horario.fecha}</td>
-            <td>${horario.horaInicio}</td>
-            <td>${horario.horaFin}</td>
-            <td>${horario.ubicacion || 'Tienda principal'}</td>
+            <td>${horario.horaEntrada || '-'}</td>
+            <td>${horario.horaSalida || '-'}</td>
+            <td>${horario.tienda || 'Tienda principal'}</td>
           `;
           tbody.appendChild(tr);
         });
       } catch (err) {
         console.error('Error cargando horarios:', err);
         alert('No se pudo cargar los horarios.');
+      }
+    }
+
+    async function registrarEntrada() {
+      try {
+        const res = await fetch(API_ENTRADA, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Error al registrar entrada');
+        alert(data.message);
+        cargarHorarios();
+      } catch (err) {
+        console.error('❌ Error registrando entrada:', err);
+        alert(err.message);
+      }
+    }
+
+    async function registrarSalida() {
+      try {
+        const res = await fetch(API_SALIDA, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Error al registrar salida');
+        alert(data.message);
+        cargarHorarios();
+      } catch (err) {
+        console.error('❌ Error registrando salida:', err);
+        alert(err.message);
       }
     }
 

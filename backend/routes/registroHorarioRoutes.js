@@ -148,5 +148,22 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     }
   });
   
+  // ✅ Ruta GET para obtener los horarios del empleado autenticado
+router.get('/mis-horarios', authMiddleware, async (req, res) => {
+    try {
+      const empleadoId = req.user.id;
+  
+      const registros = await RegistroHorario.findAll({
+        where: { empleadoId },
+        order: [['fecha', 'DESC']]
+      });
+  
+      res.json(registros);
+    } catch (error) {
+      console.error('❌ Error al obtener mis horarios:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
+    }
+  });
+  
   
 module.exports = router;
