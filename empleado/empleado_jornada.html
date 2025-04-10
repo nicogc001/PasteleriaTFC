@@ -80,35 +80,36 @@
     </div>
   </div>
 
-    <!-- Modal para editar jornada -->
-    <div class="modal fade" id="modalEditar" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <form id="formEditar">
-              <div class="modal-header">
-                <h5 class="modal-title">Editar jornada</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">
-                <input type="hidden" id="editar-id">
-                <label class="form-label">Hora entrada</label>
-                <input type="time" id="editar-entrada" class="form-control mb-3" required>
-                <label class="form-label">Hora salida</label>
-                <input type="time" id="editar-salida" class="form-control mb-3" required>
-                <label class="form-label">Tienda</label>
-                <select id="editar-tienda" class="form-select" required>
-                  <option value="">Seleccionar...</option>
-                  <option value="Espacio Torrelodones">Espacio Torrelodones</option>
-                  <option value="Torrelodones pueblo">Torrelodones pueblo</option>
-                </select>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Guardar cambios</button>
-              </div>
-            </form>
+     <!-- Modal para editar jornada -->
+  <div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formEditar">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar jornada</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
-        </div>
+          <div class="modal-body">
+            <input type="hidden" id="editar-id">
+            <label class="form-label">Hora entrada</label>
+            <input type="time" id="editar-entrada" class="form-control mb-3" required>
+            <label class="form-label">Hora salida</label>
+            <input type="time" id="editar-salida" class="form-control mb-3" required>
+            <label class="form-label">Tienda</label>
+            <select id="editar-tienda" class="form-select" required>
+              <option value="">Seleccionar...</option>
+              <option value="Espacio Torrelodones">Espacio Torrelodones</option>
+              <option value="Torrelodones pueblo">Torrelodones pueblo</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            <button type="button" class="btn btn-outline-danger" onclick="eliminarJornada()">Eliminar</button>
+          </div>
+        </form>
       </div>
+    </div>
+  </div>
 
   <script>
     const token = localStorage.getItem('token');
@@ -139,10 +140,9 @@
             <td>${j.horaSalida || '-'}</td>
             <td>${calcularTiempo(j.horaEntrada, j.horaSalida)}</td>
             <td>${j.tienda || '-'}</td>
-            <td>
-                <button class="btn btn-sm btn-outline-primary" onclick='abrirModalEditar(${JSON.stringify(j)})'>
-                <i class="fas fa-edit"></i> Editar
-                </button>
+           <td>
+                <button class="btn btn-sm btn-outline-primary me-1" onclick='abrirModalEditar(${JSON.stringify(j)})'>Editar</button>
+                <button class="btn btn-sm btn-outline-danger" onclick='eliminarJornada(${j.id})'>Eliminar</button>
             </td>
             `;
 
@@ -283,6 +283,26 @@
         alert(err.message);
       }
     });
+
+    async function eliminarJornada(id) {
+  if (!confirm("¿Estás seguro de que deseas eliminar esta jornada?")) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al eliminar jornada');
+    alert('Jornada eliminada correctamente');
+    cargarJornada();
+  } catch (err) {
+    console.error('❌ Error eliminando jornada:', err);
+    alert(err.message);
+  }
+}
 
   </script>
 
