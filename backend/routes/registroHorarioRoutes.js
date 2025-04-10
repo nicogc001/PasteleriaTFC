@@ -210,7 +210,8 @@ router.post('/manual', authMiddleware, async (req, res) => {
         empleadoId,
         fecha,
         horaEntrada,
-        horaSalida
+        horaSalida,
+        tienda: null 
       });
   
       res.status(201).json({ message: 'Registro creado correctamente', registro: nuevo });
