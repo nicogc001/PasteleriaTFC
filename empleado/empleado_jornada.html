@@ -80,6 +80,36 @@
     </div>
   </div>
 
+    <!-- Modal para editar jornada -->
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form id="formEditar">
+              <div class="modal-header">
+                <h5 class="modal-title">Editar jornada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <input type="hidden" id="editar-id">
+                <label class="form-label">Hora entrada</label>
+                <input type="time" id="editar-entrada" class="form-control mb-3" required>
+                <label class="form-label">Hora salida</label>
+                <input type="time" id="editar-salida" class="form-control mb-3" required>
+                <label class="form-label">Tienda</label>
+                <select id="editar-tienda" class="form-select" required>
+                  <option value="">Seleccionar...</option>
+                  <option value="Espacio Torrelodones">Espacio Torrelodones</option>
+                  <option value="Torrelodones pueblo">Torrelodones pueblo</option>
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
   <script>
     const token = localStorage.getItem('token');
     const API_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-horario';
@@ -210,6 +240,44 @@
       }
       cargarJornada();
     });
+
+    function abrirModalEditar(jornada) {
+      document.getElementById('editar-id').value = jornada.id;
+      document.getElementById('editar-entrada').value = jornada.horaEntrada;
+      document.getElementById('editar-salida').value = jornada.horaSalida;
+      document.getElementById('editar-tienda').value = jornada.tienda || '';
+      new bootstrap.Modal(document.getElementById('modalEditar')).show();
+    }
+
+    document.getElementById('formEditar').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editar-id').value;
+      const entrada = document.getElementById('editar-entrada').value;
+      const salida = document.getElementById('editar-salida').value;
+      const tienda = document.getElementById('editar-tienda').value;
+
+      if (!entrada || !salida || !tienda) return alert('Todos los campos son obligatorios');
+      if (entrada >= salida) return alert('La hora de entrada debe ser anterior a la salida.');
+
+      try {
+        const res = await fetch(`${API_BASE}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ horaEntrada: entrada, horaSalida: salida, tienda })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error al actualizar jornada');
+        bootstrap.Modal.getInstance(document.getElementById('modalEditar')).hide();
+        alert('Jornada actualizada');
+        cargarJornada();
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
   </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
