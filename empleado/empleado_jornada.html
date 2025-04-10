@@ -139,7 +139,13 @@
             <td>${j.horaSalida || '-'}</td>
             <td>${calcularTiempo(j.horaEntrada, j.horaSalida)}</td>
             <td>${j.tienda || '-'}</td>
-          `;
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick='abrirModalEditar(${JSON.stringify(j)})'>
+                <i class="fas fa-edit"></i> Editar
+                </button>
+            </td>
+            `;
+
           tbody.appendChild(tr);
         });
       } catch (err) {
