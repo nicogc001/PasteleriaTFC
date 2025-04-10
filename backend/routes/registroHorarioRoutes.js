@@ -187,7 +187,7 @@ router.get('/mis-horarios', authMiddleware, async (req, res) => {
 });
 
 router.post('/manual', authMiddleware, async (req, res) => {
-    const { fecha, horaEntrada, horaSalida } = req.body;
+    const { fecha, horaEntrada, horaSalida, tienda } = req.body;
     const empleadoId = req.user.id;
   
     console.log('🔍 Registro manual recibido:', { empleadoId, fecha, horaEntrada, horaSalida });
