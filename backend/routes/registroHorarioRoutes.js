@@ -193,7 +193,7 @@ router.post('/manual', authMiddleware, async (req, res) => {
     console.log('🔍 Registro manual recibido:', { empleadoId, fecha, horaEntrada, horaSalida });
   
     try {
-      if (!fecha || !horaEntrada || !horaSalida) {
+      if (!fecha || !horaEntrada || !horaSalida || !tienda) {
         return res.status(400).json({ error: 'Faltan datos obligatorios.' });
       }
   
@@ -211,7 +211,7 @@ router.post('/manual', authMiddleware, async (req, res) => {
         fecha,
         horaEntrada,
         horaSalida,
-        tienda: null 
+        tienda
       });
   
       res.status(201).json({ message: 'Registro creado correctamente', registro: nuevo });

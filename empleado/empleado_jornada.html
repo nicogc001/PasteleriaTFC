@@ -37,6 +37,7 @@
             <th>Entrada</th>
             <th>Salida</th>
             <th>Tiempo trabajado</th>
+            <th>Tienda</th>
           </tr>
         </thead>
         <tbody id="tabla-jornada"></tbody>
@@ -63,7 +64,13 @@
             <label class="form-label">Hora entrada</label>
             <input type="time" id="manual-entrada" class="form-control mb-3" required>
             <label class="form-label">Hora salida</label>
-            <input type="time" id="manual-salida" class="form-control" required>
+            <input type="time" id="manual-salida" class="form-control mb-3" required>
+            <label class="form-label">Tienda</label>
+            <select id="manual-tienda" class="form-select" required>
+              <option value="">Seleccionar...</option>
+              <option value="Espacio Torrelodones">Espacio Torrelodones</option>
+              <option value="Torrelodones pueblo">Torrelodones pueblo</option>
+            </select>
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Guardar</button>
@@ -76,25 +83,6 @@
   <script>
     const token = localStorage.getItem('token');
     const API_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-horario';
-
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!token) {
-        alert("Debes iniciar sesión.");
-        return window.location.href = '../login.html';
-      }
-      cargarJornada();
-    });
-
-    function calcularTiempo(hEntrada, hSalida) {
-      if (!hEntrada || !hSalida) return '-';
-      const [h1, m1] = hEntrada.split(':').map(Number);
-      const [h2, m2] = hSalida.split(':').map(Number);
-      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
-      if (minutos < 0) return '-';
-      const horas = Math.floor(minutos / 60);
-      minutos %= 60;
-      return `${horas}h ${minutos}min`;
-    }
 
     async function cargarJornada() {
       try {
@@ -120,6 +108,7 @@
             <td>${j.horaEntrada || '-'}</td>
             <td>${j.horaSalida || '-'}</td>
             <td>${calcularTiempo(j.horaEntrada, j.horaSalida)}</td>
+            <td>${j.tienda || '-'}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -127,6 +116,17 @@
         console.error('Error cargando jornada:', err);
         alert('No se pudo cargar el historial de jornada.');
       }
+    }
+
+    function calcularTiempo(hEntrada, hSalida) {
+      if (!hEntrada || !hSalida) return '-';
+      const [h1, m1] = hEntrada.split(':').map(Number);
+      const [h2, m2] = hSalida.split(':').map(Number);
+      let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+      if (minutos < 0) return '-';
+      const horas = Math.floor(minutos / 60);
+      minutos %= 60;
+      return `${horas}h ${minutos}min`;
     }
 
     async function registrarEntrada() {
@@ -166,8 +166,9 @@
       const fecha = document.getElementById('manual-fecha').value;
       const entrada = document.getElementById('manual-entrada').value;
       const salida = document.getElementById('manual-salida').value;
+      const tienda = document.getElementById('manual-tienda').value;
 
-      if (!fecha || !entrada || !salida) {
+      if (!fecha || !entrada || !salida || !tienda) {
         return alert('Todos los campos son obligatorios.');
       }
 
@@ -182,7 +183,7 @@
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ fecha, horaEntrada: entrada, horaSalida: salida })
+          body: JSON.stringify({ fecha, horaEntrada: entrada, horaSalida: salida, tienda })
         });
 
         const data = await res.json();
@@ -201,9 +202,17 @@
       localStorage.clear();
       location.href = '../login.html';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!token) {
+        alert("Debes iniciar sesión.");
+        return window.location.href = '../login.html';
+      }
+      cargarJornada();
+    });
   </script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
