@@ -190,8 +190,15 @@ router.post('/manual', authMiddleware, async (req, res) => {
     const { fecha, horaEntrada, horaSalida } = req.body;
     const empleadoId = req.user.id;
   
+    console.log('🔍 Registro manual recibido:', { empleadoId, fecha, horaEntrada, horaSalida });
+  
     try {
+      if (!fecha || !horaEntrada || !horaSalida) {
+        return res.status(400).json({ error: 'Faltan datos obligatorios.' });
+      }
+  
       const existente = await RegistroHorario.findOne({ where: { empleadoId, fecha } });
+  
       if (existente) {
         existente.horaEntrada = horaEntrada;
         existente.horaSalida = horaSalida;
@@ -199,13 +206,21 @@ router.post('/manual', authMiddleware, async (req, res) => {
         return res.json({ message: 'Registro actualizado correctamente', registro: existente });
       }
   
-      const nuevo = await RegistroHorario.create({ empleadoId, fecha, horaEntrada, horaSalida });
+      const nuevo = await RegistroHorario.create({
+        empleadoId,
+        fecha,
+        horaEntrada,
+        horaSalida
+      });
+  
       res.status(201).json({ message: 'Registro creado correctamente', registro: nuevo });
+  
     } catch (error) {
-      console.error('❌ Error en registro manual:', error);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error('❌ Error en registro manual:', error.message);
+      res.status(500).json({ error: 'Error en el servidor', detalles: error.message });
     }
   });
+  
   
 
 module.exports = router;
