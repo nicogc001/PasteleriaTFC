@@ -82,7 +82,7 @@
                     window.location.href = '/administrador/dashboard.html';
                     break;
                   case 'empleado':
-                    window.location.href = '/empleado/dashboard.html';
+                    window.location.href = '/empleado/empleado_dashboard.html';
                     break;
                   case 'cliente':
                     window.location.href = '/cliente/pedidos.html';
@@ -93,8 +93,8 @@
                 }
       
               } catch (error) {
-                console.error('❌ Error:', error.message);
-                alert('❌ ' + error.message);
+                console.error('ERROR:', error.message);
+                alert('ERROR' + error.message);
               }
             });
           }
