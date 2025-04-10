@@ -297,5 +297,47 @@ router.get('/pendientes-aprobacion', authMiddleware, async (req, res) => {
   }
 });
 
+// 🔹 Obtener pedidos asignados al empleado autenticado (empleado_dashboard)
+router.get('/asignados', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.rol !== 'empleado') {
+      return res.status(403).json({ error: 'Acceso denegado: solo empleados' });
+    }
+
+    const pedidos = await Pedidos.findAll({
+      where: {
+        aprobadorId: req.user.id // o cualquier otra lógica de asignación
+      },
+      include: [
+        {
+          model: ProductosPedidos,
+          include: [Productos]
+        },
+        {
+          model: Usuario,
+          attributes: ['nombre']
+        }
+      ],
+      order: [['fecha', 'DESC']]
+    });
+
+    // Formato para el frontend
+    const resultado = pedidos.map(p => ({
+      id: p.id,
+      nombreCliente: p.Usuario?.nombre || 'Cliente',
+      productos: p.ProductosPedidos.map(pp => ({
+        nombre: pp.Producto?.nombre || 'Desconocido'
+      })),
+      estado: p.estado,
+      fechaEntrega: p.fechaEntrega
+    }));
+
+    res.json(resultado);
+  } catch (err) {
+    console.error('❌ Error al obtener pedidos asignados:', err);
+    res.status(500).json({ error: 'Error al obtener pedidos asignados' });
+  }
+});
+
 
 module.exports = router;
