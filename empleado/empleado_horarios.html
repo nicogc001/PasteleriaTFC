@@ -81,6 +81,8 @@
 
     function calcularDiferencia(horaEntrada, horaSalida) {
       if (!horaEntrada || !horaSalida) return '-';
+      horaEntrada = horaEntrada.slice(0, 5);
+      horaSalida = horaSalida.slice(0, 5);
       const [h1, m1] = horaEntrada.split(':').map(Number);
       const [h2, m2] = horaSalida.split(':').map(Number);
       let minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
