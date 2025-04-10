@@ -167,6 +167,14 @@
       const entrada = document.getElementById('manual-entrada').value;
       const salida = document.getElementById('manual-salida').value;
 
+      if (!fecha || !entrada || !salida) {
+        return alert('Todos los campos son obligatorios.');
+      }
+
+      if (entrada >= salida) {
+        return alert('La hora de entrada debe ser anterior a la hora de salida.');
+      }
+
       try {
         const res = await fetch(`${API_BASE}/manual`, {
           method: 'POST',
