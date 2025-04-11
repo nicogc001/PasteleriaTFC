@@ -80,6 +80,7 @@
               <th>Fecha</th>
               <th>Entrada</th>
               <th>Salida</th>
+              <th>Acciones</th> 
             </tr>
           </thead>
           <tbody id="tabla-horarios"></tbody>
@@ -113,6 +114,12 @@
           </div>
           <div class="modal-body">
             <input type="hidden" id="editar-id">
+  
+            <div class="mb-3">
+              <label for="editar-empleado" class="form-label">Empleado</label>
+              <select id="editar-empleado" class="form-select" required></select>
+            </div>
+  
             <div class="mb-3">
               <label for="editar-tienda" class="form-label">Tienda</label>
               <select id="editar-tienda" class="form-select">
@@ -120,15 +127,18 @@
                 <option value="Torrelodones pueblo">Torrelodones pueblo</option>
               </select>
             </div>
+  
             <div class="mb-3">
               <label for="editar-entrada" class="form-label">Entrada</label>
               <input type="time" id="editar-entrada" class="form-control" required>
             </div>
+  
             <div class="mb-3">
               <label for="editar-salida" class="form-label">Salida</label>
               <input type="time" id="editar-salida" class="form-control" required>
             </div>
           </div>
+  
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Guardar cambios</button>
           </div>
@@ -136,6 +146,7 @@
       </div>
     </div>
   </div>
+  
   
   <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
     <div class="text-center p-4">
@@ -200,15 +211,17 @@
         horarios.forEach(h => {
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${h.empleadoNombre}</td>
-            <td>${h.tienda}</td>
-            <td>${new Date(h.fecha).toLocaleDateString()}</td>
-            <td>${h.entrada}</td>
-            <td>${h.salida}</td>
-            <td>
-              <button class="btn btn-sm btn-warning" onclick='abrirEditarHorario(${JSON.stringify(h)})'>Editar</button>
-            </td>
-          `;
+          <td>${h.empleadoNombre}</td>
+          <td>${h.tienda}</td>
+          <td>${new Date(h.fecha).toLocaleDateString()}</td>
+          <td>${h.entrada}</td>
+          <td>${h.salida}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-1" onclick='abrirEditarHorario(${JSON.stringify(h)})'>Editar</button>
+            <button class="btn btn-sm btn-danger" onclick='eliminarHorario(${h.id})'>Eliminar</button>
+          </td>
+        `;
+
           tabla.appendChild(tr);
         });
       } catch (err) {
@@ -266,22 +279,28 @@
     }
 
     function abrirEditarHorario(horario) {
-          document.getElementById('editar-id').value = horario.id;
-          document.getElementById('editar-tienda').value = horario.tienda;
-          document.getElementById('editar-entrada').value = horario.entrada;
-          document.getElementById('editar-salida').value = horario.salida;
+      document.getElementById('editar-id').value = horario.id;
+      document.getElementById('editar-tienda').value = horario.tienda;
+      document.getElementById('editar-entrada').value = horario.entrada;
+      document.getElementById('editar-salida').value = horario.salida;
 
-          new mdb.Modal(document.getElementById('modalEditarHorario')).show();
-        }
+      cargarEmpleadosEnModal().then(() => {
+        document.getElementById('editar-empleado').value = horario.empleadoId;
+        new mdb.Modal(document.getElementById('modalEditarHorario')).show();
+      });
+    }
 
-        document.getElementById('formEditarHorario').addEventListener('submit', async (e) => {
+
+    document.getElementById('formEditarHorario').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('editar-id').value;
       const datos = {
+        usuarioId: document.getElementById('editar-empleado').value,
         tienda: document.getElementById('editar-tienda').value,
         entrada: document.getElementById('editar-entrada').value,
         salida: document.getElementById('editar-salida').value
       };
+
 
       try {
         const res = await fetch(`${API_HORARIOS}/${id}`, {
@@ -319,6 +338,27 @@
         cargarHorarios();
       } catch (err) {
         alert('❌ No se pudo eliminar el horario');
+      }
+    }
+
+    async function cargarEmpleadosEnModal() {
+      const select = document.getElementById('editar-empleado');
+      select.innerHTML = '';
+      try {
+        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario/all', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const empleados = await res.json();
+        empleados
+          .filter(u => u.rol === 'empleado')
+          .forEach(e => {
+            const opt = document.createElement('option');
+            opt.value = e.id;
+            opt.textContent = `${e.nombre} (${e.email})`;
+            select.appendChild(opt);
+          });
+      } catch (err) {
+        alert('❌ Error cargando empleados');
       }
     }
 
