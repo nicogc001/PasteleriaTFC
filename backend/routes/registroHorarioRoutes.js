@@ -106,43 +106,40 @@ router.put('/:id', authMiddleware, async (req, res) => {
       const { id } = req.params;
       const { horaEntrada, horaSalida, tienda, usuarioId } = req.body;
   
+      // Validar campos obligatorios
+      if (!horaEntrada || !horaSalida) {
+        return res.status(400).json({ error: 'Los campos horaEntrada y horaSalida son obligatorios.' });
+      }
+  
       const horario = await RegistroHorario.findByPk(id);
       if (!horario) {
         return res.status(404).json({ error: 'Horario no encontrado' });
       }
   
-      // Solo el propio empleado o el administrador puede editar
       const isAdmin = req.user.rol === 'administrador';
       if (!isAdmin && horario.empleadoId !== req.user.id) {
         return res.status(403).json({ error: 'No autorizado para modificar este horario' });
       }
   
+      // Siempre actualizar horas
       horario.horaEntrada = horaEntrada;
       horario.horaSalida = horaSalida;
   
+      // Solo si es admin puede cambiar la tienda o el empleado
       if (isAdmin) {
-        if (usuarioId) {
-          const usuario = await Usuario.findByPk(usuarioId);
-          if (!usuario) {
-            return res.status(400).json({ error: 'El empleado indicado no existe.' });
-          }
-          horario.empleadoId = usuarioId;
-        }
-      
-        if (tienda) {
-          horario.tienda = tienda;
-        }
+        if (tienda) horario.tienda = tienda;
+        if (usuarioId) horario.empleadoId = usuarioId;
       }
-      
   
       await horario.save();
   
       res.json({ message: 'Horario actualizado correctamente', horario });
     } catch (error) {
-      console.error('❌ Error al actualizar horario:', error);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error('❌ Error al actualizar horario:', error.message);
+      res.status(500).json({ error: 'Error en el servidor', detalle: error.message });
     }
   });
+  
   
 /*
 // ✅ Actualizar solo horas (empleado)
