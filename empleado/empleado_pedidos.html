@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Pedidos Asignados</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <link href="/styles/main.css" rel="stylesheet" />
+</head>
+<body>
+  <main class="container-fluid mt-5">
+    <div class="row">
+      <div class="col-md-3 col-lg-2">
+        <div class="bg-light p-3 rounded shadow-sm">
+          <h4 class="text-primary">Menú</h4>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a class="text-decoration-none" href="empleado_dashboard.html"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+            <li class="mb-2"><strong><i class="fas fa-box me-2"></i>Pedidos</strong></li>
+            <li><a class="text-decoration-none text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-md-9 col-lg-10">
+        <div id="calendar" class="mb-4"></div>
+        <h1 class="text-center mb-4">Mis Pedidos Asignados</h1>
+        <div class="table-responsive">
+          <table class="table table-striped table-hover">
+            <thead class="table-dark">
+              <tr>
+                <th>Fecha Entrega</th>
+                <th>Cliente</th>
+                <th>Productos</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-pedidos"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalDia" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Pedidos del día</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <ul id="lista-pedidos-dia" class="list-group"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalDetalles" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Detalle del pedido</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Cliente:</strong> <span id="detalle-cliente"></span></p>
+            <p><strong>Fecha entrega:</strong> <span id="detalle-fecha"></span></p>
+            <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
+            <ul id="detalle-productos" class="list-group list-group-flush mb-3"></ul>
+            <input type="hidden" id="pedido-id-detalle" />
+            <div class="text-end" id="btn-entregar-wrapper">
+              <button class="btn btn-success" id="btn-entregar" onclick="marcarComoEntregado()">Marcar como entregado</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    const token = localStorage.getItem('token');
+    const API_PEDIDOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/mis-pedidos';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!token) {
+        alert("Debes iniciar sesión.");
+        window.location.href = '../login.html';
+        return;
+      }
+      cargarPedidos();
+    });
+
+    async function cargarPedidos() {
+      try {
+        const res = await fetch(API_PEDIDOS, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error('Error al cargar pedidos');
+        const pedidos = await res.json();
+        const tbody = document.getElementById('tabla-pedidos');
+        tbody.innerHTML = '';
+
+        pedidos.forEach(p => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${p.fechaEntrega}</td>
+            <td>${p.cliente}</td>
+            <td>${p.productos.join(', ')}</td>
+            <td><span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span></td>
+          `;
+          tr.addEventListener('click', () => verDetalles(p));
+          tbody.appendChild(tr);
+        });
+
+        pintarCalendarioPedidos(pedidos);
+      } catch (err) {
+        console.error('❌ Error al cargar pedidos:', err);
+        alert('No se pudieron cargar los pedidos.');
+      }
+    }
+
+    function pintarCalendarioPedidos(pedidos) {
+      const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        height: 500,
+        events: pedidos.map(p => ({
+          title: `${p.cliente}: ${p.productos.join(', ')}`,
+          start: p.fechaEntrega,
+          color: p.estado === 'entregado' ? '#198754' : '#0d6efd',
+          extendedProps: p
+        })),
+        dateClick: info => mostrarPedidosDelDia(info.dateStr, pedidos)
+      });
+
+      calendar.render();
+    }
+
+    function mostrarPedidosDelDia(fecha, pedidos) {
+      const lista = document.getElementById('lista-pedidos-dia');
+      lista.innerHTML = '';
+      const delDia = pedidos.filter(p => p.fechaEntrega.startsWith(fecha));
+
+      if (delDia.length === 0) {
+        lista.innerHTML = '<li class="list-group-item">No tienes pedidos asignados</li>';
+      } else {
+        delDia.forEach(p => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item';
+          li.innerHTML = `
+            <strong>${p.cliente}</strong><br>
+            ${p.productos.join(', ')}<br>
+            Estado: <span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span>
+          `;
+          lista.appendChild(li);
+        });
+      }
+
+      new mdb.Modal(document.getElementById('modalDia')).show();
+    }
+
+    function verDetalles(p) {
+      document.getElementById('detalle-cliente').textContent = p.cliente;
+      document.getElementById('detalle-fecha').textContent = p.fechaEntrega;
+      document.getElementById('detalle-estado').textContent = p.estado;
+      document.getElementById('detalle-estado').className = `badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}`;
+
+      const ul = document.getElementById('detalle-productos');
+      ul.innerHTML = '';
+      p.productos.forEach(prod => {
+        const li = document.createElement('li');
+        li.textContent = prod;
+        ul.appendChild(li);
+      });
+
+      document.getElementById('pedido-id-detalle').value = p.id;
+      const btnWrapper = document.getElementById('btn-entregar-wrapper');
+      btnWrapper.style.display = p.estado === 'entregado' ? 'none' : 'block';
+
+      new mdb.Modal(document.getElementById('modalDetalles')).show();
+    }
+
+    async function marcarComoEntregado() {
+      const pedidoId = document.getElementById('pedido-id-detalle').value;
+      const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}`;
+
+      try {
+        const res = await fetch(API_ACTUALIZAR, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ estado: 'entregado' })
+        });
+
+        if (!res.ok) throw new Error('Error al marcar como entregado');
+        alert('✅ Pedido marcado como entregado');
+        const modal = mdb.Modal.getInstance(document.getElementById('modalDetalles'));
+        modal.hide();
+        cargarPedidos();
+      } catch (err) {
+        alert('❌ No se pudo actualizar el pedido');
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      location.href = '../login.html';
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+</body>
+</html>
