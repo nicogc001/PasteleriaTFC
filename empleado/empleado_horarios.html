@@ -112,6 +112,8 @@
             events: horarios.map(h => ({
             title: `${h.tienda || 'Tienda'}: ${h.horaEntrada || '?'} - ${h.horaSalida || '?'}`,
             start: h.fecha,
+            color: h.horaSalida ? '#198754' : '#ffc107', // verde si completado, amarillo si pendiente
+            textColor: '#fff',
             extendedProps: h
             })),
             dateClick: info => mostrarHorariosDelDia(info.dateStr, horarios)
@@ -119,7 +121,6 @@
 
         calendar.render();
     }
-
 
     function mostrarHorariosDelDia(fecha, horarios) {
         const lista = document.getElementById('lista-horarios-dia');
