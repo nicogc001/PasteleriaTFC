@@ -101,32 +101,50 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // ✅ Actualizar horario completo (admin) — incluye tienda
-router.put('/admin/:id', authMiddleware, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { tienda, entrada, salida } = req.body;
-
-    if (!tienda || !entrada || !salida) {
-      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+router.put('/:id', authMiddleware, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { horaEntrada, horaSalida, tienda, usuarioId } = req.body;
+  
+      const horario = await RegistroHorario.findByPk(id);
+      if (!horario) {
+        return res.status(404).json({ error: 'Horario no encontrado' });
+      }
+  
+      // Solo el propio empleado o el administrador puede editar
+      const isAdmin = req.user.rol === 'administrador';
+      if (!isAdmin && horario.empleadoId !== req.user.id) {
+        return res.status(403).json({ error: 'No autorizado para modificar este horario' });
+      }
+  
+      horario.horaEntrada = horaEntrada;
+      horario.horaSalida = horaSalida;
+  
+      if (isAdmin) {
+        if (usuarioId) {
+          const usuario = await Usuario.findByPk(usuarioId);
+          if (!usuario) {
+            return res.status(400).json({ error: 'El empleado indicado no existe.' });
+          }
+          horario.empleadoId = usuarioId;
+        }
+      
+        if (tienda) {
+          horario.tienda = tienda;
+        }
+      }
+      
+  
+      await horario.save();
+  
+      res.json({ message: 'Horario actualizado correctamente', horario });
+    } catch (error) {
+      console.error('❌ Error al actualizar horario:', error);
+      res.status(500).json({ error: 'Error en el servidor' });
     }
-
-    const horario = await RegistroHorario.findByPk(id);
-    if (!horario) {
-      return res.status(404).json({ error: 'Horario no encontrado' });
-    }
-
-    horario.tienda = tienda;
-    horario.horaEntrada = entrada;
-    horario.horaSalida = salida;
-    await horario.save();
-
-    res.json({ message: 'Horario actualizado correctamente', horario });
-  } catch (error) {
-    console.error('❌ Error al actualizar horario (admin):', error);
-    res.status(500).json({ error: 'Error en el servidor' });
-  }
-});
-
+  });
+  
+/*
 // ✅ Actualizar solo horas (empleado)
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
@@ -151,7 +169,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     console.error('❌ Error al actualizar horario (empleado):', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
-});
+});*/
 
 // ✅ Eliminar horario (admin)
 router.delete('/:id', authMiddleware, async (req, res) => {
