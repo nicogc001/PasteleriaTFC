@@ -339,5 +339,28 @@ router.get('/asignados', authMiddleware, async (req, res) => {
   }
 });
 
+// Marcar pedido como entregado desde el frontend
+async function marcarComoEntregado(id) {
+  try {
+    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${id}/estado`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ estado: 'entregado' })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error al actualizar el pedido');
+
+    alert('✅ Pedido marcado como entregado');
+    cargarPedidos(); // recarga la tabla y el calendario
+  } catch (err) {
+    console.error('❌ Error al marcar como entregado:', err);
+    alert('Error al actualizar el estado del pedido');
+  }
+}
+
 
 module.exports = router;
