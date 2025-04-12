@@ -327,9 +327,11 @@ router.get('/mis-pedidos', authMiddleware, async (req, res) => {
 
 // 🔹 Obtener todos los pedidos (solo visualización)
 router.get('/todos', authMiddleware, async (req, res) => {
-  console.log('👤 Usuario autenticado en /todos:', req.user);
   try {
+    console.log('🧑 Usuario autenticado:', req.user); // <-- para verificar rol
+
     if (req.user.rol !== 'empleado') {
+      console.log('❌ No tiene rol de empleado');
       return res.status(403).json({ error: 'Acceso denegado: solo empleados' });
     }
 
@@ -341,22 +343,34 @@ router.get('/todos', authMiddleware, async (req, res) => {
       order: [['fechaEntrega', 'ASC']]
     });
 
-    const resultado = pedidos.map(p => ({
-      id: p.id,
-      nombreCliente: p.Usuario?.nombre || 'Cliente',
-      productos: p.ProductosPedidos.map(pp => ({
-        nombre: pp.Producto?.nombre || 'Desconocido'
-      })),
-      estado: p.estado,
-      fechaEntrega: p.fechaEntrega
-    }));
+    console.log('✅ Pedidos encontrados:', pedidos.length);
+
+    const resultado = pedidos.map(p => {
+      try {
+        return {
+          id: p.id,
+          nombreCliente: p.Usuario?.nombre || 'Cliente',
+          productos: Array.isArray(p.ProductosPedidos)
+            ? p.ProductosPedidos.map(pp => ({
+                nombre: pp.Producto?.nombre || 'Desconocido'
+              }))
+            : [],
+          estado: p.estado,
+          fechaEntrega: p.fechaEntrega
+        };
+      } catch (mapError) {
+        console.error('❌ Error al mapear pedido:', p.id, mapError.message);
+        return null;
+      }
+    }).filter(Boolean); // elimina los null
 
     res.json(resultado);
   } catch (err) {
-    console.error('❌ Error al obtener todos los pedidos:', err);
-    res.status(500).json({ error: 'Error al obtener pedidos' });
+    console.error('❌ Error general al obtener todos los pedidos:', err.message);
+    res.status(500).json({ error: 'Error al obtener pedidos', detalle: err.message });
   }
 });
+
 
 
 module.exports = router;
