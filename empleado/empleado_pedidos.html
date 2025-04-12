@@ -57,27 +57,6 @@
       </div>
     </div>
 
-    <div class="modal fade" id="modalDetalles" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Detalle del pedido</h5>
-            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <p><strong>Cliente:</strong> <span id="detalle-cliente"></span></p>
-            <p><strong>Fecha entrega:</strong> <span id="detalle-fecha"></span></p>
-            <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
-            <ul id="detalle-productos" class="list-group list-group-flush mb-3"></ul>
-            <input type="hidden" id="pedido-id-detalle" />
-            <div class="text-end" id="btn-entregar-wrapper">
-              <button class="btn btn-success" id="btn-entregar" onclick="marcarComoEntregado()">Marcar como entregado</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="modal fade" id="modalDetalle" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -86,9 +65,16 @@
               <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <ul id="detalle-pedido-lista" class="list-group"></ul>
+              <p><strong>Cliente:</strong> <span id="detalle-cliente"></span></p>
+              <p><strong>Fecha entrega:</strong> <span id="detalle-fecha"></span></p>
+              <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
+              <ul id="detalle-pedido-lista" class="list-group list-group-flush mb-3"></ul>
               <div class="mt-3">
                 <strong>Total:</strong> <span id="detalle-total"></span>
+              </div>
+              <input type="hidden" id="pedido-id-detalle" />
+              <div class="text-end" id="btn-entregar-wrapper">
+                <button class="btn btn-success" id="btn-entregar" onclick="marcarComoEntregado()">Marcar como entregado</button>
               </div>
             </div>
           </div>
@@ -251,7 +237,7 @@
 
         if (!res.ok) throw new Error('Error al marcar como entregado');
         alert('✅ Pedido marcado como entregado');
-        const modal = mdb.Modal.getInstance(document.getElementById('modalDetalles'));
+        const modal = mdb.Modal.getInstance(document.getElementById('modalDetalle'));
         modal.hide();
         cargarPedidosAsignados();
       } catch (err) {
@@ -264,9 +250,14 @@
             const pedido = pedidosAsignadosCache.find(p => p.id === id);
             if (!pedido) return alert('Pedido no encontrado');
 
+            document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
+            document.getElementById('detalle-fecha').textContent = pedido.fechaEntrega;
+            document.getElementById('detalle-estado').innerHTML = `<span class="badge ${pedido.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${pedido.estado}</span>`;
+
             const lista = document.getElementById('detalle-pedido-lista');
             lista.innerHTML = '';
 
+            if (Array.isArray(pedido.productos)) {
             pedido.productos.forEach(p => {
                 const li = document.createElement('li');
                 li.className = 'list-group-item';
@@ -276,8 +267,13 @@
                 `;
                 lista.appendChild(li);
             });
+            }
 
             document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
+            document.getElementById('pedido-id-detalle').value = pedido.id;
+
+            const btnWrapper = document.getElementById('btn-entregar-wrapper');
+            btnWrapper.style.display = pedido.estado === 'entregado' ? 'none' : 'block';
 
             new mdb.Modal(document.getElementById('modalDetalle')).show();
         } catch (err) {
@@ -301,11 +297,13 @@
 
             if (!res.ok) throw new Error('Error al marcar como entregado');
             alert('✅ Pedido marcado como entregado');
-            cargarPedidos();
+            await cargarPedidosAsignados(); // <-- corregido
         } catch (err) {
+            console.error('❌', err);
             alert('❌ No se pudo actualizar el pedido');
         }
     }
+
 
 
     function logout() {
