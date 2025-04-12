@@ -322,15 +322,26 @@ router.get('/asignados', authMiddleware, async (req, res) => {
     });
 
     // Formato para el frontend
-    const resultado = pedidos.map(p => ({
-      id: p.id,
-      nombreCliente: p.Usuario?.nombre || 'Cliente',
-      productos: p.ProductosPedidos.map(pp => ({
-        nombre: pp.Producto?.nombre || 'Desconocido'
-      })),
-      estado: p.estado,
-      fechaEntrega: p.fechaEntrega
-    }));
+    const resultado = pedidos.map(p => {
+      const productos = p.ProductosPedidos.map(pp => ({
+        nombre: pp.Producto?.nombre || 'Desconocido',
+        cantidad: pp.cantidad,
+        precio: pp.Producto?.precio || 0,
+        subtotal: pp.cantidad * (pp.Producto?.precio || 0)
+      }));
+    
+      const total = productos.reduce((sum, item) => sum + item.subtotal, 0);
+    
+      return {
+        id: p.id,
+        nombreCliente: p.Usuario?.nombre || 'Cliente',
+        productos, // con nombre, cantidad, precio y subtotal
+        estado: p.estado,
+        fechaEntrega: p.fechaEntrega,
+        total
+      };
+    });
+    
 
     res.json(resultado);
   } catch (err) {
