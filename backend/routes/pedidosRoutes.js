@@ -327,6 +327,7 @@ router.get('/mis-pedidos', authMiddleware, async (req, res) => {
 
 // 🔹 Obtener todos los pedidos (solo visualización)
 router.get('/todos', authMiddleware, async (req, res) => {
+  console.log('👤 Usuario autenticado en /todos:', req.user);
   try {
     if (req.user.rol !== 'empleado') {
       return res.status(403).json({ error: 'Acceso denegado: solo empleados' });
