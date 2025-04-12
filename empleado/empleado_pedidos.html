@@ -101,57 +101,74 @@
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
   <script>
     const token = localStorage.getItem('token');
-    const API_PEDIDOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/asignados';
-    let pedidosCache = [];
+    const API_PEDIDOS_ASIGNADOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/asignados';
+    const API_PEDIDOS_TODOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/todos';
+
+    let pedidosAsignadosCache = [];
+    let pedidosTodosCache = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
-      if (!token) {
+    if (!token) {
         alert("Debes iniciar sesión.");
-        window.location.href = '../login.html';
-        return;
-      }
-      cargarPedidos();
+        return window.location.href = '../login.html';
+    }
+
+    await cargarPedidosAsignados();
+    await cargarPedidosTodos(); // para el calendario
     });
 
-    async function cargarPedidos() {
+
+    async function cargarPedidosAsignados() {
         try {
-            const res = await fetch(API_PEDIDOS, {
+            const res = await fetch(API_PEDIDOS_ASIGNADOS, {
             headers: { Authorization: `Bearer ${token}` }
             });
+            if (!res.ok) throw new Error('Error al obtener pedidos asignados');
 
-            if (!res.ok) throw new Error('Error al cargar pedidos');
             const pedidos = await res.json();
-            pedidosCache = pedidos;
+            pedidosAsignadosCache = pedidos;
 
             const tbody = document.getElementById('tabla-pedidos');
             tbody.innerHTML = '';
 
             pedidos.forEach(p => {
             const tr = document.createElement('tr');
-
-            const botonDetalle = `<button class="btn btn-sm btn-info me-2" onclick="verDetallePedido(${p.id})">Ver detalle</button>`;
-            const botonEntregar = p.estado !== 'entregado'
-                ? `<button class="btn btn-sm btn-success" onclick="marcarComoEntregadoDesdeTabla(${p.id})">Entregar</button>`
-                : '';
+            const btnDetalle = `<button class="btn btn-sm btn-info me-2" onclick="verDetallePedido(${p.id})">Ver detalle</button>`;
+            const btnEntregar = p.estado !== 'entregado'
+                ? `<button class="btn btn-sm btn-success" onclick="marcarComoEntregadoDesdeTabla(${p.id})">Entregar</button>` : '';
 
             tr.innerHTML = `
                 <td>${p.fechaEntrega}</td>
                 <td>${p.nombreCliente}</td>
                 <td>${p.productos.map(prod => prod.nombre).join(', ')}</td>
                 <td><span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span></td>
-                <td>${botonDetalle}${botonEntregar}</td>
+                <td>${btnDetalle}${btnEntregar}</td>
             `;
             tbody.appendChild(tr);
             });
-
-            pintarCalendarioPedidos(pedidos);
       } catch (err) {
-        console.error('❌ Error al cargar pedidos:', err);
-        const texto = await res.text?.(); // si es 404 o 500 puedes ver el mensaje del servidor
-        console.log('Respuesta del servidor:', texto);
-        alert('No se pudieron cargar los pedidos.');
+            console.error('❌ Error al cargar pedidos:', err);
+            const texto = await res.text?.(); // si es 404 o 500 puedes ver el mensaje del servidor
+            console.log('Respuesta del servidor:', texto);
+            alert('No se pudieron cargar los pedidos.');
         }
     }
+
+    async function cargarPedidosTodos() {
+        try {
+            const res = await fetch(API_PEDIDOS_TODOS, {
+            headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Error al obtener pedidos para el calendario');
+
+            const pedidos = await res.json();
+            pedidosTodosCache = pedidos;
+            pintarCalendarioPedidos(pedidosTodosCache);
+        } catch (err) {
+            console.error('❌ Error al cargar pedidos para calendario:', err);
+        }
+    }
+
 
     function pintarCalendarioPedidos(pedidos) {
         const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
@@ -177,7 +194,7 @@
         const delDia = pedidos.filter(p => p.fechaEntrega.startsWith(fecha));
 
         if (delDia.length === 0) {
-            lista.innerHTML = '<li class="list-group-item">No tienes pedidos asignados</li>';
+            lista.innerHTML = '<li class="list-group-item">No hay pedidos para este día</li>';
         } else {
             delDia.forEach(p => {
             const li = document.createElement('li');
@@ -185,7 +202,8 @@
             li.innerHTML = `
                 <strong>${p.nombreCliente}</strong><br>
                 ${p.productos.map(prod => prod.nombre).join(', ')}<br>
-                Estado: <span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span>
+                Estado: <span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span><br>
+                <button class="btn btn-sm btn-info mt-2" onclick="verDetallePedido(${p.id})">Ver detalle</button>
             `;
             lista.appendChild(li);
             });
@@ -193,6 +211,7 @@
 
         new mdb.Modal(document.getElementById('modalDia')).show();
     }
+
 
 /*
     function verDetalles(p) {
@@ -234,7 +253,7 @@
         alert('✅ Pedido marcado como entregado');
         const modal = mdb.Modal.getInstance(document.getElementById('modalDetalles'));
         modal.hide();
-        cargarPedidos();
+        cargarPedidosAsignados();
       } catch (err) {
         alert('❌ No se pudo actualizar el pedido');
       }
@@ -242,7 +261,7 @@
 
     async function verDetallePedido(id) {
         try {
-            const pedido = pedidosCache.find(p => p.id === id);
+            const pedido = pedidosAsignadosCache.find(p => p.id === id);
             if (!pedido) return alert('Pedido no encontrado');
 
             const lista = document.getElementById('detalle-pedido-lista');
