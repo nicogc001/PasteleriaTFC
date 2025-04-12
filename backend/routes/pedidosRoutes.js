@@ -325,4 +325,37 @@ router.get('/mis-pedidos', authMiddleware, async (req, res) => {
   }
 });
 
+// 🔹 Obtener todos los pedidos (solo visualización)
+router.get('/todos', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.rol !== 'empleado') {
+      return res.status(403).json({ error: 'Acceso denegado: solo empleados' });
+    }
+
+    const pedidos = await Pedidos.findAll({
+      include: [
+        { model: ProductosPedidos, include: [Productos] },
+        { model: Usuario, attributes: ['nombre'] }
+      ],
+      order: [['fechaEntrega', 'ASC']]
+    });
+
+    const resultado = pedidos.map(p => ({
+      id: p.id,
+      nombreCliente: p.Usuario?.nombre || 'Cliente',
+      productos: p.ProductosPedidos.map(pp => ({
+        nombre: pp.Producto?.nombre || 'Desconocido'
+      })),
+      estado: p.estado,
+      fechaEntrega: p.fechaEntrega
+    }));
+
+    res.json(resultado);
+  } catch (err) {
+    console.error('❌ Error al obtener todos los pedidos:', err);
+    res.status(500).json({ error: 'Error al obtener pedidos' });
+  }
+});
+
+
 module.exports = router;
