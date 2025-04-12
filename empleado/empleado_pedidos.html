@@ -140,39 +140,55 @@
         }
     }
 
+  
     async function cargarPedidosTodos() {
         try {
             const res = await fetch(API_PEDIDOS_TODOS, {
             headers: { Authorization: `Bearer ${token}` }
             });
+
             if (!res.ok) throw new Error('Error al obtener pedidos para el calendario');
 
             const pedidos = await res.json();
-            pedidosTodosCache = pedidos;
+            console.log('📦 Pedidos recibidos para calendario:', pedidos);
+
+            pedidosTodosCache = Array.isArray(pedidos) ? pedidos : [];
             pintarCalendarioPedidos(pedidosTodosCache);
         } catch (err) {
             console.error('❌ Error al cargar pedidos para calendario:', err);
+            pintarCalendarioPedidos([]); // aún así intenta mostrar calendario
         }
     }
 
-
     function pintarCalendarioPedidos(pedidos) {
-        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            height: 500,
-            events: pedidos.map(p => ({
+        const eventos = pedidos
+            .filter(p => p.fechaEntrega) // Asegura que existe la fecha
+            .map(p => ({
             title: `${p.nombreCliente}: ${p.productos.map(prod => prod.nombre).join(', ')}`,
             start: p.fechaEntrega,
             color: p.estado === 'entregado' ? '#198754' : '#0d6efd',
             extendedProps: p
-            })),
+            }));
+
+        // Añadir un evento de prueba si la lista está vacía
+        if (eventos.length === 0) {
+            eventos.push({
+            title: '🎯 Evento de prueba',
+            start: new Date().toISOString().split('T')[0],
+            color: '#ffc107'
+            });
+        }
+
+        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            height: 500,
+            events: eventos,
             dateClick: info => mostrarPedidosDelDia(info.dateStr, pedidos)
         });
 
         calendar.render();
     }
-
 
     function mostrarPedidosDelDia(fecha, pedidos) {
         const lista = document.getElementById('lista-pedidos-dia');
