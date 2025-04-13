@@ -8,54 +8,68 @@ const enviarFacturaEmail = require('../utils/enviarFacturaEmail');
 const buscarEmpleadoDisponible = require('../utils/buscarEmpleadoDisponible');
 const { Op } = require('sequelize');
 
-// 🔹 Obtener pedidos asignados al empleado autenticado
+// Obtener pedidos asignados al empleado autenticado
+const RegistroHorarios = require('../models/RegistroHorarios'); // asegúrate de importarlo
+
 router.get('/asignados', authMiddleware, async (req, res) => {
   try {
     if (req.user.rol !== 'empleado') {
       return res.status(403).json({ error: 'Acceso denegado: solo empleados' });
     }
 
-    const pedidos = await Pedidos.findAll({
+    const hoy = new Date();
+    const dentroDe7Dias = new Date();
+    dentroDe7Dias.setDate(hoy.getDate() + 7);
+
+    // Convertir a string formato YYYY-MM-DD
+    const desde = hoy.toISOString().split('T')[0];
+    const hasta = dentroDe7Dias.toISOString().split('T')[0];
+
+    // Obtener horarios del empleado entre hoy y 7 días después
+    const horarios = await RegistroHorarios.findAll({
       where: {
-        aprobadorId: req.user.id
-      },
-      include: [
-        {
-          model: ProductosPedidos,
-          include: [Productos]
-        },
-        {
-          model: Usuario,
-          attributes: ['nombre']
-        }
-      ],
-      order: [['fecha', 'DESC']]
+        empleadoId: req.user.id,
+        fecha: { [Op.between]: [desde, hasta] }
+      }
     });
 
-    const resultado = pedidos.map(p => {
-      const productos = p.ProductosPedidos.map(pp => ({
+    const fechasTiendas = horarios.map(h => ({ fecha: h.fecha, tienda: h.tienda }));
+
+    if (!fechasTiendas.length) return res.json([]);
+
+    // Obtener todos los pedidos cuya fecha y tienda coincidan con alguna asignación
+    const pedidos = await Pedidos.findAll({
+      where: {
+        [Op.or]: fechasTiendas.map(({ fecha, tienda }) => ({
+          fechaEntrega: fecha,
+          tienda: tienda
+        }))
+      },
+      include: [
+        { model: ProductosPedidos, include: [Productos] },
+        { model: Usuario, attributes: ['nombre'] }
+      ],
+      order: [['fechaEntrega', 'ASC']]
+    });
+
+    const resultado = pedidos.map(p => ({
+      id: p.id,
+      nombreCliente: p.Usuario?.nombre || 'Cliente',
+      productos: p.ProductosPedidos.map(pp => ({
         nombre: pp.Producto?.nombre || 'Desconocido',
         cantidad: pp.cantidad,
         precio: pp.Producto?.precio || 0,
         subtotal: pp.cantidad * (pp.Producto?.precio || 0)
-      }));
-
-      const total = productos.reduce((sum, item) => sum + item.subtotal, 0);
-
-      return {
-        id: p.id,
-        nombreCliente: p.Usuario?.nombre || 'Cliente',
-        productos,
-        estado: p.estado,
-        fechaEntrega: p.fechaEntrega,
-        total
-      };
-    });
+      })),
+      estado: p.estado,
+      fechaEntrega: p.fechaEntrega,
+      total: p.total
+    }));
 
     res.json(resultado);
   } catch (err) {
-    console.error('❌ Error al obtener pedidos asignados:', err);
-    res.status(500).json({ error: 'Error al obtener pedidos asignados' });
+    console.error('❌ Error en /asignados:', err);
+    res.status(500).json({ error: 'Error al obtener pedidos asignados por tienda y semana' });
   }
 });
 
@@ -104,6 +118,7 @@ router.get('/', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error al obtener pedidos' });
   }
 });
+
 
 // 🔹 Vista de pedidos para el calendario del empleado (todos los pedidos)
 router.get('/empleado-vista', authMiddleware, async (req, res) => {
