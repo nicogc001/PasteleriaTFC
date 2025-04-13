@@ -273,7 +273,12 @@
 
     async function verDetallePedido(id) {
         try {
-            const pedido = pedidosAsignadosCache.find(p => p.id === id);
+            let pedido = pedidosAsignadosCache.find(p => p.id === id);
+
+            if (!pedido) {
+            pedido = pedidosTodosCache.find(p => p.id === id);
+            }
+
             if (!pedido) return alert('Pedido no encontrado');
 
             document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
@@ -289,13 +294,13 @@
                 li.className = 'list-group-item';
                 li.innerHTML = `
                 <strong>${p.nombre}</strong><br>
-                Cantidad: ${p.cantidad} × ${p.precio.toFixed(2)} € = <strong>${p.subtotal.toFixed(2)} €</strong>
+                ${p.cantidad ? `Cantidad: ${p.cantidad} × ${p.precio.toFixed(2)} € = <strong>${p.subtotal?.toFixed(2) ?? '-'} €</strong>` : ''}
                 `;
                 lista.appendChild(li);
             });
             }
 
-            document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
+            document.getElementById('detalle-total').textContent = `${pedido.total?.toFixed(2) ?? '-'} €`;
             document.getElementById('pedido-id-detalle').value = pedido.id;
 
             const btnWrapper = document.getElementById('btn-entregar-wrapper');
@@ -307,6 +312,7 @@
             alert('Error al obtener el detalle del pedido');
         }
     }
+
 
     async function marcarComoEntregadoDesdeTabla(pedidoId) {
         const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}`;
