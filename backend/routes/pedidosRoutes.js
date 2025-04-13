@@ -93,17 +93,34 @@ router.get('/', authMiddleware, async (req, res) => {
       where: esCliente ? { usuarioId: req.user.id } : {},
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        ...(esCliente ? [] : [{ model: Usuario, attributes: ['id', 'nombre', 'email'] }])
+        { model: Usuario, attributes: ['nombre'] }
       ],
       order: [['fecha', 'DESC']]
     });
 
-    res.json(pedidos);
+    const resultado = pedidos.map(p => ({
+      id: p.id,
+      nombreCliente: p.Usuario?.nombre || 'Cliente',
+      productos: Array.isArray(p.ProductosPedidos)
+        ? p.ProductosPedidos.map(pp => ({
+            nombre: pp.Producto?.nombre || 'Desconocido',
+            cantidad: pp.cantidad,
+            precio: pp.Producto?.precio || 0,
+            subtotal: pp.cantidad * (pp.Producto?.precio || 0)
+          }))
+        : [],
+      estado: p.estado,
+      fechaEntrega: p.fechaEntrega,
+      total: p.total
+    }));
+
+    res.json(resultado);
   } catch (err) {
     console.error('❌ Error al obtener pedidos:', err);
     res.status(500).json({ error: 'Error al obtener pedidos' });
   }
 });
+
 
 // 🔹 Crear un nuevo pedido
 router.post('/', authMiddleware, async (req, res) => {

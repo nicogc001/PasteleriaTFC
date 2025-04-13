@@ -168,7 +168,7 @@
         const eventos = pedidos
             .filter(p => p.fechaEntrega) // Asegura que existe la fecha
             .map(p => ({
-            title: `${p.nombreCliente}: ${p.productos.map(prod => prod.nombre).join(', ')}`,
+            title: `${p.nombreCliente}: ${(Array.isArray(p.productos) ? p.productos : []).map(prod => prod.nombre).join(', ')}`,
             start: p.fechaEntrega,
             color: p.estado === 'entregado' ? '#198754' : '#0d6efd',
             extendedProps: p
