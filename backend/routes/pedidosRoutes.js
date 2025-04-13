@@ -93,9 +93,31 @@ router.get('/', authMiddleware, async (req, res) => {
       where: esCliente ? { usuarioId: req.user.id } : {},
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        { model: Usuario, attributes: ['nombre'] }
+        ...(esCliente ? [] : [{ model: Usuario, attributes: ['id', 'nombre', 'email'] }])
       ],
       order: [['fecha', 'DESC']]
+    });
+
+    res.json(pedidos);
+  } catch (err) {
+    console.error('❌ Error al obtener pedidos:', err);
+    res.status(500).json({ error: 'Error al obtener pedidos' });
+  }
+});
+
+// 🔹 Vista de pedidos para el calendario del empleado (todos los pedidos)
+router.get('/empleado-vista', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.rol !== 'empleado') {
+      return res.status(403).json({ error: 'Acceso denegado: solo empleados' });
+    }
+
+    const pedidos = await Pedidos.findAll({
+      include: [
+        { model: ProductosPedidos, include: [Productos] },
+        { model: Usuario, attributes: ['nombre'] }
+      ],
+      order: [['fechaEntrega', 'ASC']]
     });
 
     const resultado = pedidos.map(p => ({
@@ -103,21 +125,17 @@ router.get('/', authMiddleware, async (req, res) => {
       nombreCliente: p.Usuario?.nombre || 'Cliente',
       productos: Array.isArray(p.ProductosPedidos)
         ? p.ProductosPedidos.map(pp => ({
-            nombre: pp.Producto?.nombre || 'Desconocido',
-            cantidad: pp.cantidad,
-            precio: pp.Producto?.precio || 0,
-            subtotal: pp.cantidad * (pp.Producto?.precio || 0)
+            nombre: pp?.Producto?.nombre || 'Desconocido'
           }))
         : [],
-      estado: p.estado,
-      fechaEntrega: p.fechaEntrega,
-      total: p.total
+      estado: p.estado || 'desconocido',
+      fechaEntrega: p.fechaEntrega || null
     }));
 
     res.json(resultado);
   } catch (err) {
-    console.error('❌ Error al obtener pedidos:', err);
-    res.status(500).json({ error: 'Error al obtener pedidos' });
+    console.error('❌ Error en /empleado-vista:', err);
+    res.status(500).json({ error: 'Error al obtener pedidos para el empleado' });
   }
 });
 
