@@ -88,7 +88,7 @@
   <script>
     const token = localStorage.getItem('token');
     const API_PEDIDOS_ASIGNADOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/asignados';
-    const API_PEDIDOS_TODOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/todos';
+    const API_PEDIDOS_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
 
     let pedidosAsignadosCache = [];
     let pedidosTodosCache = [];
@@ -143,7 +143,7 @@
   
     async function cargarPedidosTodos() {
         try {
-            const res = await fetch(API_PEDIDOS_TODOS, {
+            const res = await fetch(API_PEDIDOS_BASE, {
             headers: { Authorization: `Bearer ${token}` }
             });
 
