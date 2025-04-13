@@ -147,18 +147,28 @@
             headers: { Authorization: `Bearer ${token}` }
             });
 
-            if (!res.ok) throw new Error('Error al obtener pedidos para el calendario');
+            if (!res.ok) {
+            const msg = await res.text();
+            throw new Error(`Error al obtener pedidos para el calendario: ${msg}`);
+            }
 
-            const pedidos = await res.json();
-            console.log('📦 Pedidos recibidos para calendario:', pedidos);
+            const respuesta = await res.json();
 
-            pedidosTodosCache = Array.isArray(pedidos) ? pedidos : [];
-            pintarCalendarioPedidos(pedidosTodosCache);
+            const pedidos = Array.isArray(respuesta.pedidos) ? respuesta.pedidos : [];
+
+            if (respuesta.errores?.length > 0) {
+            console.warn('⚠️ Algunos pedidos no se pudieron procesar:', respuesta.errores);
+            }
+
+            pedidosTodosCache = pedidos;
+            pintarCalendarioPedidos(pedidos);
         } catch (err) {
             console.error('❌ Error al cargar pedidos para calendario:', err);
-            pintarCalendarioPedidos([]); // aún así intenta mostrar calendario
+            alert(err.message);
+            pintarCalendarioPedidos([]);
         }
     }
+
 
     function pintarCalendarioPedidos(pedidos) {
         const eventos = pedidos
