@@ -152,9 +152,7 @@
             throw new Error(`Error al obtener pedidos para el calendario: ${msg}`);
             }
 
-            const respuesta = await res.json();
-
-            const pedidos = Array.isArray(respuesta.pedidos) ? respuesta.pedidos : [];
+            const pedidos = await res.json(); 
 
             if (respuesta.errores?.length > 0) {
             console.warn('⚠️ Algunos pedidos no se pudieron procesar:', respuesta.errores);

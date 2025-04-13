@@ -368,6 +368,7 @@ router.get('/todos', authMiddleware, async (req, res) => {
     // ✅ Devuelve como objeto con clave `pedidos`, para que el frontend lo lea bien
     res.json({ pedidos: resultado });
 
+
   } catch (err) {
     console.error('❌ Error general al obtener pedidos:', err.message);
     res.status(500).json({ error: 'Error al obtener pedidos', detalle: err.message });
