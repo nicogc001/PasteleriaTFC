@@ -343,7 +343,8 @@ router.get('/todos', authMiddleware, async (req, res) => {
       order: [['fechaEntrega', 'ASC']]
     });
 
-    console.log('📦 Pedidos recuperados:', pedidos.length);
+    console.log('📦 Total pedidos encontrados:', pedidos.length);
+    console.log('🧾 IDs:', pedidos.map(p => p.id)); // ✔️ Confirmar IDs válidos
 
     const resultado = pedidos.map(p => {
       try {
@@ -355,15 +356,16 @@ router.get('/todos', authMiddleware, async (req, res) => {
                 nombre: pp?.Producto?.nombre || 'Desconocido'
               }))
             : [],
-          estado: p.estado,
-          fechaEntrega: p.fechaEntrega
+          estado: p.estado || 'desconocido',
+          fechaEntrega: p.fechaEntrega || null
         };
       } catch (err) {
         console.error(`❌ Error al procesar pedido ID ${p.id}:`, err.message);
         return null;
       }
-    }).filter(Boolean); // Filtra los errores
+    }).filter(Boolean); // elimina elementos null
 
+    // ✅ Devuelve como objeto con clave `pedidos`, para que el frontend lo lea bien
     res.json({ pedidos: resultado });
 
   } catch (err) {
