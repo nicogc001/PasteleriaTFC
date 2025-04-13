@@ -364,14 +364,12 @@ router.get('/todos', authMiddleware, async (req, res) => {
       }
     }).filter(Boolean); // Filtra los errores
 
-    res.json(resultado);
+    res.json({ pedidos: resultado });
+
   } catch (err) {
     console.error('❌ Error general al obtener pedidos:', err.message);
     res.status(500).json({ error: 'Error al obtener pedidos', detalle: err.message });
   }
 });
-
-
-
 
 module.exports = router;
