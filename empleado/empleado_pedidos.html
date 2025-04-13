@@ -110,26 +110,26 @@
 
 
     async function cargarPedidosAsignados() {
-  try {
-    const res = await fetch(API_PEDIDOS_ASIGNADOS, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+        try {
+            const res = await fetch(API_PEDIDOS_ASIGNADOS, {
+            headers: { Authorization: `Bearer ${token}` }
+            });
 
-    if (!res.ok) throw new Error('Error al obtener pedidos asignados');
+            if (!res.ok) throw new Error('Error al obtener pedidos asignados');
 
-    const pedidos = await res.json();
-    pedidosAsignadosCache = pedidos;
+            const pedidos = await res.json();
+            pedidosAsignadosCache = pedidos;
 
-    // 🔄 Llama a la función que renderiza la tabla con el filtro activo
-    renderTablaPedidosAsignados(pedidos);
-    
-  } catch (err) {
-    console.error('❌ Error al cargar pedidos:', err);
-    const texto = await res.text?.();
-    console.log('Respuesta del servidor:', texto);
-    alert('No se pudieron cargar los pedidos.');
-  }
-}
+            // 🔄 Llama a la función que renderiza la tabla con el filtro activo
+            renderTablaPedidosAsignados(pedidos);
+            
+        } catch (err) {
+            console.error('❌ Error al cargar pedidos:', err);
+            const texto = await res.text?.();
+            console.log('Respuesta del servidor:', texto);
+            alert('No se pudieron cargar los pedidos.');
+        }
+    }
 
 
   
@@ -258,57 +258,57 @@
     }
 
     async function verDetallePedido(id) {
-  // ✅ Validar ID
-  if (!id || isNaN(Number(id))) {
-    console.warn("⚠️ ID inválido al intentar ver el pedido:", id);
-    return alert("El ID del pedido es inválido.");
-  }
+        // ✅ Validar ID
+        if (!id || isNaN(Number(id))) {
+            console.warn("⚠️ ID inválido al intentar ver el pedido:", id);
+            return alert("El ID del pedido es inválido.");
+        }
 
-  try {
-    // Asegurar conversión a número si es string
-    const idNum = Number(id);
+        try {
+            // Asegurar conversión a número si es string
+            const idNum = Number(id);
 
-    // Buscar en los caches
-    let pedido = pedidosAsignadosCache.find(p => p.id === idNum);
+            // Buscar en los caches
+            let pedido = pedidosAsignadosCache.find(p => p.id === idNum);
 
-    if (!pedido) {
-      pedido = pedidosTodosCache.find(p => p.id === idNum);
+            if (!pedido) {
+            pedido = pedidosTodosCache.find(p => p.id === idNum);
+            }
+
+            if (!pedido) return alert('Pedido no encontrado');
+
+            // Mostrar datos del pedido
+            document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
+            document.getElementById('detalle-fecha').textContent = pedido.fechaEntrega;
+            document.getElementById('detalle-estado').innerHTML = `<span class="badge ${pedido.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${pedido.estado}</span>`;
+
+            const lista = document.getElementById('detalle-pedido-lista');
+            lista.innerHTML = '';
+
+            if (Array.isArray(pedido.productos)) {
+            pedido.productos.forEach(p => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.innerHTML = `
+                <strong>${p.nombre}</strong><br>
+                ${p.cantidad ? `Cantidad: ${p.cantidad} × ${(Number(p.precio) || 0).toFixed(2)} € = <strong>${(Number(p.subtotal) || 0).toFixed(2)} €</strong>` : ''}
+                `;
+                lista.appendChild(li);
+            });
+            }
+
+            document.getElementById('detalle-total').textContent = `${pedido.total?.toFixed(2) ?? '-'} €`;
+            document.getElementById('pedido-id-detalle').value = pedido.id;
+
+            const btnWrapper = document.getElementById('btn-entregar-wrapper');
+            btnWrapper.style.display = pedido.estado === 'entregado' ? 'none' : 'block';
+
+            new mdb.Modal(document.getElementById('modalDetalle')).show();
+        } catch (err) {
+            console.error('❌ Error al ver detalle:', err);
+            alert('Error al obtener el detalle del pedido');
+        }
     }
-
-    if (!pedido) return alert('Pedido no encontrado');
-
-    // Mostrar datos del pedido
-    document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
-    document.getElementById('detalle-fecha').textContent = pedido.fechaEntrega;
-    document.getElementById('detalle-estado').innerHTML = `<span class="badge ${pedido.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${pedido.estado}</span>`;
-
-    const lista = document.getElementById('detalle-pedido-lista');
-    lista.innerHTML = '';
-
-    if (Array.isArray(pedido.productos)) {
-      pedido.productos.forEach(p => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item';
-        li.innerHTML = `
-          <strong>${p.nombre}</strong><br>
-          ${p.cantidad ? `Cantidad: ${p.cantidad} × ${p.precio.toFixed(2)} € = <strong>${p.subtotal?.toFixed(2) ?? '-'} €</strong>` : ''}
-        `;
-        lista.appendChild(li);
-      });
-    }
-
-    document.getElementById('detalle-total').textContent = `${pedido.total?.toFixed(2) ?? '-'} €`;
-    document.getElementById('pedido-id-detalle').value = pedido.id;
-
-    const btnWrapper = document.getElementById('btn-entregar-wrapper');
-    btnWrapper.style.display = pedido.estado === 'entregado' ? 'none' : 'block';
-
-    new mdb.Modal(document.getElementById('modalDetalle')).show();
-  } catch (err) {
-    console.error('❌ Error al ver detalle:', err);
-    alert('Error al obtener el detalle del pedido');
-  }
-}
 
 
 
