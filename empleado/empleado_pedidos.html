@@ -215,7 +215,7 @@
                 <strong>${p.nombreCliente}</strong><br>
                 ${p.productos.map(prod => prod.nombre).join(', ')}<br>
                 Estado: <span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span><br>
-                <button class="btn btn-sm btn-info mt-2" onclick="verDetallePedido(${p.id})">Ver detalle</button>
+                <button class="btn btn-sm btn-info mt-2" onclick="verDetallePedido(${Number(p.id)})">Ver detalle</button>
             `;
             lista.appendChild(li);
             });
@@ -272,46 +272,58 @@
     }
 
     async function verDetallePedido(id) {
-        try {
-            let pedido = pedidosAsignadosCache.find(p => p.id === id);
+  // ✅ Validar ID
+  if (!id || isNaN(Number(id))) {
+    console.warn("⚠️ ID inválido al intentar ver el pedido:", id);
+    return alert("El ID del pedido es inválido.");
+  }
 
-            if (!pedido) {
-            pedido = pedidosTodosCache.find(p => p.id === id);
-            }
+  try {
+    // Asegurar conversión a número si es string
+    const idNum = Number(id);
 
-            if (!pedido) return alert('Pedido no encontrado');
+    // Buscar en los caches
+    let pedido = pedidosAsignadosCache.find(p => p.id === idNum);
 
-            document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
-            document.getElementById('detalle-fecha').textContent = pedido.fechaEntrega;
-            document.getElementById('detalle-estado').innerHTML = `<span class="badge ${pedido.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${pedido.estado}</span>`;
-
-            const lista = document.getElementById('detalle-pedido-lista');
-            lista.innerHTML = '';
-
-            if (Array.isArray(pedido.productos)) {
-            pedido.productos.forEach(p => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item';
-                li.innerHTML = `
-                <strong>${p.nombre}</strong><br>
-                ${p.cantidad ? `Cantidad: ${p.cantidad} × ${p.precio.toFixed(2)} € = <strong>${p.subtotal?.toFixed(2) ?? '-'} €</strong>` : ''}
-                `;
-                lista.appendChild(li);
-            });
-            }
-
-            document.getElementById('detalle-total').textContent = `${pedido.total?.toFixed(2) ?? '-'} €`;
-            document.getElementById('pedido-id-detalle').value = pedido.id;
-
-            const btnWrapper = document.getElementById('btn-entregar-wrapper');
-            btnWrapper.style.display = pedido.estado === 'entregado' ? 'none' : 'block';
-
-            new mdb.Modal(document.getElementById('modalDetalle')).show();
-        } catch (err) {
-            console.error('❌ Error al ver detalle:', err);
-            alert('Error al obtener el detalle del pedido');
-        }
+    if (!pedido) {
+      pedido = pedidosTodosCache.find(p => p.id === idNum);
     }
+
+    if (!pedido) return alert('Pedido no encontrado');
+
+    // Mostrar datos del pedido
+    document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
+    document.getElementById('detalle-fecha').textContent = pedido.fechaEntrega;
+    document.getElementById('detalle-estado').innerHTML = `<span class="badge ${pedido.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${pedido.estado}</span>`;
+
+    const lista = document.getElementById('detalle-pedido-lista');
+    lista.innerHTML = '';
+
+    if (Array.isArray(pedido.productos)) {
+      pedido.productos.forEach(p => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.innerHTML = `
+          <strong>${p.nombre}</strong><br>
+          ${p.cantidad ? `Cantidad: ${p.cantidad} × ${p.precio.toFixed(2)} € = <strong>${p.subtotal?.toFixed(2) ?? '-'} €</strong>` : ''}
+        `;
+        lista.appendChild(li);
+      });
+    }
+
+    document.getElementById('detalle-total').textContent = `${pedido.total?.toFixed(2) ?? '-'} €`;
+    document.getElementById('pedido-id-detalle').value = pedido.id;
+
+    const btnWrapper = document.getElementById('btn-entregar-wrapper');
+    btnWrapper.style.display = pedido.estado === 'entregado' ? 'none' : 'block';
+
+    new mdb.Modal(document.getElementById('modalDetalle')).show();
+  } catch (err) {
+    console.error('❌ Error al ver detalle:', err);
+    alert('Error al obtener el detalle del pedido');
+  }
+}
+
 
 
     async function marcarComoEntregadoDesdeTabla(pedidoId) {
