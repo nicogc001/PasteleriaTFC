@@ -195,13 +195,18 @@
             async function cargarClientes() {
                 try {
                     const token = localStorage.getItem('token');
-                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/filtrar?rol=cliente', {
+                    const res = await fetch('/api/usuarios/filtrar?rol=cliente', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
                     });
 
                     const clientes = await res.json();
+
+                    if (!Array.isArray(clientes)) {
+                        console.error('Respuesta inesperada al cargar clientes:', clientes);
+                        return;
+                    }
 
                     const lista = document.getElementById('lista-clientes');
                     lista.innerHTML = '';
@@ -220,6 +225,7 @@
                     console.error('Error al cargar clientes', err);
                 }
             }
+
 
             async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;

@@ -54,7 +54,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/pedidos', require('./routes/pedidosRoutes'));
 app.use('/api/productos', require('./routes/productosRoutes'));
 app.use('/api/registro-horario', require('./routes/registroHorarioRoutes'));
-app.use('/api/usuario', require('./routes/usuariosRoutes'));
+app.use('/api/usuarios', require('./routes/usuariosRoutes'));
 app.use('/api/direcciones', require('./routes/direccionesRoutes'));
 app.use('/api/tartas', require('./routes/tartasRoutes'));
 app.use('/api/facturas', require('./routes/facturasRoutes'));
