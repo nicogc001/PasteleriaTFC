@@ -194,17 +194,17 @@
 
             async function cargarClientes() {
                 try {
-                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios?rol=cliente');
+                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/filtrar?rol=cliente');
                     const clientes = await res.json();
                     const lista = document.getElementById('lista-clientes');
                     clientes.forEach(c => {
                         const li = document.createElement('li');
                         li.innerHTML = `
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="${c.id}" id="cliente-${c.id}">
-              <label class="form-check-label" for="cliente-${c.id}">${c.nombre}</label>
-            </div>
-          `;
+                            <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="${c.id}" id="cliente-${c.id}">
+                            <label class="form-check-label" for="cliente-${c.id}">${c.nombre}</label>
+                            </div>
+                        `;
                         lista.appendChild(li);
                     });
                 } catch (err) {

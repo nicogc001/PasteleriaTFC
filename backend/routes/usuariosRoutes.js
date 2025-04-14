@@ -61,6 +61,28 @@ router.put('/update', authMiddleware, async (req, res) => {
   }
 });
 
+// Listar usuarios por rol (por ejemplo, clientes)
+router.get('/filtrar', authMiddleware, async (req, res) => {
+  try {
+    const { rol } = req.query;
+
+    if (!rol) {
+      return res.status(400).json({ error: 'Debes indicar un rol a filtrar' });
+    }
+
+    const usuarios = await Usuario.findAll({
+      where: { rol },
+      attributes: ['id', 'nombre', 'email', 'rol']
+    });
+
+    res.json(usuarios);
+  } catch (err) {
+    console.error('Error al filtrar usuarios:', err);
+    res.status(500).json({ error: 'Error al filtrar usuarios' });
+  }
+});
+
+
 // 🔐 Cambiar contraseña
 router.put('/password', authMiddleware, async (req, res) => {
   try {
