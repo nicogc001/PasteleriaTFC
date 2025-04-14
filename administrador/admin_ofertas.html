@@ -194,9 +194,18 @@
 
             async function cargarClientes() {
                 try {
-                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/filtrar?rol=cliente');
+                    const token = localStorage.getItem('token');
+                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/filtrar?rol=cliente', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
                     const clientes = await res.json();
+
                     const lista = document.getElementById('lista-clientes');
+                    lista.innerHTML = '';
+
                     clientes.forEach(c => {
                         const li = document.createElement('li');
                         li.innerHTML = `
@@ -208,9 +217,31 @@
                         lista.appendChild(li);
                     });
                 } catch (err) {
-                    console.error('Error al cargar clientes');
+                    console.error('Error al cargar clientes', err);
                 }
             }
+
+            async function eliminarOferta(id) {
+                if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
+                try {
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (!res.ok) throw new Error();
+                    alert('Oferta eliminada');
+                    location.reload();
+                } catch (err) {
+                    console.error('Error al eliminar oferta:', err);
+                    alert('No se pudo eliminar la oferta');
+                }
+            }
+
+            function editarOferta(id) {
+                alert(`Abrir modal para editar oferta ${id}`);
+                // Aquí puedes construir un modal dinámico o redireccionar a una página de edición
+            }
+
+
         </script>
 </body>
 
