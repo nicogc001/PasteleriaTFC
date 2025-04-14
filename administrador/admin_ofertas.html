@@ -194,7 +194,7 @@
 
             async function cargarClientes() {
                 try {
-                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario/all', {
+                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/all', {
                         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                     });
                     const usuarios = await res.json();
