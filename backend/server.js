@@ -89,6 +89,12 @@ app.use((err, req, res, next) => {
     await syncDB();
     console.log('✅ Base de datos sincronizada correctamente');
 
+    const { db: models } = require('./models');
+
+    console.log('Modelos registrados en Sequelize:');
+    console.log(Object.keys(models.models || models));
+
+
     const PORT = process.env.PORT || 4000;
     app.listen(PORT, () => {
       console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
