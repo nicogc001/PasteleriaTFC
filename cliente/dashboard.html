@@ -240,9 +240,9 @@
               <div>
                 <strong>${producto.nombre}</strong><br/>
                 <small>
-                  <del>${producto.precio.toFixed(2)}€</del> 
+                  <del>${parseFloat(producto.precio).toFixed(2)}€</del>
                   <strong class="text-success ms-1">
-                    ${(producto.precio * (1 - oferta.descuento / 100)).toFixed(2)}€
+                    ${(parseFloat(producto.precio) * (1 - oferta.descuento / 100)).toFixed(2)}€
                   </strong>
                   – hasta ${new Date(oferta.fechaFin).toLocaleDateString()}
                 </small>
