@@ -3,7 +3,10 @@ const jwt = require('jsonwebtoken');
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers['authorization'];
 
+  console.log('🔐 Authorization header:', authHeader);
+
   if (!authHeader) {
+    console.warn('❌ Token no proporcionado');
     return res.status(403).json({ error: 'Acceso denegado, token no proporcionado' });
   }
 
@@ -12,7 +15,8 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
-    // ✅ Añadir el rol además del id
+    console.log('✅ Token válido:', decoded);
+
     req.user = {
       id: decoded.id,
       rol: decoded.rol
@@ -20,6 +24,7 @@ const authMiddleware = (req, res, next) => {
 
     next();
   } catch (error) {
+    console.error('❌ Token inválido o expirado:', error.message);
     return res.status(401).json({ error: 'Token inválido o expirado' });
   }
 };
