@@ -1,110 +1,112 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio - Pastelería El Caballo Goloso</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="styles/main.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cliente - El Caballo Goloso</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="styles/main.css" rel="stylesheet" />
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-        <div class="container-fluid">
-            <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                    <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
-                        loading="lazy" />
-                </a>
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
-                    <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bollería</a></li>
-                    <li class="nav-item"><a class="nav-link" href="productos/salado.html">Repostería Salada</a></li>
-                    <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
-                </ul>
-            </div>
-            <div class="d-flex align-items-center">
-                <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
-                <div class="dropdown">
-                    <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button"
-                        aria-expanded="false">
-                        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                        <li><a class="dropdown-item" href="#">Mi perfil</a></li>
-                        <li><a class="dropdown-item" href="#">Configuración</a></li>
-                        <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
-                    </ul>
-                </div>
-            </div>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary shadow-sm">
+    <div class="container-fluid">
+      <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <a class="navbar-brand mt-2 mt-lg-0 fw-bold" href="index.html">
+          <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="20" alt="Logo" loading="lazy" /> El Caballo Goloso
+        </a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
+          <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bolleria</a></li>
+          <li class="nav-item"><a class="nav-link" href="productos/salado.html">Salado</a></li>
+          <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
+        </ul>
+      </div>
+      <div class="d-flex align-items-center">
+        <a class="link-secondary me-3" href="carrito.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a>
+        <div class="dropdown">
+          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Avatar" loading="lazy" />
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+            <li><a class="dropdown-item" href="perfil.html">Mi perfil</a></li>
+            <li><a class="dropdown-item" href="#" onclick="logout()">Cerrar sesión</a></li>
+          </ul>
         </div>
-    </nav>
-    
-    
-    <!-- Contenido Principal -->
-    <main class="container mt-5">
-        <h1 class="text-center" id="welcome-message">Bienvenido</h1>
-        <div class="d-flex">
-            <nav class="me-4">
-                <h3 class="text-danger">Sección</h3>
-                <ul class="list-unstyled">
-                    <li><strong>Pedidos</strong></li>
-                    <li><a href="facturas.html">Facturas</a></li>
-                    <li><a href="perfil.html">Perfil</a></li>
-                    <li><a href="direcciones.html">Direcciones</a></li>
-                    <li><a href="tarjetas.html">Tarjetas</a></li>
-                    <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-                </ul>
-            </nav>
-            <div class="w-100">
-                <div class="mt-4">
-                    <h3>Historial de Pedidos</h3>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Fecha</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lista-pedidos">
-                            <!-- Pedidos se cargarán dinámicamente aquí -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </main>
-    
-   <!-- Footer -->
-   <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-    <div class="container text-center text-md-start mt-5">
-        <div class="row">
-            <div class="col-md-4 col-lg-3 mx-auto mb-4">
-                <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-                <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
-                <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
-                <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-            </div>
-        </div>
+      </div>
     </div>
-    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-        © 2025 Copyright:
-        <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="container mt-5">
+    <h2 class="text-center mb-4" id="welcome-message">Bienvenido</h2>
+    <div class="row">
+      <!-- Menú lateral -->
+      <div class="col-md-3">
+        <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-action active">Mis pedidos</a>
+          <a href="facturas.html" class="list-group-item list-group-item-action">Facturas</a>
+          <a href="direcciones.html" class="list-group-item list-group-item-action">Direcciones</a>
+          <a href="tarjetas.html" class="list-group-item list-group-item-action">Tarjetas</a>
+        </div>
+      </div>
+
+      <!-- Panel derecho: Pedidos y Ofertas -->
+      <div class="col-md-9">
+        <!-- Historial de pedidos -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">Historial de Pedidos</h5>
+          </div>
+          <div class="card-body table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Fecha</th>
+                  <th>Total</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="lista-pedidos">
+                <!-- Se insertan pedidos dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Ofertas personalizadas -->
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">Ofertas activas</h5>
+          </div>
+          <div class="card-body" id="contenedor-ofertas">
+            <div class="alert alert-info">No tienes ofertas activas por el momento.</div>
+          </div>
+        </div>
+      </div>
     </div>
-</footer>
-    
-<script>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br/>
+    <small>© 2025 Pastelería El Caballo Goloso</small>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
     document.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -112,78 +114,110 @@
         window.location.href = '/login.html';
         return;
       }
-  
       try {
-        // Obtener datos del usuario autenticado
-        const response = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/auth/me', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-  
-        if (!response.ok) {
-          throw new Error('Sesión inválida');
-        }
-  
-        const user = await response.json();
+        if (!res.ok) throw new Error();
+        const user = await res.json();
         document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
-  
         cargarPedidos(user.id);
-      } catch (error) {
-        console.error('❌ Error en sesión:', error);
-        alert('Tu sesión ha expirado. Inicia sesión nuevamente.');
+        cargarOfertasPublicas();
+      } catch (e) {
+        alert('Sesión inválida. Inicia sesión nuevamente.');
         window.location.href = '/login.html';
       }
     });
-  
+
     async function cargarPedidos(userId) {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/pedidos?userId=${userId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/pedidos?userId=${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
-  
-        if (!response.ok) throw new Error('Error al obtener pedidos');
-  
-        const pedidos = await response.json();
-        const ordersTable = document.getElementById("lista-pedidos");
-        ordersTable.innerHTML = "";
-  
+        if (!res.ok) throw new Error();
+        const pedidos = await res.json();
+        const tbody = document.getElementById('lista-pedidos');
+        tbody.innerHTML = '';
         if (pedidos.length === 0) {
-          ordersTable.innerHTML = "<tr><td colspan='5' class='text-center'>No tienes pedidos aún.</td></tr>";
+          tbody.innerHTML = `<tr><td colspan='5' class='text-center'>No tienes pedidos aún.</td></tr>`;
+          return;
         }
-  
-        pedidos.forEach(order => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${order.id}</td>
-            <td>${order.fecha}</td>
-            <td>$${order.total.toFixed(2)}</td>
-            <td>${order.estado}</td>
-            <td>
-              <button class="btn btn-sm btn-primary" onclick="verPedido(${order.id})">Ver</button>
-            </td>
-          `;
-          ordersTable.appendChild(row);
+        pedidos.forEach(p => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${p.id}</td>
+              <td>${p.fecha}</td>
+              <td>€${p.total.toFixed(2)}</td>
+              <td><span class="badge bg-${p.estado === 'pendiente de pago' ? 'warning text-dark' : 'success'}">${p.estado}</span></td>
+              <td><button class="btn btn-sm btn-outline-primary" onclick="verPedido(${p.id})">Ver</button></td>
+            </tr>`;
         });
-      } catch (error) {
-        console.error('Error cargando pedidos:', error);
+      } catch (err) {
+        console.error(err);
       }
     }
-  
+
+    async function cargarOfertasPublicas() {
+      try {
+        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/ofertas');
+        const ofertas = await res.json();
+        const contenedor = document.getElementById('contenedor-ofertas');
+        contenedor.innerHTML = '';
+
+        if (ofertas.length === 0) {
+          contenedor.innerHTML = `<div class="alert alert-info">No hay ofertas activas en este momento.</div>`;
+          return;
+        }
+
+        ofertas.forEach(oferta => {
+          const producto = oferta.producto;
+          contenedor.innerHTML += `
+            <div class="alert alert-success d-flex justify-content-between align-items-center flex-wrap">
+              <div>
+                <strong>${producto.nombre}</strong><br/>
+                <small>Descuento: ${oferta.descuento}% – Válido hasta ${new Date(oferta.fechaFin).toLocaleDateString()}</small>
+              </div>
+              <button class="btn btn-sm btn-outline-primary mt-2 mt-md-0" onclick="verProducto(${producto.id})">
+                Ver producto
+              </button>
+            </div>
+          `;
+        });
+      } catch (error) {
+        console.error('Error al cargar ofertas:', error);
+      }
+    }
+
+    async function verProducto(id) {
+      try {
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${id}`);
+        if (!res.ok) throw new Error('Producto no encontrado');
+        const producto = await res.json();
+
+        localStorage.setItem('selectedProduct', JSON.stringify({
+          id: producto.id,
+          name: producto.nombre,
+          price: producto.precio,
+          image: producto.imagen,
+          description: producto.descripcion
+        }));
+
+        window.location.href = '/infoProducto.html';
+      } catch (err) {
+        alert('No se pudo cargar la información del producto.');
+      }
+    }
+
     function verPedido(id) {
       alert("Mostrando detalles del pedido " + id);
     }
-  
+
     function logout() {
       localStorage.removeItem('token');
-      alert('Sesión cerrada correctamente');
       window.location.href = '/login.html';
     }
   </script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
 </html>

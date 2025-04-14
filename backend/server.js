@@ -59,6 +59,7 @@ app.use('/api/direcciones', require('./routes/direccionesRoutes'));
 app.use('/api/tartas', require('./routes/tartasRoutes'));
 app.use('/api/facturas', require('./routes/facturasRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/ofertas', require('./routes/ofertasRoutes'));
 
 // 🧾 Facturación diaria automática
 require('./jobs/facturacionDiaria');

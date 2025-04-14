@@ -42,11 +42,17 @@ const Producto = db.define('Producto', {
   timestamps: false
 });
 
-// Asociación
+// Asociaciones
 Producto.associate = (models) => {
   Producto.hasMany(models.HistorialStock, {
     foreignKey: 'productoId',
     as: 'historial'
+  });
+
+  // línea para enlazar con Ofertas
+  Producto.hasMany(models.Ofertas, {
+    foreignKey: 'productoId',
+    as: 'ofertas'
   });
 };
 
