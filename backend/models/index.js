@@ -11,6 +11,7 @@ const Ofertas = require('./Ofertas');
 const RegistroHorarios = require('./RegistroHorarios');
 const Direccion = require('./Direccion');
 const HistorialStock = require('./HistorialStock');
+const OfertasCliente = require('./OfertasCliente');
 
 // Reunimos todos los modelos
 const models = {
@@ -24,7 +25,8 @@ const models = {
   Ofertas,
   RegistroHorarios,
   Direccion,
-  HistorialStock
+  HistorialStock,
+  OfertasCliente
 };
 
 // Asociaciones por separado (por si hay lógica en associate())
@@ -64,6 +66,20 @@ HistorialStock.belongsTo(Productos, { foreignKey: 'productoId' });
 
 Usuario.hasMany(RegistroHorarios, { foreignKey: 'empleadoId', onDelete: 'CASCADE' });
 RegistroHorarios.belongsTo(Usuario, { foreignKey: 'empleadoId' });
+
+Ofertas.belongsToMany(Usuario, {
+  through: OfertasCliente,
+  foreignKey: 'ofertaId',
+  otherKey: 'userId',
+  as: 'usuarios'
+});
+
+Usuario.belongsToMany(Ofertas, {
+  through: OfertasCliente,
+  foreignKey: 'userId',
+  otherKey: 'ofertaId',
+  as: 'ofertas'
+});
 
 
 // Sync

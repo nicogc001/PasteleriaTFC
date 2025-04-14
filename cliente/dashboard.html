@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,16 +9,19 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   <link href="styles/main.css" rel="stylesheet" />
 </head>
+
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary shadow-sm">
     <div class="container-fluid">
-      <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <a class="navbar-brand mt-2 mt-lg-0 fw-bold" href="index.html">
-          <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="20" alt="Logo" loading="lazy" /> El Caballo Goloso
+          <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="20" alt="Logo"
+            loading="lazy" /> El Caballo Goloso
         </a>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
@@ -30,8 +34,10 @@
       <div class="d-flex align-items-center">
         <a class="link-secondary me-3" href="carrito.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a>
         <div class="dropdown">
-          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Avatar" loading="lazy" />
+          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+            id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Avatar"
+              loading="lazy" />
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
             <li><a class="dropdown-item" href="perfil.html">Mi perfil</a></li>
@@ -101,64 +107,65 @@
       <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
       <i class="fas fa-phone me-1"></i> 91 859 67 11
     </small>
-    <br/>
+    <br />
     <small>© 2025 Pastelería El Caballo Goloso</small>
   </footer>
 
   <!-- Modal de Detalle de Pedido -->
-<div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="pedidoModalLabel">Detalle del Pedido</h5>
-        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
-        <p><strong>Fecha de entrega:</strong> <span id="detalle-fechaEntrega"></span></p>
-        <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
-        <p><strong>Total:</strong> <span id="detalle-total"></span></p>
-        <p><strong>Tipo de entrega:</strong> <span id="detalle-entrega"></span></p>
-        <p><strong>Tienda:</strong> <span id="detalle-tienda"></span></p>
-        <hr />
-        <h6>Productos:</h6>
-        <ul id="detalle-productos" class="list-group"></ul>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal de Pago -->
-<div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="formPago">
+  <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalPagoLabel">Selecciona un método de pago</h5>
+          <h5 class="modal-title" id="pedidoModalLabel">Detalle del Pedido</h5>
           <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" id="pedidoIdSeleccionado" />
-          <div class="mb-3">
-            <label for="metodoPago" class="form-label">Método de pago:</label>
-            <select class="form-select" id="metodoPago" required>
-              <option value="">Selecciona una opción</option>
-              <option value="tarjeta">Tarjeta</option>
-              <option value="paypal">PayPal</option>
-              <option value="bizum">Bizum</option>
-              <option value="efectivo">Pagar en tienda (efectivo)</option>
-            </select>
-          </div>
+          <p><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
+          <p><strong>Fecha de entrega:</strong> <span id="detalle-fechaEntrega"></span></p>
+          <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
+          <p><strong>Total:</strong> <span id="detalle-total"></span></p>
+          <p><strong>Tipo de entrega:</strong> <span id="detalle-entrega"></span></p>
+          <p><strong>Tienda:</strong> <span id="detalle-tienda"></span></p>
+          <hr />
+          <h6>Productos:</h6>
+          <ul id="detalle-productos" class="list-group"></ul>
         </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-success w-100">Confirmar pago</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
-</div>
+  <!-- Modal de Pago -->
+  <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formPago">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalPagoLabel">Selecciona un método de pago</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="pedidoIdSeleccionado" />
+            <div class="mb-3">
+              <label for="metodoPago" class="form-label">Método de pago:</label>
+              <select class="form-select" id="metodoPago" required>
+                <option value="">Selecciona una opción</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="paypal">PayPal</option>
+                <option value="bizum">Bizum</option>
+                <option value="efectivo">Pagar en tienda (efectivo)</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success w-100">Confirmar pago</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
 
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem('token');
@@ -175,7 +182,7 @@
         const user = await res.json();
         document.getElementById('welcome-message').textContent = `Bienvenido, ${user.nombre}`;
         cargarPedidos(user.id);
-        cargarOfertasPublicas();
+        cargarOfertasCliente(user.id);
       } catch (e) {
         alert('Sesión inválida. Inicia sesión nuevamente.');
         window.location.href = '/login.html';
@@ -214,9 +221,9 @@
       }
     }
 
-    async function cargarOfertasPublicas() {
+    async function cargarOfertasCliente(userId) {
       try {
-        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/ofertas');
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/cliente/${userId}`);
         const ofertas = await res.json();
         const contenedor = document.getElementById('contenedor-ofertas');
         contenedor.innerHTML = '';
@@ -225,25 +232,44 @@
           contenedor.innerHTML = `<div class="alert alert-info">No hay ofertas activas en este momento.</div>`;
           return;
         }
-
         ofertas.forEach(oferta => {
-          const producto = oferta.producto;
+        const producto = oferta.producto;
+        if (producto.stock > 0) {
           contenedor.innerHTML += `
             <div class="alert alert-success d-flex justify-content-between align-items-center flex-wrap">
               <div>
                 <strong>${producto.nombre}</strong><br/>
-                <small>Descuento: ${oferta.descuento}% – Válido hasta ${new Date(oferta.fechaFin).toLocaleDateString()}</small>
+                <small>
+                  <del>${producto.precio.toFixed(2)}€</del> 
+                  <strong class="text-success ms-1">
+                    ${(producto.precio * (1 - oferta.descuento / 100)).toFixed(2)}€
+                  </strong>
+                  – hasta ${new Date(oferta.fechaFin).toLocaleDateString()}
+                </small>
               </div>
               <button class="btn btn-sm btn-outline-primary mt-2 mt-md-0" onclick="verProducto(${producto.id})">
                 Ver producto
               </button>
+              <button class="btn btn-sm btn-success mt-2 mt-md-0 ms-2"
+                onclick="addToCartDesdeOferta(${producto.id}, '${producto.nombre}', ${producto.precio}, ${oferta.descuento})">
+                <i class="fas fa-plus"></i> Añadir al carrito
+              </button>
             </div>
           `;
-        });
+        } else {
+          contenedor.innerHTML += `
+            <div class="alert alert-warning">
+              <strong>${producto.nombre}</strong><br/>
+              <small class="text-muted">Este producto está actualmente agotado.</small>
+            </div>
+          `;
+        }
+      });
       } catch (error) {
-        console.error('Error al cargar ofertas:', error);
+        console.error('Error al cargar ofertas del cliente:', error);
       }
     }
+
 
     async function verProducto(id) {
       try {
@@ -302,50 +328,74 @@
         console.error("❌ Error al mostrar el detalle:", err);
         alert("No se pudo mostrar el detalle del pedido.");
       }
-  }
+    }
 
-  let modalPago;
+    let modalPago;
 
-document.addEventListener('DOMContentLoaded', () => {
-  modalPago = new mdb.Modal(document.getElementById('modalPago'));
+    document.addEventListener('DOMContentLoaded', () => {
+      modalPago = new mdb.Modal(document.getElementById('modalPago'));
 
-  document.getElementById('formPago').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const pedidoId = document.getElementById('pedidoIdSeleccionado').value;
-    const metodo = document.getElementById('metodoPago').value;
-    const token = localStorage.getItem('token');
+      document.getElementById('formPago').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const pedidoId = document.getElementById('pedidoIdSeleccionado').value;
+        const metodo = document.getElementById('metodoPago').value;
+        const token = localStorage.getItem('token');
 
-    if (!metodo) return alert("Selecciona un método de pago.");
+        if (!metodo) return alert("Selecciona un método de pago.");
 
-    try {
-      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}/confirmar`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ metodoPago: metodo })
+        try {
+          const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}/confirmar`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ metodoPago: metodo })
+          });
+
+          if (!res.ok) throw new Error("Error al confirmar pedido");
+          modalPago.hide();
+          alert("✅ Pedido confirmado");
+
+          window.open(`https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${pedidoId}.pdf`, '_blank');
+          setTimeout(() => location.reload(), 1000);
+
+        } catch (err) {
+          console.error("❌ Error:", err);
+          alert("No se pudo confirmar el pedido.");
+        }
+      });
+    });
+
+    function addToCartDesdeOferta(id, nombre, precio, descuento) {
+      const precioFinal = precio - (precio * (descuento / 100));
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      const existente = cart.find(p => p.id === id);
+      if (existente) {
+        existente.quantity++;
+        existente.subtotal = existente.quantity * precioFinal;
+      } else {
+        cart.push({ id, name: nombre, price: precioFinal, quantity: 1, subtotal: precioFinal });
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      Swal.fire({
+        title: '¡Añadido!',
+        text: `${nombre} con descuento ha sido añadido al carrito.`,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
       });
 
-      if (!res.ok) throw new Error("Error al confirmar pedido");
-      modalPago.hide();
-      alert("✅ Pedido confirmado");
-
-      window.open(`https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${pedidoId}.pdf`, '_blank');
-      setTimeout(() => location.reload(), 1000);
-
-    } catch (err) {
-      console.error("❌ Error:", err);
-      alert("No se pudo confirmar el pedido.");
     }
-  });
-});
 
-function abrirModalPago(id) {
-  document.getElementById('pedidoIdSeleccionado').value = id;
-  document.getElementById('metodoPago').value = "";
-  modalPago.show();
-}
+
+    function abrirModalPago(id) {
+      document.getElementById('pedidoIdSeleccionado').value = id;
+      document.getElementById('metodoPago').value = "";
+      modalPago.show();
+    }
 
 
     function logout() {
@@ -355,4 +405,5 @@ function abrirModalPago(id) {
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
+
 </html>

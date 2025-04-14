@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Ofertas - El Caballo Goloso</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="admin_dashboard.html">El Caballo Goloso</a>
+            <div class="d-flex align-items-center">
+                <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
+                <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid mt-5">
+        <div class="row">
+            <div class="col-md-3">
+                <nav class="me-3">
+                    <h4 class="text-danger">Menú</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="admin_dashboard.html">Dashboard</a></li>
+                        <li><a href="admin_pedidos.html">Pedidos</a></li>
+                        <li><a href="admin_usuarios.html">Usuarios</a></li>
+                        <li><a href="admin_productos.html">Productos</a></li>
+                        <li><a href="admin_empleados.html">Horarios</a></li>
+                        <li><strong>Ofertas</strong></li>
+                        <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-9">
+                <h2 class="mb-4 text-center">Panel de Administración de Ofertas</h2>
+
+                <!-- Crear nueva oferta manual -->
+                <div class="card mb-5">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Crear Oferta Manual</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="formCrearOferta">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="producto" class="form-label">Producto</label>
+                                    <select id="producto" class="form-select" required></select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Clientes (opcional)</label>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
+                                            data-mdb-toggle="dropdown" aria-expanded="false">
+                                            Seleccionar clientes
+                                        </button>
+                                        <ul class="dropdown-menu p-2 w-100" id="lista-clientes"
+                                            style="max-height: 200px; overflow-y: auto;"></ul>
+                                    </div>
+                                    <small class="text-muted">Dejar vacío para aplicar a todos</small>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="descuento" class="form-label">Descuento (%)</label>
+                                    <input type="number" id="descuento" class="form-control" min="1" max="100" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="fechaInicio" class="form-label">Fecha inicio</label>
+                                    <input type="date" id="fechaInicio" class="form-control" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="fechaFin" class="form-label">Fecha fin</label>
+                                    <input type="date" id="fechaFin" class="form-control" required>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="motivo" class="form-label">Comentario (opcional)</label>
+                                    <input type="text" id="motivo" class="form-control">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Crear Oferta</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Ofertas sugeridas -->
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Ofertas Sugeridas (IA)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Producto</th>
+                                        <th>Descuento</th>
+                                        <th>Motivo</th>
+                                        <th>Fechas</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaSugeridas">
+                                    <!-- JS insertará ofertas sugeridas -->
+                                    <!-- Ejemplo de fila -->
+                                    <!-- <tr>
+                                    <td>Juan Pérez</td>
+                                    <td>Tarta de Queso</td>
+                                    <td>15%</td>
+                                    <td>Compras frecuentes</td>
+                                    <td>01/04 - 07/04</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning me-1" onclick="editarOferta(1)"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger" onclick="eliminarOferta(1)"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  async function eliminarOferta(id) {
+                if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
+                try {
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (!res.ok) throw new Error();
+                    alert('✅ Oferta eliminada');
+                    location.reload();
+                } catch (err) {
+                    console.error('❌ Error al eliminar oferta:', err);
+                    alert('No se pudo eliminar la oferta');
+                }
+            }
+
+            function editarOferta(id) {
+                alert(`Abrir modal para editar oferta ${id}`);
+                // Aquí puedes construir un modal dinámico o redireccionar a una página de edición
+            }
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                cargarProductos();
+                cargarClientes();
+
+                document.getElementById('formCrearOferta').addEventListener('submit', async function (e) {
+                    e.preventDefault();
+
+                    const productoId = document.getElementById('producto').value;
+                    const descuento = document.getElementById('descuento').value;
+                    const fechaInicio = document.getElementById('fechaInicio').value;
+                    const fechaFin = document.getElementById('fechaFin').value;
+                    const motivo = document.getElementById('motivo').value;
+                    const userIds = [...document.querySelectorAll('#lista-clientes input:checked')].map(cb => cb.value);
+
+                    const payload = { productoId, descuento, fechaInicio, fechaFin, motivo, userIds };
+
+                    try {
+                        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/manual', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!res.ok) throw new Error();
+                        alert('✅ Oferta creada correctamente');
+                        document.getElementById('formCrearOferta').reset();
+                    } catch (err) {
+                        alert('❌ Error al crear la oferta');
+                    }
+                });
+            });
+
+            async function cargarProductos() {
+                try {
+                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/productos');
+                    const productos = await res.json();
+                    const select = document.getElementById('producto');
+                    productos.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = p.nombre;
+                        select.appendChild(opt);
+                    });
+                } catch (err) {
+                    console.error('Error al cargar productos');
+                }
+            }
+
+            async function cargarClientes() {
+                try {
+                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios?rol=cliente');
+                    const clientes = await res.json();
+                    const lista = document.getElementById('lista-clientes');
+                    clientes.forEach(c => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="${c.id}" id="cliente-${c.id}">
+              <label class="form-check-label" for="cliente-${c.id}">${c.nombre}</label>
+            </div>
+          `;
+                        lista.appendChild(li);
+                    });
+                } catch (err) {
+                    console.error('Error al cargar clientes');
+                }
+            }
+        </script>
+</body>
+
+</html>
