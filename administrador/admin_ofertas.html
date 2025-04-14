@@ -195,11 +195,21 @@
             async function cargarClientes() {
                 try {
                     const token = localStorage.getItem('token');
+                    if (!token) {
+                        console.error('Token no encontrado');
+                        return;
+                    }
+
                     const res = await fetch('/api/usuarios/filtrar?rol=cliente', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
                     });
+
+                    if (!res.ok) {
+                        const errorBody = await res.text();
+                        throw new Error(`HTTP ${res.status} - ${errorBody}`);
+                    }
 
                     const clientes = await res.json();
 
@@ -221,10 +231,12 @@
                         `;
                         lista.appendChild(li);
                     });
+
                 } catch (err) {
                     console.error('Error al cargar clientes', err);
                 }
             }
+
 
 
             async function eliminarOferta(id) {
