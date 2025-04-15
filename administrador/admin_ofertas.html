@@ -421,6 +421,29 @@
                 }
             });
 
+            async function cargarProductosEnSelect(selectId, selectedId = null) {
+                try {
+                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/productos');
+                    if (!res.ok) throw new Error('Error al cargar productos');
+
+                    const productos = await res.json();
+                    const select = document.getElementById(selectId);
+                    select.innerHTML = '';
+
+                    productos.forEach(prod => {
+                        const option = document.createElement('option');
+                        option.value = prod.id;
+                        option.textContent = prod.nombre;
+                        if (prod.id === selectedId) option.selected = true;
+                        select.appendChild(option);
+                    });
+
+                } catch (err) {
+                    console.error('❌ Error al cargar productos en el select:', err);
+                    alert('No se pudieron cargar los productos.');
+                }
+            }
+
         </script>
 </body>
 
