@@ -67,6 +67,39 @@
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos?categoria=tartas';
     const container = document.getElementById('productos-container');
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const data = JSON.parse(localStorage.getItem('selectedProduct'));
+    if (!data) {
+      document.body.innerHTML = '<p class="text-center text-danger mt-5">No se pudo cargar el producto.</p>';
+      return;
+    }
+
+    document.getElementById('main_product_image').src = data.image;
+    document.getElementById('product-name').textContent = data.name;
+    document.getElementById('product-description').textContent = data.description;
+    document.getElementById('product-price').textContent = `${parseFloat(data.price).toFixed(2)} €`;
+
+    document.getElementById('add-to-cart').addEventListener('click', () => {
+      const quantity = parseInt(document.getElementById('quantity').value);
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existing = cart.find(p => p.id == data.id);
+      if (existing) {
+        existing.quantity += quantity;
+        existing.subtotal = existing.quantity * parseFloat(data.price);
+      } else {
+        cart.push({
+          id: data.id,
+          name: data.name,
+          price: parseFloat(data.price),
+          quantity,
+          subtotal: quantity * parseFloat(data.price)
+        });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert('Producto añadido al carrito');
+    });
+  });
   
     async function loadProductos() {
       try {
@@ -126,32 +159,7 @@
       alert(`${name} añadido al carrito`);
     }
   
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('add-to-cart')) {
-        const id = e.target.dataset.id;
-        const name = e.target.dataset.name;
-        const price = parseFloat(e.target.dataset.price);
-        addToCart(id, name, price);
-      }
   
-      if (e.target.closest('.view-product')) {
-        const link = e.target.closest('.view-product');
-        e.preventDefault();
-  
-        const product = {
-          id: link.dataset.id,
-          name: link.dataset.name,
-          price: link.dataset.price,
-          image: link.dataset.image,
-          description: link.dataset.description
-        };
-  
-        localStorage.setItem('selectedProduct', JSON.stringify(product));
-        window.location.href = link.href;
-      }
-    });
-  
-    document.addEventListener('DOMContentLoaded', loadProductos);
   </script>
   
 
