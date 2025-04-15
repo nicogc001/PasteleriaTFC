@@ -339,7 +339,7 @@
           description: producto.descripcion
         }));
 
-        window.location.href = '/infoProducto.html';
+        window.location.href = '/productos/infoProducto.html';
       } catch (err) {
         alert('No se pudo cargar la información del producto.');
       }
@@ -387,24 +387,24 @@
     let modalPago;
 
     async function verProducto(id) {
-  try {
-    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${id}`);
-    if (!res.ok) throw new Error('Producto no encontrado');
-    const producto = await res.json();
+      try {
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${id}`);
+        if (!res.ok) throw new Error('Producto no encontrado');
+        const producto = await res.json();
 
-    localStorage.setItem('selectedProduct', JSON.stringify({
-      id: producto.id,
-      name: producto.nombre,
-      price: producto.precio,
-      image: producto.imagen,
-      description: producto.descripcion
-    }));
+        localStorage.setItem('selectedProduct', JSON.stringify({
+          id: producto.id,
+          name: producto.nombre,
+          price: producto.precio,
+          image: producto.imagen,
+          description: producto.descripcion
+        }));
 
-    window.location.href = '/infoProducto.html';
-  } catch (err) {
-    alert('No se pudo cargar la información del producto.');
-  }
-}
+        window.location.href = '/infoProducto.html';
+      } catch (err) {
+        alert('No se pudo cargar la información del producto.');
+      }
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       modalPago = new mdb.Modal(document.getElementById('modalPago'));
