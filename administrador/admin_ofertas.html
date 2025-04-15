@@ -133,7 +133,45 @@
                 </div>
 
             </div>
+
         </div>
+
+        <!-- Modal para editar oferta -->
+        <div class="modal fade" id="modalEditarOferta" tabindex="-1" aria-labelledby="modalEditarOfertaLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <form class="modal-content" id="formEditarOferta">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarOfertaLabel">Editar Oferta</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="edit-id" />
+                        <div class="mb-3">
+                            <label for="edit-producto" class="form-label">Producto</label>
+                            <select id="edit-producto" class="form-select" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-descuento" class="form-label">Descuento (%)</label>
+                            <input type="number" id="edit-descuento" class="form-control" min="1" max="100" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-fechaInicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" id="edit-fechaInicio" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-fechaFin" class="form-label">Fecha de Fin</label>
+                            <input type="date" id="edit-fechaFin" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
                 try {
@@ -292,27 +330,96 @@
 
             async function editarOferta(id) {
                 try {
-                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`);
-                    if (!res.ok) throw new Error('No se pudo obtener la oferta');
+                    const token = localStorage.getItem('token');
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Error al obtener la oferta');
+
                     const oferta = await res.json();
 
-                    // Llenar modal (debes tener inputs con estos IDs en el modal)
+                    // Llenar campos del modal
                     document.getElementById('edit-id').value = oferta.id;
-                    document.getElementById('edit-producto').value = oferta.productoId;
                     document.getElementById('edit-descuento').value = oferta.descuento;
                     document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
                     document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
 
+                    // Cargar productos si no están ya
+                    await cargarProductosEnSelect('edit-producto', oferta.productoId);
+
+                    // Abrir modal
                     const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
                     modal.show();
 
-                } catch (err) {
-                    console.error('Error al cargar datos de oferta:', err);
-                    alert('No se pudo cargar la oferta para edición');
+                } catch (error) {
+                    console.error('❌ Error al cargar datos de oferta:', error);
+                    alert('No se pudo cargar la información de la oferta.');
                 }
             }
 
 
+            async function editarOferta(id) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (!res.ok) throw new Error('Error al obtener la oferta');
+
+                    const oferta = await res.json();
+
+                    // Llenar campos del modal
+                    document.getElementById('edit-id').value = oferta.id;
+                    document.getElementById('edit-descuento').value = oferta.descuento;
+                    document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
+                    document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
+
+                    // Cargar productos si no están ya
+                    await cargarProductosEnSelect('edit-producto', oferta.productoId);
+
+                    // Abrir modal
+                    const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
+                    modal.show();
+
+                } catch (error) {
+                    console.error('❌ Error al cargar datos de oferta:', error);
+                    alert('No se pudo cargar la información de la oferta.');
+                }
+            }
+
+            document.getElementById('formEditarOferta').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const token = localStorage.getItem('token');
+                const id = document.getElementById('edit-id').value;
+                const body = {
+                    productoId: document.getElementById('edit-producto').value,
+                    descuento: document.getElementById('edit-descuento').value,
+                    fechaInicio: document.getElementById('edit-fechaInicio').value,
+                    fechaFin: document.getElementById('edit-fechaFin').value
+                };
+
+                try {
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+
+                    if (!res.ok) throw new Error('Error al actualizar la oferta');
+
+                    alert('✅ Oferta actualizada correctamente');
+                    location.reload();
+                } catch (err) {
+                    console.error('❌ Error al actualizar oferta:', err);
+                    alert('Hubo un error al guardar los cambios.');
+                }
+            });
 
         </script>
 </body>
