@@ -136,6 +136,19 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+      const oferta = await Ofertas.findByPk(id);
+      if (!oferta) return res.status(404).json({ error: 'Oferta no encontrada' });
+      res.json(oferta);
+    } catch (err) {
+      console.error('Error al obtener oferta por ID:', err);
+      res.status(500).json({ error: 'Error al obtener la oferta' });
+    }
+  });
+  
+
 
 
 module.exports = router;
