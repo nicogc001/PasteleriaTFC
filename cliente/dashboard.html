@@ -112,6 +112,7 @@
   </footer>
 
   <!-- Modal de Detalle de Pedido -->
+
   <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -129,10 +130,16 @@
           <hr />
           <h6>Productos:</h6>
           <ul id="detalle-productos" class="list-group"></ul>
+          <div class="text-end mt-4">
+            <button id="btn-descargar-factura" class="btn btn-outline-primary d-none" target="_blank">
+              <i class="fas fa-file-pdf me-1"></i> Descargar factura
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  
   <!-- Modal de Pago -->
   <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -189,6 +196,53 @@
       }
     });
 
+    async function verPedido(id) {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${id}`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error("No se pudo obtener el detalle del pedido.");
+        const pedido = await res.json();
+
+        document.getElementById('detalle-fecha').textContent = new Date(pedido.fecha).toLocaleDateString('es-ES');
+        document.getElementById('detalle-fechaEntrega').textContent = new Date(pedido.fechaEntrega).toLocaleDateString('es-ES');
+        document.getElementById('detalle-estado').textContent = pedido.estado;
+        document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
+        document.getElementById('detalle-entrega').textContent = pedido.tipoEntrega;
+        document.getElementById('detalle-tienda').textContent = pedido.tipoEntrega === 'recoger' ? pedido.tienda : '-';
+
+        const lista = document.getElementById('detalle-productos');
+        lista.innerHTML = '';
+        pedido.productos.forEach(prod => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item d-flex justify-content-between align-items-center';
+          li.innerHTML = `
+            <span>${prod.nombre} x${prod.cantidad}</span>
+            <span>${prod.subtotal.toFixed(2)} €</span>
+          `;
+          lista.appendChild(li);
+        });
+
+        const btnFactura = document.getElementById('btn-descargar-factura');
+        if (pedido.estado !== 'pendiente de pago') {
+          btnFactura.classList.remove('d-none');
+          btnFactura.onclick = () => window.open(`https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${pedido.id}.pdf`, '_blank');
+        } else {
+          btnFactura.classList.add('d-none');
+        }
+
+        const modal = new mdb.Modal(document.getElementById('pedidoModal'));
+        modal.show();
+
+      } catch (err) {
+        console.error("❌ Error al mostrar el detalle:", err);
+        alert("No se pudo mostrar el detalle del pedido.");
+      }
+    }
+
     async function cargarPedidos(userId) {
       try {
         const token = localStorage.getItem('token');
@@ -233,9 +287,9 @@
           return;
         }
         ofertas.forEach(oferta => {
-        const producto = oferta.producto;
-        if (producto.stock > 0) {
-          contenedor.innerHTML += `
+          const producto = oferta.producto;
+          if (producto.stock > 0) {
+            contenedor.innerHTML += `
             <div class="alert alert-success d-flex justify-content-between align-items-center flex-wrap">
               <div>
                 <strong>${producto.nombre}</strong><br/>
@@ -256,15 +310,15 @@
               </button>
             </div>
           `;
-        } else {
-          contenedor.innerHTML += `
+          } else {
+            contenedor.innerHTML += `
             <div class="alert alert-warning">
               <strong>${producto.nombre}</strong><br/>
               <small class="text-muted">Este producto está actualmente agotado.</small>
             </div>
           `;
-        }
-      });
+          }
+        });
       } catch (error) {
         console.error('Error al cargar ofertas del cliente:', error);
       }
