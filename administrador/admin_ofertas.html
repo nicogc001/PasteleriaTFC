@@ -122,6 +122,16 @@
                         </div>
                     </div>
                 </div>
+                <!-- Ofertas vigentes -->
+                <div class="card mt-5">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Ofertas Vigentes</h5>
+                    </div>
+                    <div class="card-body" id="contenedor-ofertas-vigentes">
+                        <div class="text-center text-muted">Cargando ofertas...</div>
+                    </div>
+                </div>
+
             </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  async function eliminarOferta(id) {
@@ -131,10 +141,10 @@
                         method: 'DELETE'
                     });
                     if (!res.ok) throw new Error();
-                    alert('✅ Oferta eliminada');
+                    alert('Oferta eliminada');
                     location.reload();
                 } catch (err) {
-                    console.error('❌ Error al eliminar oferta:', err);
+                    console.error('Error al eliminar oferta:', err);
                     alert('No se pudo eliminar la oferta');
                 }
             }
@@ -148,6 +158,7 @@
             document.addEventListener('DOMContentLoaded', () => {
                 cargarProductos();
                 cargarClientes();
+                cargarOfertasVigentes();
 
                 document.getElementById('formCrearOferta').addEventListener('submit', async function (e) {
                     e.preventDefault();
@@ -168,10 +179,10 @@
                             body: JSON.stringify(payload)
                         });
                         if (!res.ok) throw new Error();
-                        alert('✅ Oferta creada correctamente');
+                        alert('Oferta creada correctamente');
                         document.getElementById('formCrearOferta').reset();
                     } catch (err) {
-                        alert('❌ Error al crear la oferta');
+                        alert('Error al crear la oferta');
                     }
                 });
             });
@@ -216,9 +227,53 @@
                         });
 
                 } catch (err) {
-                    console.error('❌ Error al cargar clientes', err);
+                    console.error('Error al cargar clientes', err);
                 }
             }
+
+            async function cargarOfertasVigentes() {
+                try {
+                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/ofertas');
+                    const ofertas = await res.json();
+                    const contenedor = document.getElementById('contenedor-ofertas-vigentes');
+                    contenedor.innerHTML = '';
+
+                    if (ofertas.length === 0) {
+                        contenedor.innerHTML = `<div class="alert alert-info">No hay ofertas vigentes en este momento.</div>`;
+                        return;
+                    }
+
+                    ofertas.forEach(oferta => {
+                        const producto = oferta.producto;
+                        const div = document.createElement('div');
+                        div.className = 'alert alert-success d-flex justify-content-between align-items-center flex-wrap';
+
+                        div.innerHTML = `
+                            <div>
+                            <strong>${producto.nombre}</strong><br/>
+                            <small>
+                                ${oferta.descuento}% – del ${new Date(oferta.fechaInicio).toLocaleDateString()} 
+                                al ${new Date(oferta.fechaFin).toLocaleDateString()}
+                            </small>
+                            </div>
+                            <div class="mt-2 mt-md-0">
+                            <button class="btn btn-sm btn-warning me-2" onclick="editarOferta(${oferta.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="eliminarOferta(${oferta.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            </div>
+                        `;
+
+                        contenedor.appendChild(div);
+                    });
+                } catch (error) {
+                    console.error('Error al cargar ofertas vigentes:', error);
+                    document.getElementById('contenedor-ofertas-vigentes').innerHTML = `<div class="text-danger">Error al cargar ofertas.</div>`;
+                }
+            }
+
 
             async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
@@ -235,10 +290,28 @@
                 }
             }
 
-            function editarOferta(id) {
-                alert(`Abrir modal para editar oferta ${id}`);
-                // Aquí puedes construir un modal dinámico o redireccionar a una página de edición
+            async function editarOferta(id) {
+                try {
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`);
+                    if (!res.ok) throw new Error('No se pudo obtener la oferta');
+                    const oferta = await res.json();
+
+                    // Llenar modal (debes tener inputs con estos IDs en el modal)
+                    document.getElementById('edit-id').value = oferta.id;
+                    document.getElementById('edit-producto').value = oferta.productoId;
+                    document.getElementById('edit-descuento').value = oferta.descuento;
+                    document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
+                    document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
+
+                    const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
+                    modal.show();
+
+                } catch (err) {
+                    console.error('Error al cargar datos de oferta:', err);
+                    alert('No se pudo cargar la oferta para edición');
+                }
             }
+
 
 
         </script>
