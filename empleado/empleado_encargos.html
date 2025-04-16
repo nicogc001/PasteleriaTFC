@@ -1,178 +1,199 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crear Pedido para Cliente</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <style>
-    body { padding: 20px; }
-    .section-title { margin-top: 30px; margin-bottom: 15px; }
-    .card-producto { cursor: pointer; transition: transform 0.2s ease; }
-    .card-producto:hover { transform: scale(1.02); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Pedido para Cliente</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .card-producto {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .card-producto:hover {
+            transform: scale(1.02);
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Crear Pedido para Cliente</h1>
+    <div class="container">
+        <h1>Crear Pedido para Cliente</h1>
 
-    <!-- Cliente -->
-    <div class="section-title"><strong>Cliente</strong></div>
-    <div class="form-row align-items-center">
-      <div class="col-sm-6">
-        <input type="text" id="clienteId" class="form-control" placeholder="ID del cliente">
-      </div>
+        <!-- Cliente -->
+        <div class="section-title"><strong>Cliente</strong></div>
+        <div class="form-row align-items-center">
+            <div class="col-sm-6">
+                <input type="text" id="clienteId" class="form-control" placeholder="ID del cliente">
+            </div>
+        </div>
+
+        <!-- Fecha de entrega -->
+        <div class="section-title"><strong>Fecha de entrega</strong></div>
+        <input type="date" id="fechaEntrega" class="form-control" />
+
+        <!-- Tipo de envío -->
+        <div class="section-title"><strong>Tipo de envío</strong></div>
+        <select id="tipoEnvio" class="form-control">
+            <option value="recoger">Recogida en tienda</option>
+            <option value="enviar">Envío local (Madrid)</option>
+            <option value="enviar">Envío nacional</option>
+        </select>
+
+        <!-- Tienda -->
+        <div class="section-title"><strong>Tienda</strong></div>
+        <select id="tienda" class="form-control" required>
+            <option value="">Selecciona una tienda</option>
+            <option value="Espacio Torrelodones">Espacio Torrelodones</option>
+            <option value="Torrelodones pueblo">Torrelodones pueblo</option>
+        </select>
+
+
+        <!-- Productos -->
+        <div class="section-title"><strong>Productos</strong></div>
+        <div class="form-group">
+            <input type="text" id="buscarProducto" class="form-control" placeholder="Buscar productos...">
+        </div>
+        <div class="row" id="lista-productos">
+            <!-- Los productos se insertan dinámicamente aquí -->
+        </div>
+
+        <!-- Notas -->
+        <div class="section-title"><strong>Notas adicionales</strong></div>
+        <textarea id="notas" class="form-control" rows="3" placeholder="Alergias, comentarios..."></textarea>
+
+        <!-- Confirmación -->
+        <div class="section-title"><strong>Resumen del pedido</strong></div>
+        <ul class="list-group mb-3" id="resumenPedido"></ul>
+        <div class="mb-3 font-weight-bold">Total: <span id="totalPedido">0.00</span> €</div>
+        <button class="btn btn-success btn-lg" onclick="confirmarPedido()">Confirmar pedido</button>
     </div>
 
-    <!-- Fecha de entrega -->
-    <div class="section-title"><strong>Fecha de entrega</strong></div>
-    <input type="date" id="fechaEntrega" class="form-control" />
+    <script>
+        let pedido = [];
+        let productosGlobales = [];
 
-    <!-- Tipo de envío -->
-    <div class="section-title"><strong>Tipo de envío</strong></div>
-    <select id="tipoEnvio" class="form-control">
-      <option value="recoger">Recogida en tienda</option>
-      <option value="enviar">Envío local (Madrid)</option>
-      <option value="enviar">Envío nacional</option>
-    </select>
+        function agregarProducto(productoId, nombre, precio) {
+            const item = pedido.find(p => p.productoId === productoId);
+            if (item) {
+                item.cantidad++;
+            } else {
+                pedido.push({ productoId, nombre, precio, cantidad: 1 });
+            }
+            renderResumen();
+        }
 
-    <!-- Tienda -->
-    <div class="section-title"><strong>Tienda (si aplica)</strong></div>
-    <input type="text" id="tienda" class="form-control" placeholder="Ej: Torrelodones" />
+        function renderResumen() {
+            const resumen = document.getElementById('resumenPedido');
+            resumen.innerHTML = '';
+            let total = 0;
+            pedido.forEach(item => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = `${item.cantidad}x ${item.nombre} - ${subtotal.toFixed(2)} €`;
+                resumen.appendChild(li);
+            });
+            document.getElementById('totalPedido').textContent = total.toFixed(2);
+        }
 
-    <!-- Productos -->
-    <div class="section-title"><strong>Productos</strong></div>
-    <div class="form-group">
-      <input type="text" id="buscarProducto" class="form-control" placeholder="Buscar productos...">
-    </div>
-    <div class="row" id="lista-productos">
-      <!-- Los productos se insertan dinámicamente aquí -->
-    </div>
+        async function confirmarPedido() {
+            const clienteId = document.getElementById('clienteId').value;
+            const fechaEntrega = document.getElementById('fechaEntrega').value;
+            const tipoEntrega = document.getElementById('tipoEnvio').value;
+            const tienda = document.getElementById('tienda').value;
+            const notas = document.getElementById('notas').value;
 
-    <!-- Notas -->
-    <div class="section-title"><strong>Notas adicionales</strong></div>
-    <textarea id="notas" class="form-control" rows="3" placeholder="Alergias, comentarios..."></textarea>
+            if (!clienteId || !fechaEntrega || pedido.length === 0) {
+                alert('Faltan datos obligatorios.');
+                return;
+            }
 
-    <!-- Confirmación -->
-    <div class="section-title"><strong>Resumen del pedido</strong></div>
-    <ul class="list-group mb-3" id="resumenPedido"></ul>
-    <div class="mb-3 font-weight-bold">Total: <span id="totalPedido">0.00</span> €</div>
-    <button class="btn btn-success btn-lg" onclick="confirmarPedido()">Confirmar pedido</button>
-  </div>
+            const datos = {
+                clienteId,
+                fechaEntrega,
+                tipoEntrega,
+                tienda,
+                notas,
+                items: pedido.map(p => ({ productoId: p.productoId, cantidad: p.cantidad }))
+            };
 
-  <script>
-    let pedido = [];
-    let productosGlobales = [];
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/crear-por-empleado', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(datos)
+                });
 
-    function agregarProducto(productoId, nombre, precio) {
-      const item = pedido.find(p => p.productoId === productoId);
-      if (item) {
-        item.cantidad++;
-      } else {
-        pedido.push({ productoId, nombre, precio, cantidad: 1 });
-      }
-      renderResumen();
-    }
+                if (!res.ok) throw new Error('Error al crear pedido');
 
-    function renderResumen() {
-      const resumen = document.getElementById('resumenPedido');
-      resumen.innerHTML = '';
-      let total = 0;
-      pedido.forEach(item => {
-        const subtotal = item.precio * item.cantidad;
-        total += subtotal;
-        const li = document.createElement('li');
-        li.className = 'list-group-item';
-        li.textContent = `${item.cantidad}x ${item.nombre} - ${subtotal.toFixed(2)} €`;
-        resumen.appendChild(li);
-      });
-      document.getElementById('totalPedido').textContent = total.toFixed(2);
-    }
+                const result = await res.json();
+                alert('✅ Pedido creado correctamente. ID: ' + result.pedidoId);
+                location.reload();
+            } catch (err) {
+                console.error(err);
+                alert('Error al crear el pedido.');
+            }
+        }
 
-    async function confirmarPedido() {
-      const clienteId = document.getElementById('clienteId').value;
-      const fechaEntrega = document.getElementById('fechaEntrega').value;
-      const tipoEntrega = document.getElementById('tipoEnvio').value;
-      const tienda = document.getElementById('tienda').value;
-      const notas = document.getElementById('notas').value;
+        async function cargarProductos() {
+            try {
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/productos');
+                if (!res.ok) throw new Error('Error al cargar productos');
+                const productos = await res.json();
+                productosGlobales = productos;
+                renderProductos(productos);
 
-      if (!clienteId || !fechaEntrega || pedido.length === 0) {
-        alert('Faltan datos obligatorios.');
-        return;
-      }
+                document.getElementById('buscarProducto').addEventListener('input', function () {
+                    const query = this.value.toLowerCase();
+                    const filtrados = productosGlobales.filter(p => p.nombre.toLowerCase().includes(query));
+                    renderProductos(filtrados);
+                });
+            } catch (err) {
+                console.error(err);
+                alert('Error al cargar productos');
+            }
+        }
 
-      const datos = {
-        clienteId,
-        fechaEntrega,
-        tipoEntrega,
-        tienda,
-        notas,
-        items: pedido.map(p => ({ productoId: p.productoId, cantidad: p.cantidad }))
-      };
+        function renderProductos(productos) {
+            const lista = document.getElementById('lista-productos');
+            lista.innerHTML = '';
 
-      try {
-        const token = localStorage.getItem('token');
-        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/crear-por-empleado', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(datos)
-        });
-
-        if (!res.ok) throw new Error('Error al crear pedido');
-
-        const result = await res.json();
-        alert('✅ Pedido creado correctamente. ID: ' + result.pedidoId);
-        location.reload();
-      } catch (err) {
-        console.error(err);
-        alert('Error al crear el pedido.');
-      }
-    }
-
-    async function cargarProductos() {
-      try {
-        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/productos');
-        if (!res.ok) throw new Error('Error al cargar productos');
-        const productos = await res.json();
-        productosGlobales = productos;
-        renderProductos(productos);
-
-        document.getElementById('buscarProducto').addEventListener('input', function () {
-          const query = this.value.toLowerCase();
-          const filtrados = productosGlobales.filter(p => p.nombre.toLowerCase().includes(query));
-          renderProductos(filtrados);
-        });
-      } catch (err) {
-        console.error(err);
-        alert('Error al cargar productos');
-      }
-    }
-
-    function renderProductos(productos) {
-      const lista = document.getElementById('lista-productos');
-      lista.innerHTML = '';
-
-      productos.forEach(p => {
-        const col = document.createElement('div');
-        col.className = 'col-md-3 mb-3';
-        col.innerHTML = `
+            productos.forEach(p => {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 mb-3';
+                col.innerHTML = `
           <div class="card card-producto">
             <img class="card-img-top" src="${p.imagen}" alt="${p.nombre}" />
             <div class="card-body text-center">
               <h5 class="card-title">${p.nombre}</h5>
-              <p class="card-text">${p.precio.toFixed(2)} €</p>
+              <p class="card-text">${p.precio ? Number(p.precio).toFixed(2) : '0.00'} €</p>
               <button class="btn btn-sm btn-primary" onclick="agregarProducto(${p.id}, '${p.nombre}', ${p.precio})">Añadir</button>
             </div>
           </div>
         `;
-        lista.appendChild(col);
-      });
-    }
+                lista.appendChild(col);
+            });
+        }
 
-    document.addEventListener('DOMContentLoaded', cargarProductos);
-  </script>
+        document.addEventListener('DOMContentLoaded', cargarProductos);
+    </script>
 </body>
+
 </html>
