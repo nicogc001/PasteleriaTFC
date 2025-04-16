@@ -40,8 +40,7 @@
                 </select>
             </div>
             <div class="col-auto">
-                <button class="btn btn-outline-primary" onclick="window.location.href='/registro.html'">Nuevo
-                    cliente</button>
+                <button class="btn btn-outline-primary" onclick="abrirModalRegistro()">Registro rápido</button>
             </div>
         </div>
 
@@ -116,6 +115,12 @@
             </div>
         </div>
     </div>
+    <script>
+        function abrirModalRegistro() {
+            $('#modalRegistroRapido').modal('show');
+        }
+    </script>
+    
 
     <script>
         let pedido = [];
