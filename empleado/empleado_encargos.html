@@ -37,7 +37,6 @@
             <div class="col-sm-6">
                 <select id="clienteId" class="form-control" required>
                     <option value="">Selecciona un cliente</option>
-                    <!-- Clientes se insertarán dinámicamente aquí -->
                 </select>
             </div>
             <div class="col-auto">
@@ -45,7 +44,6 @@
                     cliente</button>
             </div>
         </div>
-
 
         <!-- Fecha de entrega -->
         <div class="section-title"><strong>Fecha de entrega</strong></div>
@@ -67,15 +65,12 @@
             <option value="Torrelodones pueblo">Torrelodones pueblo</option>
         </select>
 
-
         <!-- Productos -->
         <div class="section-title"><strong>Productos</strong></div>
         <div class="form-group">
             <input type="text" id="buscarProducto" class="form-control" placeholder="Buscar productos...">
         </div>
-        <div class="row" id="lista-productos">
-            <!-- Los productos se insertan dinámicamente aquí -->
-        </div>
+        <div class="row" id="lista-productos"></div>
 
         <!-- Notas -->
         <div class="section-title"><strong>Notas adicionales</strong></div>
@@ -167,7 +162,8 @@
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!res.ok) throw new Error('Error al cargar clientes');
-                const clientes = await res.json();
+                const data = await res.json();
+                const clientes = Array.isArray(data) ? data : data.usuarios || data.clientes || [];
 
                 const select = document.getElementById('clienteId');
                 clientes.forEach(c => {
@@ -182,9 +178,6 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', cargarClientes);
-
-
         async function cargarProductos() {
             try {
                 const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/productos');
@@ -192,12 +185,6 @@
                 const productos = await res.json();
                 productosGlobales = productos;
                 renderProductos(productos);
-
-                document.getElementById('buscarProducto').addEventListener('input', function () {
-                    const query = this.value.toLowerCase();
-                    const filtrados = productosGlobales.filter(p => p.nombre.toLowerCase().includes(query));
-                    renderProductos(filtrados);
-                });
             } catch (err) {
                 console.error(err);
                 alert('Error al cargar productos');
@@ -225,7 +212,16 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', cargarProductos);
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarClientes();
+            cargarProductos();
+
+            document.getElementById('buscarProducto').addEventListener('input', function () {
+                const query = this.value.toLowerCase();
+                const filtrados = productosGlobales.filter(p => p.nombre.toLowerCase().includes(query));
+                renderProductos(filtrados);
+            });
+        });
     </script>
 </body>
 
