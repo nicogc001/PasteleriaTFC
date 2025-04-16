@@ -158,8 +158,8 @@
         async function cargarClientes() {
             try {
                 const token = localStorage.getItem('token');
-                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios?rol=cliente', {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/all', {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
 
                 if (!res.ok) throw new Error('Error al cargar clientes');
