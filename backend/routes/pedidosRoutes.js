@@ -425,4 +425,55 @@ router.get('/todos', authMiddleware, async (req, res) => {
   }
 });
 
+// 🔸 Crear pedido como empleado para un cliente
+router.post('/crear-por-empleado', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.rol !== 'empleado') {
+      return res.status(403).json({ error: 'Solo los empleados pueden usar esta ruta' });
+    }
+
+    const { clienteId, items, tipoEntrega, tienda, fechaEntrega, notas } = req.body;
+
+    if (!clienteId || !fechaEntrega || !items?.length) {
+      return res.status(400).json({ error: 'Faltan datos obligatorios: clienteId, fechaEntrega o productos' });
+    }
+
+    let total = 0;
+    const productosParaActualizar = [];
+
+    for (const item of items) {
+      const producto = await Productos.findByPk(item.productoId);
+      if (!producto) return res.status(404).json({ error: `Producto ID ${item.productoId} no encontrado` });
+      if (producto.stock < item.cantidad) return res.status(400).json({ error: `Stock insuficiente para ${producto.nombre}` });
+
+      total += producto.precio * item.cantidad;
+      productosParaActualizar.push({ producto, cantidad: item.cantidad });
+    }
+
+    const pedido = await Pedidos.create({
+      usuarioId: clienteId,
+      fecha: new Date(),
+      estado: 'pendiente',
+      total,
+      tipoEntrega,
+      tienda: tipoEntrega === 'recoger' ? tienda : null,
+      metodoPago: 'empleado', // o 'interno'
+      fechaEntrega,
+      notas
+    });
+
+    for (const { producto, cantidad } of productosParaActualizar) {
+      await ProductosPedidos.create({ pedidoId: pedido.id, productoId: producto.id, cantidad });
+      producto.stock -= cantidad;
+      await producto.save();
+    }
+
+    res.status(201).json({ message: 'Pedido creado por empleado', pedidoId: pedido.id });
+  } catch (err) {
+    console.error('❌ Error en /crear-por-empleado:', err);
+    res.status(500).json({ error: 'Error al crear pedido por empleado' });
+  }
+});
+
+
 module.exports = router;

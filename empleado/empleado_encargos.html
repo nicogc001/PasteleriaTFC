@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Pedido para Cliente</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body { padding: 20px; }
+    .section-title { margin-top: 30px; margin-bottom: 15px; }
+    .card-producto { cursor: pointer; transition: transform 0.2s ease; }
+    .card-producto:hover { transform: scale(1.02); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Crear Pedido para Cliente</h1>
+
+    <!-- Cliente -->
+    <div class="section-title"><strong>Cliente</strong></div>
+    <div class="form-row align-items-center">
+      <div class="col-sm-6">
+        <input type="text" id="cliente" class="form-control" placeholder="Buscar cliente por nombre, email o teléfono">
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-outline-primary">Nuevo cliente</button>
+      </div>
+    </div>
+
+    <!-- Fecha de entrega -->
+    <div class="section-title"><strong>Fecha de entrega</strong></div>
+    <input type="date" id="fechaEntrega" class="form-control" />
+
+    <!-- Tipo de envío -->
+    <div class="section-title"><strong>Tipo de envío</strong></div>
+    <select id="tipoEnvio" class="form-control">
+      <option value="recoger">Recogida en tienda</option>
+      <option value="enviar">Envío local (Madrid)</option>
+      <option value="enviar">Envío nacional</option>
+    </select>
+
+    <!-- Productos -->
+    <div class="section-title"><strong>Productos</strong></div>
+    <div class="form-group">
+      <input type="text" id="buscarProducto" class="form-control" placeholder="Buscar productos...">
+    </div>
+    <div class="row">
+      <!-- Producto demo -->
+      <div class="col-md-3">
+        <div class="card card-producto">
+          <img class="card-img-top" src="https://via.placeholder.com/150" alt="Producto">
+          <div class="card-body text-center">
+            <h5 class="card-title">Producto ejemplo</h5>
+            <p class="card-text">7,50 €</p>
+            <button class="btn btn-sm btn-primary" onclick="agregarProducto('Producto ejemplo', 7.50)">Añadir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notas -->
+    <div class="section-title"><strong>Notas adicionales</strong></div>
+    <textarea id="notas" class="form-control" rows="3" placeholder="Alergias, comentarios..."></textarea>
+
+    <!-- Confirmación -->
+    <div class="section-title"><strong>Resumen del pedido</strong></div>
+    <ul class="list-group mb-3" id="resumenPedido">
+    </ul>
+    <div class="mb-3 font-weight-bold">Total: <span id="totalPedido">0.00</span> €</div>
+    <button class="btn btn-success btn-lg" onclick="confirmarPedido()">Confirmar pedido</button>
+  </div>
+
+  <script>
+    let pedido = [];
+
+    function agregarProducto(nombre, precio) {
+      const item = pedido.find(p => p.nombre === nombre);
+      if (item) {
+        item.cantidad++;
+      } else {
+        pedido.push({ nombre, precio, cantidad: 1 });
+      }
+      renderResumen();
+    }
+
+    function renderResumen() {
+      const resumen = document.getElementById('resumenPedido');
+      resumen.innerHTML = '';
+      let total = 0;
+      pedido.forEach(item => {
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = `${item.cantidad}x ${item.nombre} - ${subtotal.toFixed(2)} €`;
+        resumen.appendChild(li);
+      });
+      document.getElementById('totalPedido').textContent = total.toFixed(2);
+    }
+
+    function confirmarPedido() {
+      const cliente = document.getElementById('cliente').value;
+      const fechaEntrega = document.getElementById('fechaEntrega').value;
+      const tipoEntrega = document.getElementById('tipoEnvio').value;
+      const notas = document.getElementById('notas').value;
+
+      if (!cliente || !fechaEntrega || pedido.length === 0) {
+        alert('Faltan datos obligatorios.');
+        return;
+      }
+
+      const datos = {
+        cliente,
+        fechaEntrega,
+        tipoEntrega,
+        notas,
+        items: pedido
+      };
+
+      console.log('Pedido confirmado:', datos);
+      alert('Pedido simulado en consola. Backend aún no implementado.');
+    }
+  </script>
+</body>
+</html>
