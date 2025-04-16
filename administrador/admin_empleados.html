@@ -139,13 +139,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>
     const token = localStorage.getItem('token');
-    const API_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/usuario';
+    const API_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/usuarios';
 
 
     async function cargarEmpleados(filtro = '') {
       try {
-        const res = await fetch(`${API_BASE}/all`, {
-          method: 'GET',
+        const res = await fetch(`${API_BASE}/filtrar?rol=empleado`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -154,6 +153,7 @@
         tabla.innerHTML = '';
 
         empleados
+          .filter(emp => emp.rol === 'empleado')
           .filter(emp => emp.nombre.toLowerCase().includes(filtro) || emp.email.toLowerCase().includes(filtro))
           .forEach(emp => {
             const tr = document.createElement('tr');
