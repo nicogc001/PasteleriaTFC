@@ -161,22 +161,30 @@
                 const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios?rol=cliente', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+
                 if (!res.ok) throw new Error('Error al cargar clientes');
+
                 const data = await res.json();
                 const clientes = Array.isArray(data) ? data : data.usuarios || data.clientes || [];
 
+                console.log('👥 Clientes cargados:', clientes);
+
                 const select = document.getElementById('clienteId');
+                select.innerHTML = '<option value="">Selecciona un cliente</option>';
+
                 clientes.forEach(c => {
                     const option = document.createElement('option');
                     option.value = c.id;
                     option.textContent = `${c.nombre} (${c.email})`;
                     select.appendChild(option);
                 });
+
             } catch (err) {
-                console.error(err);
+                console.error('❌ Error al cargar clientes:', err);
                 alert('No se pudieron cargar los clientes');
             }
         }
+
 
         async function cargarProductos() {
             try {
