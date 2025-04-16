@@ -35,9 +35,17 @@
         <div class="section-title"><strong>Cliente</strong></div>
         <div class="form-row align-items-center">
             <div class="col-sm-6">
-                <input type="text" id="clienteId" class="form-control" placeholder="ID del cliente">
+                <select id="clienteId" class="form-control" required>
+                    <option value="">Selecciona un cliente</option>
+                    <!-- Clientes se insertarán dinámicamente aquí -->
+                </select>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-outline-primary" onclick="window.location.href='/registro.html'">Nuevo
+                    cliente</button>
             </div>
         </div>
+
 
         <!-- Fecha de entrega -->
         <div class="section-title"><strong>Fecha de entrega</strong></div>
@@ -151,6 +159,31 @@
                 alert('Error al crear el pedido.');
             }
         }
+
+        async function cargarClientes() {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios?rol=cliente', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error('Error al cargar clientes');
+                const clientes = await res.json();
+
+                const select = document.getElementById('clienteId');
+                clientes.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = `${c.nombre} (${c.email})`;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error(err);
+                alert('No se pudieron cargar los clientes');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', cargarClientes);
+
 
         async function cargarProductos() {
             try {
