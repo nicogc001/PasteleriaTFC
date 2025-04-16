@@ -83,6 +83,40 @@
         <button class="btn btn-success btn-lg" onclick="confirmarPedido()">Confirmar pedido</button>
     </div>
 
+
+    <!-- Modal de Registro Rápido -->
+    <div class="modal fade" id="modalRegistroRapido" tabindex="-1" aria-labelledby="modalRegistroRapidoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalRegistroRapidoLabel">Registro rápido de cliente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="nuevoNombre">Nombre</label>
+                        <input type="text" id="nuevoNombre" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="nuevoApellido">Apellidos</label>
+                        <input type="text" id="nuevoApellido" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="nuevoTelefono">Teléfono</label>
+                        <input type="text" id="nuevoTelefono" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="registrarClienteRapido()">Registrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let pedido = [];
         let productosGlobales = [];
@@ -220,6 +254,63 @@
             });
         }
 
+        async function registrarClienteRapido() {
+            const nombre = document.getElementById('nuevoNombre').value;
+            const apellidos = document.getElementById('nuevoApellido').value;
+            const telefono = document.getElementById('nuevoTelefono').value;
+
+            if (!nombre || !telefono) {
+                alert('Nombre y teléfono son obligatorios.');
+                return;
+            }
+
+            try {
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nombre, apellidos, telefono, rol: 'cliente', email: `cliente${Date.now()}@auto.com`, password: '123456' })
+                });
+
+                if (!res.ok) throw new Error('Error al registrar cliente');
+
+                const nuevo = await res.json();
+                alert('Cliente registrado');
+                $('#modalRegistroRapido').modal('hide');
+                cargarClientes(nuevo.usuario?.id);
+            } catch (err) {
+                console.error(err);
+                alert('Error al registrar el cliente');
+            }
+        }
+
+        async function cargarClientes(seleccionarId = null) {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/filtrar?rol=cliente', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!res.ok) throw new Error('Error al cargar clientes');
+
+                const clientes = await res.json();
+                const select = document.getElementById('clienteId');
+                select.innerHTML = '<option value="">Selecciona un cliente</option>';
+
+                clientes.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = `${c.nombre} (${c.email})`;
+                    if (c.id === seleccionarId) option.selected = true;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('❌ Error al cargar clientes:', err);
+                alert('No se pudieron cargar los clientes');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             cargarClientes();
             cargarProductos();
@@ -231,6 +322,8 @@
             });
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
