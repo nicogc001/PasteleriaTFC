@@ -156,33 +156,33 @@
         }
 
         async function cargarClientes() {
-    try {
-        const token = localStorage.getItem('token');
-        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/filtrar?rol=cliente', {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/filtrar?rol=cliente', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-        if (!res.ok) throw new Error('Error al cargar clientes');
+                if (!res.ok) throw new Error('Error al cargar clientes');
 
-        const clientes = await res.json(); // ya viene como array
+                const clientes = await res.json(); // ya viene como array
 
-        console.log('👥 Clientes cargados:', clientes);
+                console.log('👥 Clientes cargados:', clientes);
 
-        const select = document.getElementById('clienteId');
-        select.innerHTML = '<option value="">Selecciona un cliente</option>';
+                const select = document.getElementById('clienteId');
+                select.innerHTML = '<option value="">Selecciona un cliente</option>';
 
-        clientes.forEach(c => {
-            const option = document.createElement('option');
-            option.value = c.id;
-            option.textContent = `${c.nombre} (${c.email})`;
-            select.appendChild(option);
-        });
+                clientes.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = `${c.nombre} (${c.email})`;
+                    select.appendChild(option);
+                });
 
-    } catch (err) {
-        console.error('❌ Error al cargar clientes:', err);
-        alert('No se pudieron cargar los clientes');
-    }
-}
+            } catch (err) {
+                console.error('❌ Error al cargar clientes:', err);
+                alert('No se pudieron cargar los clientes');
+            }
+        }
 
 
 
@@ -207,15 +207,15 @@
                 const col = document.createElement('div');
                 col.className = 'col-md-3 mb-3';
                 col.innerHTML = `
-          <div class="card card-producto">
-            <img class="card-img-top" src="${p.imagen}" alt="${p.nombre}" />
-            <div class="card-body text-center">
-              <h5 class="card-title">${p.nombre}</h5>
-              <p class="card-text">${p.precio ? Number(p.precio).toFixed(2) : '0.00'} €</p>
-              <button class="btn btn-sm btn-primary" onclick="agregarProducto(${p.id}, '${p.nombre}', ${p.precio})">Añadir</button>
-            </div>
-          </div>
-        `;
+                    <div class="card card-producto h-100 d-flex flex-column justify-content-between">
+                        <img class="card-img-top" src="${p.imagen}" alt="${p.nombre}" style="object-fit:cover; height:150px;" />
+                        <div class="card-body text-center d-flex flex-column justify-content-between">
+                        <h5 class="card-title">${p.nombre}</h5>
+                        <p class="card-text">${p.precio ? Number(p.precio).toFixed(2) : '0.00'} €</p>
+                        <button class="btn btn-sm btn-primary mt-auto" onclick="agregarProducto(${p.id}, '${p.nombre}', ${p.precio})">Añadir</button>
+                        </div>
+                    </div>
+                    `;
                 lista.appendChild(col);
             });
         }
