@@ -146,7 +146,7 @@
     async function cargarUsuarios() {
       try {
         const response = await fetch(`${API_URL}/usuarios/all`, {
-          headers: { 'Authorization': `Bearer ${token}` },
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!response.ok) throw new Error('Error obteniendo usuarios');
