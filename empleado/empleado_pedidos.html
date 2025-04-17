@@ -256,15 +256,22 @@
                     body: JSON.stringify({ estado: 'entregado' })
                 });
 
-                if (!res.ok) throw new Error('Error al marcar como entregado');
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Error desconocido al actualizar el estado');
+                }
+
                 alert('Pedido marcado como entregado');
                 const modal = mdb.Modal.getInstance(document.getElementById('modalDetalle'));
                 modal.hide();
                 cargarPedidosAsignados();
             } catch (err) {
-                alert('No se pudo actualizar el pedido');
+                console.error('Error al marcar como entregado:', err);
+                alert('No se pudo actualizar el pedido: ' + err.message);
             }
         }
+
 
         async function verDetallePedido(id) {
             // Validar ID
