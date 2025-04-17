@@ -22,7 +22,7 @@
       </div>
     </div>
   </nav>
-  
+
 
   <main class="container mt-5">
     <h1 class="text-center">Gestión de Usuarios</h1>
@@ -37,7 +37,7 @@
         <li><a href="admin_usuarios.html"><strong>Usuarios</strong></a></li>
         <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
       </ul>
-      
+
       <table class="table table-striped">
         <thead>
           <tr>
@@ -117,32 +117,32 @@
         },
         body: JSON.stringify({ rol: nuevoRol })
       })
-      .then(res => {
-        if (!res.ok) throw new Error('Error actualizando rol');
-        alert('✅ Rol actualizado correctamente');
-      })
-      .catch(error => {
-        console.error('❌ Error actualizando rol:', error);
-        alert('Error actualizando rol');
-      });
+        .then(res => {
+          if (!res.ok) throw new Error('Error actualizando rol');
+          alert('✅ Rol actualizado correctamente');
+        })
+        .catch(error => {
+          console.error('❌ Error actualizando rol:', error);
+          alert('Error actualizando rol');
+        });
     }
 
     function eliminarUsuario(id) {
       if (!confirm(`¿Estás seguro de que deseas eliminar al usuario #${id}?`)) return;
 
-      fetch(`${API_URL}/admin/usuarios/${id}`, {
+      fetch(`${API_URL}/usuarios/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       })
-      .then(res => {
-        if (!res.ok) throw new Error('Error eliminando usuario');
-        alert('✅ Usuario eliminado correctamente');
-        location.reload();
-      })
-      .catch(error => {
-        console.error('❌ Error eliminando usuario:', error);
-        alert('Error eliminando usuario');
-      });
+        .then(res => {
+          if (!res.ok) throw new Error('Error eliminando usuario');
+          alert('✅ Usuario eliminado correctamente');
+          location.reload();
+        })
+        .catch(error => {
+          console.error('❌ Error eliminando usuario:', error);
+          alert('Error eliminando usuario');
+        });
     }
 
     function logout() {
