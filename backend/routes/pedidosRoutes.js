@@ -47,7 +47,7 @@ router.get('/asignados', authMiddleware, async (req, res) => {
       },
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        { model: Usuario, attributes: ['nombre'] }
+        { model: Usuario, attributes: ['nombre', 'telefono'] }
       ],
       order: [['fechaEntrega', 'ASC']]
     });
@@ -55,6 +55,7 @@ router.get('/asignados', authMiddleware, async (req, res) => {
     const resultado = pedidos.map(p => ({
       id: p.id,
       nombreCliente: p.Usuario?.nombre || 'Cliente',
+      telefonoCliente: p.Usuario?.telefono || 'N/D',
       productos: p.ProductosPedidos.map(pp => ({
         nombre: pp.Producto?.nombre || 'Desconocido',
         cantidad: pp.cantidad,
@@ -64,7 +65,7 @@ router.get('/asignados', authMiddleware, async (req, res) => {
       estado: p.estado,
       fechaEntrega: p.fechaEntrega,
       total: p.total
-    }));
+    }));      
 
     res.json(resultado);
   } catch (err) {

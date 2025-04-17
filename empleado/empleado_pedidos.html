@@ -70,6 +70,7 @@
             </div>
             <div class="modal-body">
               <p><strong>Cliente:</strong> <span id="detalle-cliente"></span></p>
+              <p><strong>Teléfono:</strong> <span id="detalle-telefono"></span></p>
               <p><strong>Fecha entrega:</strong> <span id="detalle-fecha"></span></p>
               <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
               <ul id="detalle-pedido-lista" class="list-group list-group-flush mb-3"></ul>
@@ -279,6 +280,7 @@
 
             // Mostrar datos del pedido
             document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
+            document.getElementById('detalle-telefono').textContent = pedido.telefonoCliente || '-';
             document.getElementById('detalle-fecha').textContent = pedido.fechaEntrega;
             document.getElementById('detalle-estado').innerHTML = `<span class="badge ${pedido.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${pedido.estado}</span>`;
 
