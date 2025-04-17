@@ -275,7 +275,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ nombre, apellidos, telefono, rol: 'cliente', email: `cliente${Date.now()}@auto.com`, password: '123456' })
+                    body: JSON.stringify({ nombre, apellidos, telefono, rol: 'cliente', email: `clienteENCARGO${Date.now()}@yopmail.com`, password: '123456' })
                 });
 
                 if (!res.ok) throw new Error('Error al registrar cliente');

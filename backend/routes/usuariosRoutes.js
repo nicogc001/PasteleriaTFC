@@ -117,7 +117,7 @@ router.put('/password', authMiddleware, async (req, res) => {
 // ➕ Crear nuevo usuario (registro desde admin panel)
 router.post('/', async (req, res) => {
   try {
-    const { nombre, email, password, rol } = req.body;
+    const { nombre, email, password, rol, telefono, apellidos } = req.body;
 
     if (!nombre || !email || !password) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
@@ -132,6 +132,8 @@ router.post('/', async (req, res) => {
 
     const nuevoUsuario = await Usuario.create({
       nombre,
+      apellidos,        
+      telefono,          
       email,
       password: hashedPassword,
       rol: rol || 'empleado'
@@ -143,6 +145,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
+
 
 // ✅ Eliminar usuario (solo admin)
 router.delete('/:id', authMiddleware, async (req, res) => {
