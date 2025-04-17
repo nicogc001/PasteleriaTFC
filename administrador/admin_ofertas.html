@@ -2,8 +2,8 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administrar Ofertas - El Caballo Goloso</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
@@ -59,8 +59,15 @@
                 </div>
                 <div class="col-md-4 mb-3">
                   <label class="form-label">Clientes (opcional)</label>
-                  <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto;" id="lista-clientes">
-                    <!-- JS insertará aquí checkboxes -->
+                  <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
+                      data-mdb-toggle="dropdown" aria-expanded="false">
+                      Seleccionar clientes
+                    </button>
+                    <ul class="dropdown-menu p-2 w-100" id="lista-clientes"
+                      style="max-height: 200px; overflow-y: auto;">
+                      <!-- JS insertará aquí checkboxes -->
+                    </ul>
                   </div>
                   <small class="text-muted">Dejar vacío para aplicar a todos</small>
                 </div>
@@ -132,7 +139,6 @@
     <small>© 2025 Pastelería El Caballo Goloso</small>
   </footer>
 
-  <!-- Scripts necesarios -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>
     function logout() {
@@ -140,6 +146,7 @@
       window.location.href = "../login.html";
     }
   </script>
+
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
