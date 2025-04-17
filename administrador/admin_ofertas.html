@@ -2,28 +2,24 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrar Ofertas - El Caballo Goloso</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="../styles/main.css" rel="stylesheet" />
 </head>
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="admin_dashboard.html">
-                <i class="fas fa-tags me-2"></i> Ofertas - El Caballo Goloso
-            </a>
+            <a class="navbar-brand" href="admin_dashboard.html">El Caballo Goloso</a>
             <div class="d-flex align-items-center">
                 <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
                 <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
             </div>
         </div>
     </nav>
-
     <div class="container-fluid mt-5">
         <div class="row">
             <div class="col-md-3">
@@ -176,41 +172,23 @@
             </div>
         </div>
 
-        <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
-            <small>
-                <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
-                <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
-                <i class="fas fa-phone me-1"></i> 91 859 67 11
-            </small>
-            <br />
-            <small>© 2025 Pastelería El Caballo Goloso</small>
-        </footer>
-
-        <!-- Scripts -->
-        <script>
-            function logout() {
-                localStorage.clear();
-                window.location.href = '../login.html';
-            }
-        </script>
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
                 try {
-                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
                         method: 'DELETE'
-                  });
-                if (!res.ok) throw new Error();
-                alert('Oferta eliminada');
-                location.reload();
-            } catch (err) {
-                console.error('Error al eliminar oferta:', err);
-                alert('No se pudo eliminar la oferta');
+                    });
+                    if (!res.ok) throw new Error();
+                    alert('Oferta eliminada');
+                    location.reload();
+                } catch (err) {
+                    console.error('Error al eliminar oferta:', err);
+                    alert('No se pudo eliminar la oferta');
+                }
             }
-          }
 
             function editarOferta(id) {
-                alert(Abrir modal para editar oferta ${ id });
+                alert(`Abrir modal para editar oferta ${id}`);
                 // Aquí puedes construir un modal dinámico o redireccionar a una página de edición
             }
         </script>
@@ -266,30 +244,30 @@
             async function cargarClientes() {
                 try {
                     const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/all', {
-                        headers: { Authorization: Bearer ${ localStorage.getItem('token') } }
-                  });
-            const usuarios = await res.json();
+                        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                    });
+                    const usuarios = await res.json();
 
-            const lista = document.getElementById('lista-clientes');
-            lista.innerHTML = '';
+                    const lista = document.getElementById('lista-clientes');
+                    lista.innerHTML = '';
 
-            usuarios
-                .filter(u => u.rol === 'cliente')
-                .forEach(c => {
-                    const li = document.createElement('li');
-                    li.innerHTML =
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="${c.id}" id="cliente-${c.id}">
+                    usuarios
+                        .filter(u => u.rol === 'cliente')
+                        .forEach(c => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="${c.id}" id="cliente-${c.id}">
                                 <label class="form-check-label" for="cliente-${c.id}">${c.nombre}</label>
-                        </div>
-                        ;
-                    lista.appendChild(li);
-                });
-  
-              } catch (err) {
-                console.error('Error al cargar clientes', err);
+                            </div>
+                            `;
+                            lista.appendChild(li);
+                        });
+
+                } catch (err) {
+                    console.error('Error al cargar clientes', err);
+                }
             }
-          }
 
             async function cargarOfertasVigentes() {
                 try {
@@ -299,7 +277,7 @@
                     contenedor.innerHTML = '';
 
                     if (ofertas.length === 0) {
-                        contenedor.innerHTML = <div class="alert alert-info">No hay ofertas vigentes en este momento.</div>;
+                        contenedor.innerHTML = `<div class="alert alert-info">No hay ofertas vigentes en este momento.</div>`;
                         return;
                     }
 
@@ -308,29 +286,29 @@
                         const div = document.createElement('div');
                         div.className = 'alert alert-success d-flex justify-content-between align-items-center flex-wrap';
 
-                        div.innerHTML = 
-                              <div>
-                              <strong>${producto.nombre}</strong><br/>
-                              <small>
-                                  ${oferta.descuento}% – del ${new Date(oferta.fechaInicio).toLocaleDateString()} 
-                                  al ${new Date(oferta.fechaFin).toLocaleDateString()}
-                              </small>
-                              </div>
-                              <div class="mt-2 mt-md-0">
-                              <button class="btn btn-sm btn-warning me-2" onclick="editarOferta(${oferta.id})">
-                                  <i class="fas fa-edit"></i>
-                              </button>
-                              <button class="btn btn-sm btn-danger" onclick="eliminarOferta(${oferta.id})">
-                                  <i class="fas fa-trash"></i>
-                              </button>
-                              </div>
-                            ;
+                        div.innerHTML = `
+                            <div>
+                            <strong>${producto.nombre}</strong><br/>
+                            <small>
+                                ${oferta.descuento}% – del ${new Date(oferta.fechaInicio).toLocaleDateString()} 
+                                al ${new Date(oferta.fechaFin).toLocaleDateString()}
+                            </small>
+                            </div>
+                            <div class="mt-2 mt-md-0">
+                            <button class="btn btn-sm btn-warning me-2" onclick="editarOferta(${oferta.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="eliminarOferta(${oferta.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            </div>
+                        `;
 
                         contenedor.appendChild(div);
                     });
                 } catch (error) {
                     console.error('Error al cargar ofertas vigentes:', error);
-                    document.getElementById('contenedor-ofertas-vigentes').innerHTML = <div class="text-danger">Error al cargar ofertas.</div>;
+                    document.getElementById('contenedor-ofertas-vigentes').innerHTML = `<div class="text-danger">Error al cargar ofertas.</div>`;
                 }
             }
 
@@ -338,78 +316,78 @@
             async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
                 try {
-                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
                         method: 'DELETE'
-                  });
-                if (!res.ok) throw new Error();
-                alert('Oferta eliminada');
-                location.reload();
-            } catch (err) {
-                console.error('Error al eliminar oferta:', err);
-                alert('No se pudo eliminar la oferta');
+                    });
+                    if (!res.ok) throw new Error();
+                    alert('Oferta eliminada');
+                    location.reload();
+                } catch (err) {
+                    console.error('Error al eliminar oferta:', err);
+                    alert('No se pudo eliminar la oferta');
+                }
             }
-          }
 
             async function editarOferta(id) {
                 try {
                     const token = localStorage.getItem('token');
-                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
-                        headers: { 'Authorization': Bearer ${ token } }
-                  });
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
 
-            if (!res.ok) throw new Error('Error al obtener la oferta');
+                    if (!res.ok) throw new Error('Error al obtener la oferta');
 
-            const oferta = await res.json();
+                    const oferta = await res.json();
 
-            // Llenar campos del modal
-            document.getElementById('edit-id').value = oferta.id;
-            document.getElementById('edit-descuento').value = oferta.descuento;
-            document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
-            document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
+                    // Llenar campos del modal
+                    document.getElementById('edit-id').value = oferta.id;
+                    document.getElementById('edit-descuento').value = oferta.descuento;
+                    document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
+                    document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
 
-            // Cargar productos si no están ya
-            await cargarProductosEnSelect('edit-producto', oferta.productoId);
+                    // Cargar productos si no están ya
+                    await cargarProductosEnSelect('edit-producto', oferta.productoId);
 
-            // Abrir modal
-            const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
-            modal.show();
-  
-              } catch (error) {
-                console.error('❌ Error al cargar datos de oferta:', error);
-                alert('No se pudo cargar la información de la oferta.');
+                    // Abrir modal
+                    const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
+                    modal.show();
+
+                } catch (error) {
+                    console.error('❌ Error al cargar datos de oferta:', error);
+                    alert('No se pudo cargar la información de la oferta.');
+                }
             }
-          }
 
 
             async function editarOferta(id) {
                 try {
                     const token = localStorage.getItem('token');
-                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
-                        headers: { 'Authorization': Bearer ${ token } }
-                  });
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
 
-            if (!res.ok) throw new Error('Error al obtener la oferta');
+                    if (!res.ok) throw new Error('Error al obtener la oferta');
 
-            const oferta = await res.json();
+                    const oferta = await res.json();
 
-            // Llenar campos del modal
-            document.getElementById('edit-id').value = oferta.id;
-            document.getElementById('edit-descuento').value = oferta.descuento;
-            document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
-            document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
+                    // Llenar campos del modal
+                    document.getElementById('edit-id').value = oferta.id;
+                    document.getElementById('edit-descuento').value = oferta.descuento;
+                    document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
+                    document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
 
-            // Cargar productos si no están ya
-            await cargarProductosEnSelect('edit-producto', oferta.productoId);
+                    // Cargar productos si no están ya
+                    await cargarProductosEnSelect('edit-producto', oferta.productoId);
 
-            // Abrir modal
-            const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
-            modal.show();
-  
-              } catch (error) {
-                console.error('❌ Error al cargar datos de oferta:', error);
-                alert('No se pudo cargar la información de la oferta.');
+                    // Abrir modal
+                    const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
+                    modal.show();
+
+                } catch (error) {
+                    console.error('❌ Error al cargar datos de oferta:', error);
+                    alert('No se pudo cargar la información de la oferta.');
+                }
             }
-          }
 
             document.getElementById('formEditarOferta').addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -424,24 +402,24 @@
                 };
 
                 try {
-                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
+                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
                         method: 'PUT',
                         headers: {
-                        'Authorization': Bearer ${ token },
-                        'Content-Type': 'application/json'
-                      },
-                body: JSON.stringify(body)
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+
+                    if (!res.ok) throw new Error('Error al actualizar la oferta');
+
+                    alert('✅ Oferta actualizada correctamente');
+                    location.reload();
+                } catch (err) {
+                    console.error('❌ Error al actualizar oferta:', err);
+                    alert('Hubo un error al guardar los cambios.');
+                }
             });
-
-            if (!res.ok) throw new Error('Error al actualizar la oferta');
-
-            alert('✅ Oferta actualizada correctamente');
-            location.reload();
-              } catch (err) {
-                console.error('❌ Error al actualizar oferta:', err);
-                alert('Hubo un error al guardar los cambios.');
-            }
-          });
 
             async function cargarProductosEnSelect(selectId, selectedId = null) {
                 try {
