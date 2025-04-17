@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,19 +10,14 @@
     <link href="styles/main.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
         <div class="container-fluid">
             <!-- Toggle button -->
-            <button
-                data-mdb-collapse-init
-                class="navbar-toggler"
-                type="button"
-                data-mdb-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
+            <button data-mdb-collapse-init class="navbar-toggler" type="button"
+                data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
                 <i class="fas fa-bars"></i>
             </button>
 
@@ -29,12 +25,8 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Navbar brand -->
                 <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                    <img
-                        src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
-                        height="15"
-                        alt="MDB Logo"
-                        loading="lazy"
-                    />
+                    <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15"
+                        alt="MDB Logo" loading="lazy" />
                 </a>
                 <!-- Left links -->
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -48,25 +40,14 @@
 
             <!-- Right elements -->
             <div class="d-flex align-items-center">
-                
+
 
                 <!-- Avatar -->
                 <div class="dropdown">
-                    <a
-                        data-mdb-dropdown-init
-                        class="dropdown-toggle d-flex align-items-center hidden-arrow"
-                        href="login.html"
-                        id="navbarDropdownMenuAvatar"
-                        role="button"
-                        aria-expanded="false"
-                    >
-                        <img
-                            src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                            class="rounded-circle"
-                            height="25"
-                            alt="User Avatar"
-                            loading="lazy"
-                        />
+                    <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                        href="login.html" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+                        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25"
+                            alt="User Avatar" loading="lazy" />
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                         <li>
@@ -83,7 +64,7 @@
             </div>
         </div>
     </nav>
-    
+
     <main class="container mt-5">
         <h1 class="text-center">Perfil</h1>
         <div class="d-flex">
@@ -114,7 +95,8 @@
                     <div class="row mt-3">
                         <div class="col-md-6">
                             <label class="form-label">Email</label>
-                            <input type="email" id="inputEmail" class="form-control" value="nicolas.gonzalez.cuchi@gmail.com">
+                            <input type="email" id="inputEmail" class="form-control"
+                                value="nicolas.gonzalez.cuchi@gmail.com">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Teléfono</label>
@@ -157,7 +139,7 @@
             </div>
         </div>
     </main>
-    
+
     <!-- Footer -->
     <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
         <div class="container text-center text-md-start mt-5">
@@ -175,96 +157,110 @@
             <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
         </div>
     </footer>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-          const token = localStorage.getItem('token');
-          if (!token) return (window.location.href = 'login.html');
-      
-          try {
-            const response = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario', {
-              method: 'GET',
-              headers: { 'Authorization': `Bearer ${token}` },
-              credentials: 'include'
-            });
-      
-            if (!response.ok) throw new Error("Token inválido");
-      
-            const user = await response.json();
-            document.getElementById("inputNombre").value = user.nombre || '';
-            document.getElementById("inputEmail").value = user.email || '';
-            document.getElementById("inputTelefono").value = user.telefono || '';
-            document.getElementById("inputEmpresa").value = user.empresa || '';
-            document.getElementById("inputCIF").value = user.cif || '';
-            document.getElementById("inputApellidos").value = user.apellidos || '';
-          } catch (err) {
-            console.error(err);
-            alert("Debes iniciar sesión.");
-            window.location.href = 'login.html';
-          }
-        });
-      
-        async function guardarPerfil(event) {
-          event.preventDefault();
-          const token = localStorage.getItem('token');
-          if (!token) return alert("Sesión no válida.");
-      
-          const payload = {
-            nombre: document.getElementById("inputNombre").value,
-            apellidos: document.getElementById("inputApellidos").value,
-            email: document.getElementById("inputEmail").value,
-            telefono: document.getElementById("inputTelefono").value,
-            empresa: document.getElementById("inputEmpresa").value,
-            cif: document.getElementById("inputCIF").value
-          };
-      
-          const passActual = document.getElementById("inputPassActual").value;
-          const passNueva = document.getElementById("inputPassNueva").value;
-          const passNuevaRep = document.getElementById("inputPassNuevaRep").value;
-      
-          try {
-            // 1️⃣ Guardar datos de perfil
-            const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario/update', {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-              body: JSON.stringify(payload),
-              credentials: 'include'
-            });
-      
-            if (!res.ok) throw new Error("Error actualizando perfil");
-            alert("✅ Perfil actualizado correctamente.");
-      
-            // 2️⃣ Cambiar contraseña si se han rellenado los campos
-            if (passActual && passNueva && passNueva === passNuevaRep) {
-              const passRes = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario/password', {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ actual: passActual, nueva: passNueva }),
-                credentials: 'include'
-              });
-      
-              if (!passRes.ok) {
-                const error = await passRes.json();
-                throw new Error(error.error || "Error cambiando contraseña");
-              }
-      
-              alert("🔐 Contraseña cambiada correctamente.");
-            } else if (passActual || passNueva || passNuevaRep) {
-              alert("❌ Las contraseñas no coinciden o faltan campos.");
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("Token no encontrado. Debes iniciar sesión.");
+                window.location.href = 'login.html';
+                return;
             }
-          } catch (error) {
-            console.error(error);
-            alert("❌ Error guardando cambios.");
-          }
+
+            try {
+                const response = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                    // credentials: 'include' -> eliminado si no es necesario
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Error: ${response.status} - ${errorData.message || 'Token inválido'}`);
+                }
+
+                const user = await response.json();
+
+                document.getElementById("inputNombre").value = user.nombre || '';
+                document.getElementById("inputEmail").value = user.email || '';
+                document.getElementById("inputTelefono").value = user.telefono || '';
+                document.getElementById("inputEmpresa").value = user.empresa || '';
+                document.getElementById("inputCIF").value = user.cif || '';
+                document.getElementById("inputApellidos").value = user.apellidos || '';
+
+            } catch (err) {
+                console.error(err);
+                alert(err.message);
+                window.location.href = 'login.html';
+            }
+        });
+
+
+        async function guardarPerfil(event) {
+            event.preventDefault();
+            const token = localStorage.getItem('token');
+            if (!token) return alert("Sesión no válida.");
+
+            const payload = {
+                nombre: document.getElementById("inputNombre").value,
+                apellidos: document.getElementById("inputApellidos").value,
+                email: document.getElementById("inputEmail").value,
+                telefono: document.getElementById("inputTelefono").value,
+                empresa: document.getElementById("inputEmpresa").value,
+                cif: document.getElementById("inputCIF").value
+            };
+
+            const passActual = document.getElementById("inputPassActual").value;
+            const passNueva = document.getElementById("inputPassNueva").value;
+            const passNuevaRep = document.getElementById("inputPassNuevaRep").value;
+
+            try {
+                // 1️⃣ Guardar datos de perfil
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
+                });
+
+                if (!res.ok) throw new Error("Error actualizando perfil");
+                alert("✅ Perfil actualizado correctamente.");
+
+                // 2️⃣ Cambiar contraseña si se han rellenado los campos
+                if (passActual && passNueva && passNueva === passNuevaRep) {
+                    const passRes = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario/password', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ actual: passActual, nueva: passNueva }),
+                        credentials: 'include'
+                    });
+
+                    if (!passRes.ok) {
+                        const error = await passRes.json();
+                        throw new Error(error.error || "Error cambiando contraseña");
+                    }
+
+                    alert("🔐 Contraseña cambiada correctamente.");
+                } else if (passActual || passNueva || passNuevaRep) {
+                    alert("❌ Las contraseñas no coinciden o faltan campos.");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("❌ Error guardando cambios.");
+            }
         }
-      </script>
-      
-      
+    </script>
+
+
 </body>
+
 </html>
