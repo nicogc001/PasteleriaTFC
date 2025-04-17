@@ -128,22 +128,23 @@
     }
 
     function eliminarUsuario(id) {
-      if (!confirm(`¿Estás seguro de que deseas eliminar al usuario #${id}?`)) return;
+  if (!confirm(`¿Estás seguro de que deseas eliminar al usuario #${id}?`)) return;
 
-      fetch(`${API_URL}/usuarios/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-        .then(res => {
-          if (!res.ok) throw new Error('Error eliminando usuario');
-          alert('✅ Usuario eliminado correctamente');
-          location.reload();
-        })
-        .catch(error => {
-          console.error('❌ Error eliminando usuario:', error);
-          alert('Error eliminando usuario');
-        });
-    }
+  fetch(`${API_URL}/usuarios/${id}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('Error eliminando usuario');
+    alert('Usuario eliminado correctamente');
+    location.reload();
+  })
+  .catch(error => {
+    console.error('Error eliminando usuario:', error);
+    alert('Error eliminando usuario');
+  });
+}
+
 
     function logout() {
       fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' })
