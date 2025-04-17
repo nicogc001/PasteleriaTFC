@@ -23,37 +23,83 @@
     </div>
   </nav>
 
-
   <main class="container mt-5">
     <h1 class="text-center">Gestión de Usuarios</h1>
-    <div class="mt-4">
-      <ul class="list-unstyled">
-        <li><a href="admin_empleados.html">Empleados</a></li>
-        <li><a href="admin_horarios.html">Horarios</a></li>
-        <li><a href="admin_registroJornada.html">Registros Jornada</a></li> <!-- pendiente de implementación -->
-        <li><a href="admin_ofertas.html">Ofertas</a></li>
-        <li><a href="admin_pedidos.html">Pedidos</a></li>
-        <li><a href="admin_productos.html">Productos</a></li>
-        <li><a href="admin_usuarios.html"><strong>Usuarios</strong></a></li>
-        <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-      </ul>
+    <div class="row">
+      <aside class="col-md-3">
+        <h4 class="text-danger">Menú</h4>
+        <ul class="list-unstyled">
+          <li><a href="admin_empleados.html">Empleados</a></li>
+          <li><a href="admin_horarios.html">Horarios</a></li>
+          <li><a href="admin_registroJornada.html">Registros Jornada</a></li>
+          <li><a href="admin_ofertas.html">Ofertas</a></li>
+          <li><a href="admin_pedidos.html">Pedidos</a></li>
+          <li><a href="admin_productos.html">Productos</a></li>
+          <li><strong>Usuarios</strong></li>
+          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+        </ul>
+      </aside>
 
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="lista-usuarios">
-          <!-- Usuarios se cargarán dinámicamente aquí -->
-        </tbody>
-      </table>
+      <section class="col-md-9">
+        <div class="d-flex justify-content-between mb-3">
+          <h4>Lista de Usuarios</h4>
+          <button class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#modalNuevoUsuario">
+            <i class="fas fa-user-plus me-1"></i> Nuevo Usuario
+          </button>
+        </div>
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="lista-usuarios"></tbody>
+        </table>
+      </section>
     </div>
   </main>
+
+  <!-- Modal nuevo usuario -->
+  <div class="modal fade" id="modalNuevoUsuario" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Nuevo Usuario</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formNuevoUsuario">
+            <div class="mb-3">
+              <label for="nuevo-nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nuevo-nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="nuevo-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="nuevo-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="nuevo-password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="nuevo-password" required minlength="6">
+            </div>
+            <div class="mb-3">
+              <label for="nuevo-rol" class="form-label">Rol</label>
+              <select id="nuevo-rol" class="form-select" required>
+                <option value="cliente">Cliente</option>
+                <option value="empleado">Empleado</option>
+                <option value="administrador">Administrador</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Crear</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
     <div class="text-center p-3">
@@ -66,8 +112,40 @@
     const token = localStorage.getItem('token');
 
     document.addEventListener('DOMContentLoaded', async () => {
+      await cargarUsuarios();
+
+      document.getElementById('formNuevoUsuario').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nombre = document.getElementById('nuevo-nombre').value;
+        const email = document.getElementById('nuevo-email').value;
+        const password = document.getElementById('nuevo-password').value;
+        const rol = document.getElementById('nuevo-rol').value;
+
+        try {
+          const res = await fetch(`${API_URL}/usuarios`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nombre, email, password, rol })
+          });
+
+          if (!res.ok) throw new Error('Error al crear usuario');
+          alert('Usuario creado correctamente');
+          const modal = mdb.Modal.getInstance(document.getElementById('modalNuevoUsuario'));
+          modal.hide();
+          document.getElementById('formNuevoUsuario').reset();
+          await cargarUsuarios();
+        } catch (error) {
+          alert('Error al crear usuario');
+        }
+      });
+    });
+
+    async function cargarUsuarios() {
       try {
-        const response = await fetch(`${API_URL}/admin/usuarios`, {
+        const response = await fetch(`${API_URL}/usuarios/all`, {
           method: 'GET',
           headers: { 'Authorization': `Bearer ${token}` },
           credentials: 'include'
@@ -92,7 +170,8 @@
             <td>
               <select onchange="cambiarRol(${user.id}, this.value)" class="form-select form-select-sm">
                 <option value="cliente" ${user.rol === 'cliente' ? 'selected' : ''}>cliente</option>
-                <option value="admin" ${user.rol === 'admin' ? 'selected' : ''}>admin</option>
+                <option value="empleado" ${user.rol === 'empleado' ? 'selected' : ''}>empleado</option>
+                <option value="administrador" ${user.rol === 'administrador' ? 'selected' : ''}>administrador</option>
               </select>
             </td>
             <td>
@@ -104,12 +183,12 @@
       } catch (error) {
         console.error('Error cargando usuarios:', error);
       }
-    });
+    }
 
     function cambiarRol(id, nuevoRol) {
       if (!confirm(`¿Seguro que deseas cambiar el rol del usuario #${id} a '${nuevoRol}'?`)) return;
 
-      fetch(`${API_URL}/admin/usuarios/${id}/rol`, {
+      fetch(`${API_URL}/usuarios/${id}/rol`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -119,32 +198,31 @@
       })
         .then(res => {
           if (!res.ok) throw new Error('Error actualizando rol');
-          alert('✅ Rol actualizado correctamente');
+          alert('Rol actualizado correctamente');
         })
         .catch(error => {
-          console.error('❌ Error actualizando rol:', error);
+          console.error('Error actualizando rol:', error);
           alert('Error actualizando rol');
         });
     }
 
     function eliminarUsuario(id) {
-  if (!confirm(`¿Estás seguro de que deseas eliminar al usuario #${id}?`)) return;
+      if (!confirm(`¿Estás seguro de que deseas eliminar al usuario #${id}?`)) return;
 
-  fetch(`${API_URL}/usuarios/${id}`, {
-    method: 'DELETE',
-    headers: { 'Authorization': `Bearer ${token}` }
-  })
-  .then(res => {
-    if (!res.ok) throw new Error('Error eliminando usuario');
-    alert('Usuario eliminado correctamente');
-    location.reload();
-  })
-  .catch(error => {
-    console.error('Error eliminando usuario:', error);
-    alert('Error eliminando usuario');
-  });
-}
-
+      fetch(`${API_URL}/usuarios/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Error eliminando usuario');
+          alert('Usuario eliminado correctamente');
+          cargarUsuarios();
+        })
+        .catch(error => {
+          console.error('Error eliminando usuario:', error);
+          alert('Error eliminando usuario');
+        });
+    }
 
     function logout() {
       fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' })
