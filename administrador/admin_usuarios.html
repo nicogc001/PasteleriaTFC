@@ -54,10 +54,11 @@
               <th>ID</th>
               <th>Nombre</th>
               <th>Email</th>
+              <th>Teléfono</th>
               <th>Rol</th>
               <th>Acciones</th>
             </tr>
-          </thead>
+          </thead>          
           <tbody id="lista-usuarios"></tbody>
         </table>
       </section>
@@ -165,6 +166,7 @@
             <td>${user.id}</td>
             <td>${user.nombre}</td>
             <td>${user.email}</td>
+            <td>${user.telefono || '-'}</td>
             <td>
               <select onchange="cambiarRol(${user.id}, this.value)" class="form-select form-select-sm">
                 <option value="cliente" ${user.rol === 'cliente' ? 'selected' : ''}>cliente</option>

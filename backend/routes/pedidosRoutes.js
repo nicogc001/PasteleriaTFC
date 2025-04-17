@@ -390,7 +390,7 @@ router.get('/todos', authMiddleware, async (req, res) => {
     const pedidos = await Pedidos.findAll({
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        { model: Usuario, attributes: ['nombre'] }
+        { model: Usuario, attributes: ['nombre', 'telefono'] }
       ],
       order: [['fechaEntrega', 'ASC']]
     });
