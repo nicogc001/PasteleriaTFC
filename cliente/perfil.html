@@ -219,7 +219,7 @@
 
             try {
                 // 1️⃣ Guardar datos de perfil
-                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario/update', {
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/update', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -234,7 +234,7 @@
 
                 // 2️⃣ Cambiar contraseña si se han rellenado los campos
                 if (passActual && passNueva && passNueva === passNuevaRep) {
-                    const passRes = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuario/password', {
+                    const passRes = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/password', {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
