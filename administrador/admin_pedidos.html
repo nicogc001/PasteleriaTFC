@@ -11,9 +11,11 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">El Caballo Goloso</a>
+      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
+        <i class="fas fa-cog me-1"></i> El Caballo Goloso - Admin
+      </a>
       <div class="d-flex align-items-center">
         <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
         <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
@@ -22,64 +24,98 @@
   </nav>
 
   <main class="container mt-5">
-    <h1 class="text-center">Gestión de Pedidos</h1>
-    <nav class="me-4">
-      <h3 class="text-danger">Menú</h3>
-      <ul class="list-unstyled">
-        <li><a href="dashboard.html">Inicio</a></li>
-          <li><a href="admin_pedidos.html">Pedidos</a></li>
-          <li><a href="admin_ofertas.html">Ofertas</a></li>
-          <li><a href="admin_usuarios.html">Usuarios</a></li>
-          <li><a href="admin_productos.html">Productos</a></li>
+    <div class="row">
+      <!-- Menú lateral -->
+      <aside class="col-md-3">
+        <h4 class="text-danger">Menú</h4>
+        <ul class="list-unstyled">
           <li><a href="admin_empleados.html">Empleados</a></li>
+          <li><a href="admin_horarios.html">Horarios</a></li>
+          <li><a href="#">Registros Jornada</a></li>
+          <li><a href="admin_ofertas.html">Ofertas</a></li>
+          <li><a href="admin_pedidos.html" class="fw-bold text-dark">Pedidos</a></li>
+          <li><a href="admin_productos.html">Productos</a></li>
+          <li><a href="admin_usuarios.html">Usuarios</a></li>
           <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-      </ul>
-  </nav>
-    <div class="mt-4">
+        </ul>
+      </aside>
 
-      <!-- 🔍 Filtro por fecha de entrega -->
-      <form id="filtroFechas" class="row g-3 mb-4">
-        <div class="col-md-4">
-          <label for="fechaDesde" class="form-label">Desde</label>
-          <input type="date" id="fechaDesde" class="form-control" />
-        </div>
-        <div class="col-md-4">
-          <label for="fechaHasta" class="form-label">Hasta</label>
-          <input type="date" id="fechaHasta" class="form-control" />
-        </div>
-        <div class="col-md-4 align-self-end">
-          <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-        </div>
-      </form>
-      <div class="mb-4 d-flex justify-content-end gap-2">
-        <button class="btn btn-outline-danger" onclick="exportarPedidosPDF()">Exportar PDF</button>
-        <button class="btn btn-outline-success" onclick="exportarPedidosExcel()">Exportar Excel</button>
-      </div>
-      
+      <!-- Contenido principal -->
+      <section class="col-md-9">
+        <h1 class="text-center mb-4">Gestión de Pedidos</h1>
 
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Cliente</th>
-            <th>Fecha</th>
-            <th>Total</th>
-            <th>Estado</th>
-            <th>Entrega</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="lista-pedidos">
-          <!-- Pedidos cargados por JS  -->
-        </tbody>
-      </table>
+        <!-- Filtro de fechas -->
+        <form id="filtroFechas" class="row g-3 mb-4">
+          <div class="col-md-4">
+            <label for="fechaDesde" class="form-label">Desde</label>
+            <input type="date" id="fechaDesde" class="form-control" />
+          </div>
+          <div class="col-md-4">
+            <label for="fechaHasta" class="form-label">Hasta</label>
+            <input type="date" id="fechaHasta" class="form-control" />
+          </div>
+          <div class="col-md-4 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+          </div>
+        </form>
+
+        <div class="mb-4 d-flex justify-content-end gap-2">
+          <button class="btn btn-outline-danger" onclick="exportarPedidosPDF()">Exportar PDF</button>
+          <button class="btn btn-outline-success" onclick="exportarPedidosExcel()">Exportar Excel</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Entrega</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="lista-pedidos">
+              <!-- JS inserta pedidos -->
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   </main>
 
-  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-    <div class="text-center p-3">
-      © 2025 El Caballo Goloso | Administración
+  <!-- Modal de detalle del pedido -->
+  <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pedidoModalLabel">Detalle del Pedido</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
+          <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
+          <p><strong>Tipo de entrega:</strong> <span id="detalle-entrega"></span></p>
+          <p><strong>Tienda:</strong> <span id="detalle-tienda"></span></p>
+          <p><strong>Total:</strong> <span id="detalle-total"></span></p>
+          <hr />
+          <h6>Productos:</h6>
+          <ul id="detalle-productos" class="list-group"></ul>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br />
+    <small>© 2025 Pastelería El Caballo Goloso</small>
   </footer>
 
   <!-- Modal de detalle del pedido -->

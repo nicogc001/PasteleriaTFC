@@ -9,9 +9,11 @@
   <link href="../styles/main.css" rel="stylesheet" />
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="admin_dashboard.html">El Caballo Goloso</a>
+      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
+        <i class="fas fa-cog me-1"></i> El Caballo Goloso - Admin
+      </a>
       <div class="d-flex align-items-center">
         <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
         <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
@@ -20,23 +22,24 @@
   </nav>
 
   <main class="container mt-5">
-    <h1 class="text-center">Gestión de Empleados</h1>
-    <div class="d-flex">
-      <nav class="me-4">
+    <div class="row">
+      <aside class="col-md-3">
         <h4 class="text-danger">Menú</h4>
         <ul class="list-unstyled">
-          <li><a href="admin_dashboard.html">Inicio</a></li>
-          <li><a href="admin_pedidos.html">Pedidos</a></li>
+          <li><a href="admin_empleados.html" class="fw-bold text-dark">Empleados</a></li>
+          <li><a href="admin_horarios.html">Horarios</a></li>
+          <li><a href="#">Registros Jornada</a></li>
           <li><a href="admin_ofertas.html">Ofertas</a></li>
-          <li><a href="admin_usuarios.html">Usuarios</a></li>
+          <li><a href="admin_pedidos.html">Pedidos</a></li>
           <li><a href="admin_productos.html">Productos</a></li>
-          <li><a href="admin_empleados.html">Horarios</a></li>
-          <li><strong>Empleados</strong></li>
+          <li><a href="admin_usuarios.html">Usuarios</a></li>
           <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
         </ul>
-      </nav>
+      </aside>
 
-      <div class="w-100">
+      <section class="col-md-9">
+        <h1 class="text-center mb-4">Gestión de Empleados</h1>
+
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h4>Lista de Empleados</h4>
           <input type="text" id="filtroEmpleado" class="form-control w-25" placeholder="Buscar por nombre o email">
@@ -57,7 +60,7 @@
           </thead>
           <tbody id="tabla-empleados"></tbody>
         </table>
-      </div>
+      </section>
     </div>
   </main>
 
@@ -130,11 +133,24 @@
     </div>
   </div>
 
-  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-    <div class="text-center p-4">
-      © 2025 El Caballo Goloso
-    </div>
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br />
+    <small>© 2025 Pastelería El Caballo Goloso</small>
   </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script>

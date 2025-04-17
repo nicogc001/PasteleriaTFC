@@ -10,9 +10,11 @@
   <link href="../styles/main.css" rel="stylesheet" />
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="admin_dashboard.html">El Caballo Goloso</a>
+      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
+        <i class="fas fa-cog me-1"></i> El Caballo Goloso - Admin
+      </a>
       <div class="d-flex align-items-center">
         <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
         <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
@@ -21,33 +23,35 @@
   </nav>
 
   <main class="container mt-5">
-    <h1 class="text-center mb-4">Gestión de Horarios</h1>
-    <div class="d-flex">
+    <div class="row">
       <!-- Menú lateral -->
-      <nav class="me-4" style="min-width: 200px">
+      <aside class="col-md-3">
         <h4 class="text-danger">Menú</h4>
         <ul class="list-unstyled">
-          <li><a href="admin_dashboard.html">Dashboard</a></li>
-          <li><a href="admin_pedidos.html">Pedidos</a></li>
-          <li><a href="admin_usuarios.html">Usuarios</a></li>
-          <li><a href="admin_productos.html">Productos</a></li>
           <li><a href="admin_empleados.html">Empleados</a></li>
           <li><strong>Horarios</strong></li>
+          <li><a href="#">Registros Jornada</a></li>
+          <li><a href="admin_ofertas.html">Ofertas</a></li>
+          <li><a href="admin_pedidos.html">Pedidos</a></li>
+          <li><a href="admin_productos.html">Productos</a></li>
+          <li><a href="admin_usuarios.html">Usuarios</a></li>
           <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
         </ul>
-      </nav>
-  
-      <!-- Contenido principal: Calendario + formulario + tabla -->
-      <div class="w-100">
+      </aside>
+
+      <!-- Contenido principal -->
+      <section class="col-md-9">
+        <h1 class="text-center mb-4">Gestión de Horarios</h1>
+
         <div id="calendar" class="mb-4"></div>
-  
+
         <h4>Asignar Horario a Empleado</h4>
         <form id="formHorario" class="row g-3 mb-4">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label for="empleado" class="form-label">Empleado</label>
             <select id="empleado" class="form-select" required></select>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <label for="tienda" class="form-label">Tienda</label>
             <select id="tienda" class="form-select" required>
               <option value="Espacio Torrelodones">Espacio Torrelodones</option>
@@ -58,11 +62,11 @@
             <label for="fecha" class="form-label">Fecha</label>
             <input type="date" id="fecha" class="form-control" required>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-4">
             <label for="entrada" class="form-label">Entrada</label>
             <input type="time" id="entrada" class="form-control" required>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-4">
             <label for="salida" class="form-label">Salida</label>
             <input type="time" id="salida" class="form-control" required>
           </div>
@@ -70,7 +74,7 @@
             <button class="btn btn-success" type="submit">Asignar horario</button>
           </div>
         </form>
-  
+
         <h4>Horarios Asignados</h4>
         <table class="table table-striped">
           <thead>
@@ -85,7 +89,7 @@
           </thead>
           <tbody id="tabla-horarios"></tbody>
         </table>
-      </div>
+      </section>
     </div>
   </main>
 
@@ -104,6 +108,7 @@
     </div>
   </div>
 
+  <!-- Modal editar horario -->
   <div class="modal fade" id="modalEditarHorario" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -113,13 +118,11 @@
             <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <input type="hidden" id="editar-id">
-  
+            <input type="hidden" id="editar-id" />
             <div class="mb-3">
               <label for="editar-empleado" class="form-label">Empleado</label>
               <select id="editar-empleado" class="form-select" required></select>
             </div>
-  
             <div class="mb-3">
               <label for="editar-tienda" class="form-label">Tienda</label>
               <select id="editar-tienda" class="form-select">
@@ -127,18 +130,15 @@
                 <option value="Torrelodones pueblo">Torrelodones pueblo</option>
               </select>
             </div>
-  
             <div class="mb-3">
               <label for="editar-entrada" class="form-label">Entrada</label>
               <input type="time" id="editar-entrada" class="form-control" required>
             </div>
-  
             <div class="mb-3">
               <label for="editar-salida" class="form-label">Salida</label>
               <input type="time" id="editar-salida" class="form-control" required>
             </div>
           </div>
-  
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Guardar cambios</button>
           </div>
@@ -146,13 +146,25 @@
       </div>
     </div>
   </div>
-  
-  
-  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-    <div class="text-center p-4">
-      © 2025 El Caballo Goloso
-    </div>
+
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br />
+    <small>© 2025 Pastelería El Caballo Goloso</small>
   </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>

@@ -11,30 +11,33 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">El Caballo Goloso</a>
+      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
+        <i class="fas fa-user-shield me-1"></i> El Caballo Goloso - Admin
+      </a>
       <div class="d-flex align-items-center">
         <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
         <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
       </div>
     </div>
   </nav>
+  
 
   <main class="container mt-5">
     <h1 class="text-center">Gestión de Usuarios</h1>
     <div class="mt-4">
-        <nav class="me-4">
-            <h3 class="text-danger">Menú</h3>
-            <ul class="list-unstyled">
-                <li><strong>Dashboard</strong></li>
-                <li><a href="admin_pedidos.html">Pedidos</a></li>
-                <li><a href="admin_usuarios.html">Usuarios</a></li>
-                <li><a href="admin_productos.html">Productos</a></li>
-                <li><a href="admin_empleados.html">Horarios</a></li>
-                <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-            </ul>
-        </nav>
+      <ul class="list-unstyled">
+        <li><a href="admin_empleados.html">Empleados</a></li>
+        <li><a href="admin_horarios.html">Horarios</a></li>
+        <li><a href="#">Registros Jornada</a></li> <!-- pendiente de implementación -->
+        <li><a href="admin_ofertas.html">Ofertas</a></li>
+        <li><a href="admin_pedidos.html">Pedidos</a></li>
+        <li><a href="admin_productos.html">Productos</a></li>
+        <li><a href="admin_usuarios.html"><strong>Usuarios</strong></a></li>
+        <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+      </ul>
+      
       <table class="table table-striped">
         <thead>
           <tr>

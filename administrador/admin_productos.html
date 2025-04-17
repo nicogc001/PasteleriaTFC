@@ -11,124 +11,129 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">El Caballo Goloso</a>
+      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
+        <i class="fas fa-cog me-1"></i> El Caballo Goloso - Admin
+      </a>
       <div class="d-flex align-items-center">
-        <a class="btn btn-outline-dark me-2" href="dashboard.html">Dashboard</a>
+        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
         <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
       </div>
     </div>
   </nav>
-
+  
   <main class="container mt-5">
-    <h1 class="text-center mb-4">Agregar nuevo producto</h1>
-    <nav class="me-4">
-      <h3 class="text-danger">Menú</h3>
-      <ul class="list-unstyled">
-        <li><a href="dashboard.html">Inicio</a></li>
-          <li><a href="admin_pedidos.html">Pedidos</a></li>
-          <li><a href="admin_ofertas.html">Ofertas</a></li>
-          <li><a href="admin_usuarios.html">Usuarios</a></li>
-          <li><a href="admin_productos.html">Productos</a></li>
+    <div class="row">
+      <!-- Menú lateral -->
+      <aside class="col-md-3">
+        <h4 class="text-danger">Menú</h4>
+        <ul class="list-unstyled">
           <li><a href="admin_empleados.html">Empleados</a></li>
+          <li><a href="admin_horarios.html">Horarios</a></li>
+          <li><a href="#">Registros Jornada</a></li>
+          <li><a href="admin_ofertas.html">Ofertas</a></li>
+          <li><a href="admin_pedidos.html">Pedidos</a></li>
+          <li><a href="admin_productos.html" class="fw-bold text-dark">Productos</a></li>
+          <li><a href="admin_usuarios.html">Usuarios</a></li>
           <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-      </ul>
-  </nav>
+        </ul>
+      </aside>
 
-    <form id="formNuevoProducto" class="row g-3">
-      <div class="col-md-6">
-        <label for="nombre" class="form-label">Nombre del producto</label>
-        <input type="text" class="form-control" id="nombre" required>
-      </div>
-
-      <div class="col-md-6">
-        <label for="precio" class="form-label">Precio</label>
-        <input type="number" step="0.01" class="form-control" id="precio" required>
-      </div>
-
-      <div class="col-12">
-        <label for="descripcion" class="form-label">Descripción</label>
-        <textarea class="form-control" id="descripcion" rows="2" required></textarea>
-      </div>
-
-      <div class="col-md-6">
-        <label for="stock" class="form-label">Stock</label>
-        <input type="number" class="form-control" id="stock" required>
-      </div>
-
-      <div class="col-md-6">
-        <label for="imagen" class="form-label">URL de la imagen</label>
-        <input type="url" class="form-control" id="imagen" required>
-      </div>
-
-      <div class="col-md-6">
-        <label for="categoria" class="form-label">Categoría</label>
-        <select class="form-select" id="categoria" required>
-          <option value="">Selecciona una categoría</option>
-          <option value="novedades">Novedades</option>
-          <option value="tartas">Tartas</option>
-          <option value="bolleria">Bollería</option>
-          <option value="salado">Salado</option>
-          <option value="pasteleria">Pastelería</option>
-          <option value="pastas">Pastas</option>
-          <option value="cafeteria">Cafetería</option>
-        </select>
-      </div>
-
-      <div class="col-12 text-center">
-        <button type="submit" class="btn btn-success">Crear producto</button>
-      </div>
-    </form>
-
-    <hr class="my-5">
-
-    <h2 class="text-center mb-4">Listado de productos</h2>
-    <div class="table-responsive">
-      <div class="row mb-3">
-        <div class="row mb-3">
-          <div class="col-md-3">
-            <label>Desde:</label>
-            <input type="date" id="filtroFechaInicio" class="form-control">
+      <!-- Contenido principal -->
+      <section class="col-md-9">
+        <h1 class="text-center mb-4">Agregar nuevo producto</h1>
+        <form id="formNuevoProducto" class="row g-3">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre del producto</label>
+            <input type="text" class="form-control" id="nombre" required>
           </div>
-          <div class="col-md-3">
-            <label>Hasta:</label>
-            <input type="date" id="filtroFechaFin" class="form-control">
+          <div class="col-md-6">
+            <label for="precio" class="form-label">Precio</label>
+            <input type="number" step="0.01" class="form-control" id="precio" required>
           </div>
-        </div>        
-        <div class="col-md-6">
-          <input type="text" id="buscadorNombre" class="form-control" placeholder="Buscar por nombre...">
+          <div class="col-12">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" rows="2" required></textarea>
+          </div>
+          <div class="col-md-6">
+            <label for="stock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="stock" required>
+          </div>
+          <div class="col-md-6">
+            <label for="imagen" class="form-label">URL de la imagen</label>
+            <input type="url" class="form-control" id="imagen" required>
+          </div>
+          <div class="col-md-6">
+            <label for="categoria" class="form-label">Categoría</label>
+            <select class="form-select" id="categoria" required>
+              <option value="">Selecciona una categoría</option>
+              <option value="novedades">Novedades</option>
+              <option value="tartas">Tartas</option>
+              <option value="bolleria">Bollería</option>
+              <option value="salado">Salado</option>
+              <option value="pasteleria">Pastelería</option>
+              <option value="pastas">Pastas</option>
+              <option value="cafeteria">Cafetería</option>
+            </select>
+          </div>
+          <div class="col-12 text-center">
+            <button type="submit" class="btn btn-success">Crear producto</button>
+          </div>
+        </form>
+
+        <hr class="my-5">
+
+        <h2 class="text-center mb-4">Listado de productos</h2>
+        <div class="table-responsive">
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <label>Desde:</label>
+              <input type="date" id="filtroFechaInicio" class="form-control">
+            </div>
+            <div class="col-md-3">
+              <label>Hasta:</label>
+              <input type="date" id="filtroFechaFin" class="form-control">
+            </div>
+            <div class="col-md-3">
+              <label>Nombre:</label>
+              <input type="text" id="buscadorNombre" class="form-control" placeholder="Buscar por nombre...">
+            </div>
+            <div class="col-md-3">
+              <label>Categoría:</label>
+              <select id="filtroCategoria" class="form-select">
+                <option value="">Todas las categorías</option>
+                <option value="novedades">Novedades</option>
+                <option value="tartas">Tartas</option>
+                <option value="bolleria">Bollería</option>
+                <option value="salado">Salado</option>
+                <option value="pasteleria">Pastelería</option>
+                <option value="pastas">Pastas</option>
+                <option value="cafeteria">Cafetería</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <button class="btn btn-outline-danger" onclick="exportarPDF()">Exportar a PDF</button>
+            <button class="btn btn-outline-success ms-2" onclick="exportarExcel()">Exportar a Excel</button>
+          </div>
+          <table class="table table-bordered" id="tablaProductos">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
-        <div class="col-md-6">
-          <select id="filtroCategoria" class="form-select">
-            <option value="">Todas las categorías</option>
-            <option value="novedades">Novedades</option>
-            <option value="tartas">Tartas</option>
-            <option value="bolleria">Bollería</option>
-            <option value="salado">Salado</option>
-            <option value="pasteleria">Pastelería</option>
-            <option value="pastas">Pastas</option>
-            <option value="cafeteria">Cafetería</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <button class="btn btn-outline-danger" onclick="exportarPDF()">Exportar a PDF</button>
-        <button class="btn btn-outline-success ms-2" onclick="exportarExcel()">Exportar a Excel</button>
-      </div>
-      <table class="table table-bordered" id="tablaProductos">
-        <thead class="table-light">
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Stock</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      </section>
     </div>
+  </main>
+
     <!-- Modal Historial de Stock -->
     <div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="modalHistorialLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -158,8 +163,15 @@
         </div>
       </div>
     </div>
-
-  </main>
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br />
+    <small>© 2025 Pastelería El Caballo Goloso</small>
+  </footer>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
