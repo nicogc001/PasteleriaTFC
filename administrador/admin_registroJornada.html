@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros de Jornada - El Caballo Goloso</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="../styles/main.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="admin_dashboard.html">
+                <i class="fas fa-clock me-2"></i> Registros de Jornada
+            </a>
+            <div class="d-flex align-items-center">
+                <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
+                <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-5">
+        <div class="row">
+            <!-- Menú lateral -->
+            <aside class="col-md-3">
+                <h4 class="text-danger">Menú</h4>
+                <ul class="list-unstyled">
+                    <li><a href="admin_empleados.html">Empleados</a></li>
+                    <li><a href="admin_horarios.html">Horarios</a></li>
+                    <li><strong>Registros Jornada</strong></li>
+                    <li><a href="admin_ofertas.html">Ofertas</a></li>
+                    <li><a href="admin_pedidos.html">Pedidos</a></li>
+                    <li><a href="admin_productos.html">Productos</a></li>
+                    <li><a href="admin_usuarios.html">Usuarios</a></li>
+                    <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
+                </ul>
+            </aside>
+
+            <!-- Panel principal -->
+            <section class="col-md-9">
+                <h2 class="text-center mb-4">Registros de Jornada</h2>
+
+                <!-- Filtros -->
+                <form id="formFiltros" class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <label for="filtroEmpleado" class="form-label">Empleado</label>
+                        <select id="filtroEmpleado" class="form-select">
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="filtroTienda" class="form-label">Tienda</label>
+                        <select id="filtroTienda" class="form-select">
+                            <option value="">Todas</option>
+                            <option value="Espacio Torrelodones">Espacio Torrelodones</option>
+                            <option value="Torrelodones pueblo">Torrelodones pueblo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="filtroFecha" class="form-label">Fecha</label>
+                        <input type="date" id="filtroFecha" class="form-control" />
+                    </div>
+                </form>
+
+                <!-- Tabla registros -->
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Tienda</th>
+                                <th>Fecha</th>
+                                <th>Entrada</th>
+                                <th>Salida</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaJornadas">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Cargando registros...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+        <small>
+            <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+            <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+            <i class="fas fa-phone me-1"></i> 91 859 67 11
+        </small>
+        <br />
+        <small>© 2025 Pastelería El Caballo Goloso</small>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+    <script>
+        function logout() {
+            localStorage.clear();
+            window.location.href = "../login.html";
+        }
+    </script>
+    <script>
+        const API_JORNADAS = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-jornada';
+        const token = localStorage.getItem('token');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarEmpleados();
+            cargarJornadas();
+
+            document.getElementById('formFiltros').addEventListener('input', cargarJornadas);
+        });
+
+        async function cargarEmpleados() {
+            try {
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/filtrar?rol=empleado', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const empleados = await res.json();
+                const select = document.getElementById('filtroEmpleado');
+                empleados.forEach(e => {
+                    const opt = document.createElement('option');
+                    opt.value = e.id;
+                    opt.textContent = `${e.nombre}`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error('Error cargando empleados:', err);
+            }
+        }
+
+        async function cargarJornadas() {
+            const empleadoId = document.getElementById('filtroEmpleado').value;
+            const tienda = document.getElementById('filtroTienda').value;
+            const fecha = document.getElementById('filtroFecha').value;
+
+            try {
+                const url = new URL(API_JORNADAS);
+                if (empleadoId) url.searchParams.append('usuarioId', empleadoId);
+                if (tienda) url.searchParams.append('tienda', tienda);
+                if (fecha) url.searchParams.append('fecha', fecha);
+
+                const res = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) throw new Error('Error al obtener registros');
+
+                const registros = await res.json();
+                const tbody = document.getElementById('tablaJornadas');
+                tbody.innerHTML = '';
+
+                if (!registros.length) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No hay registros.</td></tr>`;
+                    return;
+                }
+
+                registros.forEach(r => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+            <td>${r.empleadoNombre || '—'}</td>
+            <td>${r.tienda}</td>
+            <td>${new Date(r.fecha).toLocaleDateString()}</td>
+            <td>${r.entrada}</td>
+            <td>${r.salida}</td>
+          `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (err) {
+                console.error('Error cargando jornadas:', err);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
