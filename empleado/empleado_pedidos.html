@@ -1,395 +1,406 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Pedidos Asignados</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
-  <link href="/styles/main.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos Asignados</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <link href="/styles/main.css" rel="stylesheet" />
 </head>
+
 <body>
-  <main class="container-fluid mt-5">
-    <div class="row">
-      <div class="col-md-3 col-lg-2">
-        <div class="bg-light p-3 rounded shadow-sm">
-          <h4 class="text-primary">Menú</h4>
-          <ul class="list-unstyled">
-            <li class="mb-2"><a class="text-decoration-none" href="empleado_dashboard.html"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-            <li class="mb-2"><strong><i class="fas fa-box me-2"></i>Pedidos</strong></li>
-            <li><a class="text-decoration-none text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="col-md-9 col-lg-10">
-        <div id="calendar" class="mb-4"></div>
-        <h1 class="text-center mb-4">Mis Pedidos Asignados</h1>
-        <div class="mb-3 text-end">
-            <button id="toggleFiltroTabla" class="btn btn-outline-primary">Ver solo hoy</button>
-        </div>
-          
-        <div class="table-responsive">
-          <table class="table table-striped table-hover">
-            <thead class="table-dark">
-              <tr>
-                <th>Fecha Entrega</th>
-                <th>Cliente</th>
-                <th>Productos</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tabla-pedidos"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="modalDia" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Pedidos del día</h5>
-            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <ul id="lista-pedidos-dia" class="list-group"></ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="modalDetalle" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Detalle del Pedido</h5>
-              <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+    <main class="container-fluid mt-5">
+        <div class="row">
+            <div class="col-md-3 col-lg-2">
+                <div class="bg-light p-3 rounded shadow-sm">
+                    <h4 class="text-primary">Menú</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a class="text-decoration-none" href="empleado_dashboard.html"><i
+                                    class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                        <li class="mb-2"><strong><i class="fas fa-box me-2"></i>Pedidos</strong></li>
+                        <li><a class="text-decoration-none text-danger" href="#" onclick="logout()"><i
+                                    class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="modal-body">
-              <p><strong>Cliente:</strong> <span id="detalle-cliente"></span></p>
-              <p><strong>Teléfono:</strong> <span id="detalle-telefono"></span></p>
-              <p><strong>Fecha entrega:</strong> <span id="detalle-fecha"></span></p>
-              <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
-              <ul id="detalle-pedido-lista" class="list-group list-group-flush mb-3"></ul>
-              <div class="mt-3">
-                <strong>Total:</strong> <span id="detalle-total"></span>
-              </div>
-              <input type="hidden" id="pedido-id-detalle" />
-              <div class="text-end" id="btn-entregar-wrapper">
-                <button class="btn btn-success" id="btn-entregar" onclick="marcarComoEntregado()">Marcar como entregado</button>
-              </div>
+
+            <div class="col-md-9 col-lg-10">
+                <div id="calendar" class="mb-4"></div>
+                <h1 class="text-center mb-4">Mis Pedidos Asignados</h1>
+                <div class="mb-3 text-end">
+                    <button id="toggleFiltroTabla" class="btn btn-outline-primary">Ver solo hoy</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Fecha Entrega</th>
+                                <th>Cliente</th>
+                                <th>Teléfono</th>
+                                <th>Productos</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-pedidos"></tbody>
+                    </table>
+                </div>
             </div>
-          </div>
         </div>
-    </div>
-      
 
-  </main>
+        <div class="modal fade" id="modalDia" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Pedidos del día</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="lista-pedidos-dia" class="list-group"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script>
-    const token = localStorage.getItem('token');
-    const API_PEDIDOS_ASIGNADOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/asignados';
-    const API_PEDIDOS_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/empleado-vista';
+        <div class="modal fade" id="modalDetalle" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Detalle del Pedido</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Cliente:</strong> <span id="detalle-cliente"></span></p>
+                        <p><strong>Teléfono:</strong> <span id="detalle-telefono"></span></p>
+                        <p><strong>Fecha entrega:</strong> <span id="detalle-fecha"></span></p>
+                        <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
+                        <ul id="detalle-pedido-lista" class="list-group list-group-flush mb-3"></ul>
+                        <div class="mt-3">
+                            <strong>Total:</strong> <span id="detalle-total"></span>
+                        </div>
+                        <input type="hidden" id="pedido-id-detalle" />
+                        <div class="text-end" id="btn-entregar-wrapper">
+                            <button class="btn btn-success" id="btn-entregar" onclick="marcarComoEntregado()">Marcar
+                                como entregado</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    let pedidosAsignadosCache = [];
-    let pedidosTodosCache = [];
-    let mostrarSoloHoyTabla = true;
+    </main>
 
-    document.addEventListener('DOMContentLoaded', async () => {
-    if (!token) {
-        alert("Debes iniciar sesión.");
-        return window.location.href = '../login.html';
-    }
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 
-    await cargarPedidosAsignados();
-    await cargarPedidosTodos(); // para el calendario
-    });
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        const token = localStorage.getItem('token');
+        const API_PEDIDOS_ASIGNADOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/asignados';
+        const API_PEDIDOS_BASE = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/empleado-vista';
 
+        let pedidosAsignadosCache = [];
+        let pedidosTodosCache = [];
+        let mostrarSoloHoyTabla = true;
 
-    async function cargarPedidosAsignados() {
-        try {
-            const res = await fetch(API_PEDIDOS_ASIGNADOS, {
-            headers: { Authorization: `Bearer ${token}` }
-            });
-
-            if (!res.ok) throw new Error('Error al obtener pedidos asignados');
-
-            const pedidos = await res.json();
-            pedidosAsignadosCache = pedidos;
-
-            // 🔄 Llama a la función que renderiza la tabla con el filtro activo
-            renderTablaPedidosAsignados(pedidos);
-            
-        } catch (err) {
-            console.error('❌ Error al cargar pedidos:', err);
-            const texto = await res.text?.();
-            console.log('Respuesta del servidor:', texto);
-            alert('No se pudieron cargar los pedidos.');
-        }
-    }
-
-
-  
-    async function cargarPedidosTodos() {
-        try {
-            const res = await fetch(API_PEDIDOS_BASE, {
-            headers: { Authorization: `Bearer ${token}` }
-            });
-
-            if (!res.ok) {
-            const msg = await res.text();
-            throw new Error(`Error al obtener pedidos para el calendario: ${msg}`);
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!token) {
+                alert("Debes iniciar sesión.");
+                return window.location.href = '../login.html';
             }
 
-            const pedidos = await res.json(); // directamente es un array
-
-            pedidosTodosCache = pedidos;
-            pintarCalendarioPedidos(pedidos);
-        } catch (err) {
-            console.error('❌ Error al cargar pedidos para calendario:', err);
-            alert(err.message);
-            pintarCalendarioPedidos([]);
-        }
-    }
-
-
-    function pintarCalendarioPedidos(pedidos) {
-        const eventos = pedidos
-            .filter(p => p.fechaEntrega) // Asegura que existe la fecha
-            .map(p => ({
-            title: `${p.nombreCliente}: ${(Array.isArray(p.productos) ? p.productos : []).map(prod => prod.nombre).join(', ')}`,
-            start: p.fechaEntrega,
-            color: p.estado === 'entregado' ? '#198754' : '#0d6efd',
-            extendedProps: p
-            }));
-
-        // Añadir un evento de prueba si la lista está vacía
-        if (eventos.length === 0) {
-            eventos.push({
-            title: '🎯 Evento de prueba',
-            start: new Date().toISOString().split('T')[0],
-            color: '#ffc107'
-            });
-        }
-
-        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            height: 500,
-            events: eventos,
-            dateClick: info => mostrarPedidosDelDia(info.dateStr, pedidos)
+            await cargarPedidosAsignados();
+            await cargarPedidosTodos(); // para el calendario
         });
 
-        calendar.render();
-    }
 
-    function mostrarPedidosDelDia(fecha, pedidos) {
-        const lista = document.getElementById('lista-pedidos-dia');
-        lista.innerHTML = '';
-        const delDia = pedidos.filter(p => p.fechaEntrega.startsWith(fecha));
+        async function cargarPedidosAsignados() {
+            try {
+                const res = await fetch(API_PEDIDOS_ASIGNADOS, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-        if (delDia.length === 0) {
-            lista.innerHTML = '<li class="list-group-item">No hay pedidos para este día</li>';
-        } else {
-            delDia.forEach(p => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item';
-            li.innerHTML = `
+                if (!res.ok) throw new Error('Error al obtener pedidos asignados');
+
+                const pedidos = await res.json();
+                pedidosAsignadosCache = pedidos;
+
+                // sLlama a la función que renderiza la tabla con el filtro activo
+                renderTablaPedidosAsignados(pedidos);
+
+            } catch (err) {
+                console.error('Error al cargar pedidos:', err);
+                const texto = await res.text?.();
+                console.log('Respuesta del servidor:', texto);
+                alert('No se pudieron cargar los pedidos.');
+            }
+        }
+
+
+
+        async function cargarPedidosTodos() {
+            try {
+                const res = await fetch(API_PEDIDOS_BASE, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    const msg = await res.text();
+                    throw new Error(`Error al obtener pedidos para el calendario: ${msg}`);
+                }
+
+                const pedidos = await res.json(); // directamente es un array
+
+                pedidosTodosCache = pedidos;
+                pintarCalendarioPedidos(pedidos);
+            } catch (err) {
+                console.error('Error al cargar pedidos para calendario:', err);
+                alert(err.message);
+                pintarCalendarioPedidos([]);
+            }
+        }
+
+
+        function pintarCalendarioPedidos(pedidos) {
+            const eventos = pedidos
+                .filter(p => p.fechaEntrega) // Asegura que existe la fecha
+                .map(p => ({
+                    title: `${p.nombreCliente}: ${(Array.isArray(p.productos) ? p.productos : []).map(prod => prod.nombre).join(', ')}`,
+                    start: p.fechaEntrega,
+                    color: p.estado === 'entregado' ? '#198754' : '#0d6efd',
+                    extendedProps: p
+                }));
+
+            // Añadir un evento de prueba si la lista está vacía
+            if (eventos.length === 0) {
+                eventos.push({
+                    title: 'Evento de prueba',
+                    start: new Date().toISOString().split('T')[0],
+                    color: '#ffc107'
+                });
+            }
+
+            const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                height: 500,
+                events: eventos,
+                dateClick: info => mostrarPedidosDelDia(info.dateStr, pedidos)
+            });
+
+            calendar.render();
+        }
+
+        function mostrarPedidosDelDia(fecha, pedidos) {
+            const lista = document.getElementById('lista-pedidos-dia');
+            lista.innerHTML = '';
+            const delDia = pedidos.filter(p => p.fechaEntrega.startsWith(fecha));
+
+            if (delDia.length === 0) {
+                lista.innerHTML = '<li class="list-group-item">No hay pedidos para este día</li>';
+            } else {
+                delDia.forEach(p => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.innerHTML = `
                 <strong>${p.nombreCliente}</strong><br>
                 ${p.productos.map(prod => prod.nombre).join(', ')}<br>
                 Estado: <span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span><br>
                 <button class="btn btn-sm btn-info mt-2" onclick="verDetallePedido(${Number(p.id)})">Ver detalle</button>
             `;
-            lista.appendChild(li);
-            });
-        }
-
-        new mdb.Modal(document.getElementById('modalDia')).show();
-    }
-
-
-/*
-    function verDetalles(p) {
-      document.getElementById('detalle-cliente').textContent = p.cliente;
-      document.getElementById('detalle-fecha').textContent = p.fechaEntrega;
-      document.getElementById('detalle-estado').textContent = p.estado;
-      document.getElementById('detalle-estado').className = `badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}`;
-
-      const ul = document.getElementById('detalle-productos');
-      ul.innerHTML = '';
-      p.productos.forEach(prod => {
-        const li = document.createElement('li');
-        li.textContent = prod;
-        ul.appendChild(li);
-      });
-
-      document.getElementById('pedido-id-detalle').value = p.id;
-      const btnWrapper = document.getElementById('btn-entregar-wrapper');
-      btnWrapper.style.display = p.estado === 'entregado' ? 'none' : 'block';
-
-      new mdb.Modal(document.getElementById('modalDetalles')).show();
-    }*/
-
-    async function marcarComoEntregado() {
-      const pedidoId = document.getElementById('pedido-id-detalle').value;
-      const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}`;
-
-      try {
-        const res = await fetch(API_ACTUALIZAR, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ estado: 'entregado' })
-        });
-
-        if (!res.ok) throw new Error('Error al marcar como entregado');
-        alert('✅ Pedido marcado como entregado');
-        const modal = mdb.Modal.getInstance(document.getElementById('modalDetalle'));
-        modal.hide();
-        cargarPedidosAsignados();
-      } catch (err) {
-        alert('❌ No se pudo actualizar el pedido');
-      }
-    }
-
-    async function verDetallePedido(id) {
-        // ✅ Validar ID
-        if (!id || isNaN(Number(id))) {
-            console.warn("⚠️ ID inválido al intentar ver el pedido:", id);
-            return alert("El ID del pedido es inválido.");
-        }
-
-        try {
-            // Asegurar conversión a número si es string
-            const idNum = Number(id);
-
-            // Buscar en los caches
-            let pedido = pedidosAsignadosCache.find(p => p.id === idNum);
-
-            if (!pedido) {
-            pedido = pedidosTodosCache.find(p => p.id === idNum);
+                    lista.appendChild(li);
+                });
             }
 
-            if (!pedido) return alert('Pedido no encontrado');
+            new mdb.Modal(document.getElementById('modalDia')).show();
+        }
 
-            // Mostrar datos del pedido
-            document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
-            document.getElementById('detalle-telefono').textContent = pedido.telefonoCliente || '-';
-            document.getElementById('detalle-fecha').textContent = pedido.fechaEntrega;
-            document.getElementById('detalle-estado').innerHTML = `<span class="badge ${pedido.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${pedido.estado}</span>`;
 
-            const lista = document.getElementById('detalle-pedido-lista');
-            lista.innerHTML = '';
-
-            if (Array.isArray(pedido.productos)) {
-            pedido.productos.forEach(p => {
+        /*
+            function verDetalles(p) {
+              document.getElementById('detalle-cliente').textContent = p.cliente;
+              document.getElementById('detalle-fecha').textContent = p.fechaEntrega;
+              document.getElementById('detalle-estado').textContent = p.estado;
+              document.getElementById('detalle-estado').className = `badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}`;
+        
+              const ul = document.getElementById('detalle-productos');
+              ul.innerHTML = '';
+              p.productos.forEach(prod => {
                 const li = document.createElement('li');
-                li.className = 'list-group-item';
-                li.innerHTML = `
+                li.textContent = prod;
+                ul.appendChild(li);
+              });
+        
+              document.getElementById('pedido-id-detalle').value = p.id;
+              const btnWrapper = document.getElementById('btn-entregar-wrapper');
+              btnWrapper.style.display = p.estado === 'entregado' ? 'none' : 'block';
+        
+              new mdb.Modal(document.getElementById('modalDetalles')).show();
+            }*/
+
+        async function marcarComoEntregado() {
+            const pedidoId = document.getElementById('pedido-id-detalle').value;
+            const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}`;
+
+            try {
+                const res = await fetch(API_ACTUALIZAR, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ estado: 'entregado' })
+                });
+
+                if (!res.ok) throw new Error('Error al marcar como entregado');
+                alert('Pedido marcado como entregado');
+                const modal = mdb.Modal.getInstance(document.getElementById('modalDetalle'));
+                modal.hide();
+                cargarPedidosAsignados();
+            } catch (err) {
+                alert('No se pudo actualizar el pedido');
+            }
+        }
+
+        async function verDetallePedido(id) {
+            // Validar ID
+            if (!id || isNaN(Number(id))) {
+                console.warn("⚠️ ID inválido al intentar ver el pedido:", id);
+                return alert("El ID del pedido es inválido.");
+            }
+
+            try {
+                // Asegurar conversión a número si es string
+                const idNum = Number(id);
+
+                // Buscar en los caches
+                let pedido = pedidosAsignadosCache.find(p => p.id === idNum);
+
+                if (!pedido) {
+                    pedido = pedidosTodosCache.find(p => p.id === idNum);
+                }
+
+                if (!pedido) return alert('Pedido no encontrado');
+
+                // Mostrar datos del pedido
+                document.getElementById('detalle-cliente').textContent = pedido.nombreCliente;
+                document.getElementById('detalle-telefono').textContent = pedido.telefonoCliente || '-';
+                document.getElementById('detalle-fecha').textContent = pedido.fechaEntrega;
+                document.getElementById('detalle-estado').innerHTML = `<span class="badge ${pedido.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${pedido.estado}</span>`;
+
+                const lista = document.getElementById('detalle-pedido-lista');
+                lista.innerHTML = '';
+
+                if (Array.isArray(pedido.productos)) {
+                    pedido.productos.forEach(p => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.innerHTML = `
                 <strong>${p.nombre}</strong><br>
                 ${p.cantidad ? `Cantidad: ${p.cantidad} × ${(Number(p.precio) || 0).toFixed(2)} € = <strong>${(Number(p.subtotal) || 0).toFixed(2)} €</strong>` : ''}
                 `;
-                lista.appendChild(li);
+                        lista.appendChild(li);
+                    });
+                }
+
+                document.getElementById('detalle-total').textContent = `${pedido.total?.toFixed(2) ?? '-'} €`;
+                document.getElementById('pedido-id-detalle').value = pedido.id;
+
+                const btnWrapper = document.getElementById('btn-entregar-wrapper');
+                btnWrapper.style.display = pedido.estado === 'entregado' ? 'none' : 'block';
+
+                new mdb.Modal(document.getElementById('modalDetalle')).show();
+            } catch (err) {
+                console.error('❌ Error al ver detalle:', err);
+                alert('Error al obtener el detalle del pedido');
+            }
+        }
+
+
+
+        async function marcarComoEntregadoDesdeTabla(pedidoId) {
+            const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}`;
+
+            try {
+                const res = await fetch(API_ACTUALIZAR, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ estado: 'entregado' })
+                });
+
+                if (!res.ok) throw new Error('Error al marcar como entregado');
+                alert('Pedido marcado como entregado');
+                await cargarPedidosAsignados();
+            } catch (err) {
+                console.error('Error', err);
+                alert('No se pudo actualizar el pedido');
+            }
+        }
+
+        function renderTablaPedidosAsignados(pedidos) {
+            const tbody = document.getElementById('tabla-pedidos');
+            tbody.innerHTML = '';
+
+            const hoy = new Date();
+            const limite = new Date();
+            limite.setDate(hoy.getDate() + 7);
+
+            const pedidosFiltrados = pedidos.filter(p => {
+                const fecha = new Date(p.fechaEntrega);
+                if (mostrarSoloHoyTabla) {
+                    return fecha.toISOString().split('T')[0] === hoy.toISOString().split('T')[0];
+                } else {
+                    return fecha >= hoy && fecha <= limite;
+                }
             });
+
+            if (!pedidosFiltrados.length) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center">No hay pedidos disponibles.</td></tr>`;
+                return;
             }
 
-            document.getElementById('detalle-total').textContent = `${pedido.total?.toFixed(2) ?? '-'} €`;
-            document.getElementById('pedido-id-detalle').value = pedido.id;
+            pedidosFiltrados.forEach(p => {
+                const tr = document.createElement('tr');
+                const btnDetalle = `<button class="btn btn-sm btn-info me-2" onclick="verDetallePedido(${p.id})">Ver detalle</button>`;
+                const btnEntregar = p.estado !== 'entregado'
+                    ? `<button class="btn btn-sm btn-success" onclick="marcarComoEntregadoDesdeTabla(${p.id})">Entregar</button>` : '';
 
-            const btnWrapper = document.getElementById('btn-entregar-wrapper');
-            btnWrapper.style.display = pedido.estado === 'entregado' ? 'none' : 'block';
+                tr.innerHTML = `
+        <td>${p.fechaEntrega}</td>
+        <td>${p.nombreCliente}</td>
+        <td>${p.telefonoCliente || '-'}</td>
+        <td>${p.productos.map(prod => prod.nombre).join(', ')}</td>
+        <td><span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span></td>
+        <td>${btnDetalle}${btnEntregar}</td>
+        `;
 
-            new mdb.Modal(document.getElementById('modalDetalle')).show();
-        } catch (err) {
-            console.error('❌ Error al ver detalle:', err);
-            alert('Error al obtener el detalle del pedido');
-        }
-    }
-
-
-
-    async function marcarComoEntregadoDesdeTabla(pedidoId) {
-        const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}`;
-
-        try {
-            const res = await fetch(API_ACTUALIZAR, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ estado: 'entregado' })
+                tbody.appendChild(tr);
             });
-
-            if (!res.ok) throw new Error('Error al marcar como entregado');
-            alert('✅ Pedido marcado como entregado');
-            await cargarPedidosAsignados(); // <-- corregido
-        } catch (err) {
-            console.error('❌', err);
-            alert('❌ No se pudo actualizar el pedido');
         }
-    }
-
-    function renderTablaPedidosAsignados(pedidos) {
-  const tbody = document.getElementById('tabla-pedidos');
-  tbody.innerHTML = '';
-
-  const hoy = new Date();
-  const limite = new Date();
-  limite.setDate(hoy.getDate() + 7);
-
-  const pedidosFiltrados = pedidos.filter(p => {
-    const fecha = new Date(p.fechaEntrega);
-    if (mostrarSoloHoyTabla) {
-      return fecha.toISOString().split('T')[0] === hoy.toISOString().split('T')[0];
-    } else {
-      return fecha >= hoy && fecha <= limite;
-    }
-  });
-
-  if (!pedidosFiltrados.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="text-center">No hay pedidos disponibles.</td></tr>`;
-    return;
-  }
-
-  pedidosFiltrados.forEach(p => {
-    const tr = document.createElement('tr');
-    const btnDetalle = `<button class="btn btn-sm btn-info me-2" onclick="verDetallePedido(${p.id})">Ver detalle</button>`;
-    const btnEntregar = p.estado !== 'entregado'
-      ? `<button class="btn btn-sm btn-success" onclick="marcarComoEntregadoDesdeTabla(${p.id})">Entregar</button>` : '';
-
-    tr.innerHTML = `
-      <td>${p.fechaEntrega}</td>
-      <td>${p.nombreCliente}</td>
-      <td>${p.productos.map(prod => prod.nombre).join(', ')}</td>
-      <td><span class="badge ${p.estado === 'entregado' ? 'bg-success' : 'bg-warning'}">${p.estado}</span></td>
-      <td>${btnDetalle}${btnEntregar}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
 
 
-    document.getElementById('toggleFiltroTabla').addEventListener('click', () => {
-        mostrarSoloHoyTabla = !mostrarSoloHoyTabla;
-        document.getElementById('toggleFiltroTabla').textContent = mostrarSoloHoyTabla
-            ? 'Ver solo hoy'
-            : 'Ver próximos 7 días';
-        renderTablaPedidosAsignados(pedidosAsignadosCache);
-    });
+        document.getElementById('toggleFiltroTabla').addEventListener('click', () => {
+            mostrarSoloHoyTabla = !mostrarSoloHoyTabla;
+            document.getElementById('toggleFiltroTabla').textContent = mostrarSoloHoyTabla
+                ? 'Ver solo hoy'
+                : 'Ver próximos 7 días';
+            renderTablaPedidosAsignados(pedidosAsignadosCache);
+        });
 
 
-    function logout() {
-      localStorage.clear();
-      location.href = '../login.html';
-    }
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+        function logout() {
+            localStorage.clear();
+            location.href = '../login.html';
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
+
 </html>
