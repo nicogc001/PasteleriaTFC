@@ -69,12 +69,12 @@ router.get('/asignados', authMiddleware, async (req, res) => {
 
     res.json(resultado);
   } catch (err) {
-    console.error('❌ Error en /asignados:', err);
+    console.error('Error en /asignados:', err);
     res.status(500).json({ error: 'Error al obtener pedidos asignados por tienda y semana' });
   }
 });
 
-// 🔍 Pedidos pendientes de aprobación (solo admins)
+// Pedidos pendientes de aprobación (solo admins)
 router.get('/pendientes-aprobacion', authMiddleware, async (req, res) => {
   if (req.user.rol !== 'administrador') {
     return res.status(403).json({ error: 'Acceso denegado' });
@@ -94,12 +94,12 @@ router.get('/pendientes-aprobacion', authMiddleware, async (req, res) => {
 
     res.json(pedidos);
   } catch (err) {
-    console.error('❌ Error al obtener pedidos pendientes:', err);
+    console.error('Error al obtener pedidos pendientes:', err);
     res.status(500).json({ error: 'Error al obtener pedidos pendientes' });
   }
 });
 
-// 🔹 Obtener pedidos del usuario autenticado (cliente o admin)
+// Obtener pedidos del usuario autenticado (cliente o admin)
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const esCliente = req.user.rol === 'cliente';
@@ -115,13 +115,13 @@ router.get('/', authMiddleware, async (req, res) => {
 
     res.json(pedidos);
   } catch (err) {
-    console.error('❌ Error al obtener pedidos:', err);
+    console.error('Error al obtener pedidos:', err);
     res.status(500).json({ error: 'Error al obtener pedidos' });
   }
 });
 
 
-// 🔹 Vista de pedidos para el calendario del empleado (todos los pedidos)
+// Vista de pedidos para el calendario del empleado (todos los pedidos)
 router.get('/empleado-vista', authMiddleware, async (req, res) => {
   try {
     if (req.user.rol !== 'empleado') {
@@ -131,7 +131,7 @@ router.get('/empleado-vista', authMiddleware, async (req, res) => {
     const pedidos = await Pedidos.findAll({
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        { model: Usuario, attributes: ['nombre'] }
+        { model: Usuario, attributes: ['nombre', 'telefono'] } 
       ],
       order: [['fechaEntrega', 'ASC']]
     });
@@ -139,6 +139,7 @@ router.get('/empleado-vista', authMiddleware, async (req, res) => {
     const resultado = pedidos.map(p => ({
       id: p.id,
       nombreCliente: p.Usuario?.nombre || 'Cliente',
+      telefonoCliente: p.Usuario?.telefono || 'N/D', 
       productos: Array.isArray(p.ProductosPedidos)
         ? p.ProductosPedidos.map(pp => ({
             nombre: pp?.Producto?.nombre || 'Desconocido'
@@ -150,13 +151,13 @@ router.get('/empleado-vista', authMiddleware, async (req, res) => {
 
     res.json(resultado);
   } catch (err) {
-    console.error('❌ Error en /empleado-vista:', err);
+    console.error('Error en /empleado-vista:', err);
     res.status(500).json({ error: 'Error al obtener pedidos para el empleado' });
   }
 });
 
 
-// 🔹 Crear un nuevo pedido
+// Crear un nuevo pedido
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { items, tipoEntrega, tienda, metodoPago, fechaEntrega, direccionId } = req.body;
@@ -220,7 +221,7 @@ router.post('/', authMiddleware, async (req, res) => {
 
     res.status(201).json({ message: 'Pedido creado exitosamente', pedidoId: pedido.id, advertencias });
   } catch (err) {
-    console.error('❌ Error creando pedido:', err);
+    console.error('Error creando pedido:', err);
     res.status(500).json({ error: 'Error al crear pedido' });
   }
 });
@@ -245,7 +246,7 @@ router.put('/:id/aprobar', authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Cambiar estado del pedido
+// Cambiar estado del pedido
 router.put('/:id/estado', authMiddleware, async (req, res) => {
   try {
     const pedido = await Pedidos.findByPk(req.params.id);
@@ -259,7 +260,7 @@ router.put('/:id/estado', authMiddleware, async (req, res) => {
   }
 });
 
-// 🔁 Confirmar un pedido (generar factura y enviar email)
+// Confirmar un pedido (generar factura y enviar email)
 router.put('/:id/confirmar', authMiddleware, async (req, res) => {
   try {
     const { metodoPago } = req.body;
@@ -280,7 +281,7 @@ router.put('/:id/confirmar', authMiddleware, async (req, res) => {
   }
 });
 
-// 🔎 Obtener detalle del pedido (última ruta)
+// Obtener detalle del pedido (última ruta)
 router.get('/:id', authMiddleware, async (req, res) => {
   const id = Number(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: 'ID de pedido inválido' });
@@ -331,14 +332,14 @@ router.put('/:id/preparar', authMiddleware, async (req, res) => {
     pedido.estado = 'entregado';
     await pedido.save();
 
-    res.json({ message: '✅ Pedido marcado como entregado', pedido });
+    res.json({ message: 'Pedido marcado como entregado', pedido });
   } catch (err) {
-    console.error('❌ Error al marcar como preparado:', err);
+    console.error('Error al marcar como preparado:', err);
     res.status(500).json({ error: 'Error al preparar el pedido' });
   }
 });
 
-// 🔹 Obtener los pedidos del cliente autenticado (mis pedidos)
+// Obtener los pedidos del cliente autenticado (mis pedidos)
 router.get('/mis-pedidos', authMiddleware, async (req, res) => {
   try {
     if (req.user.rol !== 'cliente') {
@@ -376,13 +377,13 @@ router.get('/mis-pedidos', authMiddleware, async (req, res) => {
   }
 });
 
-// 🔹 Obtener todos los pedidos (solo visualización)
+// Obtener todos los pedidos (solo visualización)
 router.get('/todos', authMiddleware, async (req, res) => {
   try {
-    console.log('🧑 Usuario autenticado:', req.user);
+    console.log('Usuario autenticado:', req.user);
 
     if (req.user.rol !== 'empleado') {
-      console.log('❌ No tiene rol de empleado');
+      console.log('No tiene rol de empleado');
       return res.status(403).json({ error: 'Acceso denegado: solo empleados' });
     }
 
@@ -394,8 +395,8 @@ router.get('/todos', authMiddleware, async (req, res) => {
       order: [['fechaEntrega', 'ASC']]
     });
 
-    console.log('📦 Total pedidos encontrados:', pedidos.length);
-    console.log('🧾 IDs:', pedidos.map(p => p.id)); // ✔️ Confirmar IDs válidos
+    console.log('Total pedidos encontrados:', pedidos.length);
+    console.log('IDs:', pedidos.map(p => p.id)); // ✔️ Confirmar IDs válidos
 
     const resultado = pedidos.map(p => {
       try {
@@ -416,17 +417,17 @@ router.get('/todos', authMiddleware, async (req, res) => {
       }
     }).filter(Boolean); // elimina elementos null
 
-    // ✅ Devuelve como objeto con clave `pedidos`, para que el frontend lo lea bien
+    // Devuelve como objeto con clave `pedidos`, para que el frontend lo lea bien
     res.json({ pedidos: resultado });
 
 
   } catch (err) {
-    console.error('❌ Error general al obtener pedidos:', err.message);
+    console.error('Error general al obtener pedidos:', err.message);
     res.status(500).json({ error: 'Error al obtener pedidos', detalle: err.message });
   }
 });
 
-// 🔸 Crear pedido como empleado para un cliente
+// Crear pedido como empleado para un cliente
 router.post('/crear-por-empleado', authMiddleware, async (req, res) => {
   try {
     if (req.user.rol !== 'empleado') {
@@ -471,7 +472,7 @@ router.post('/crear-por-empleado', authMiddleware, async (req, res) => {
 
     res.status(201).json({ message: 'Pedido creado por empleado', pedidoId: pedido.id });
   } catch (err) {
-    console.error('❌ Error en /crear-por-empleado:', err);
+    console.error('Error en /crear-por-empleado:', err);
     res.status(500).json({ error: 'Error al crear pedido por empleado' });
   }
 });
