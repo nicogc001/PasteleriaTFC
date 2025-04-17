@@ -2,169 +2,215 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Administrar Ofertas - El Caballo Goloso</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-  <link href="../styles/main.css" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administrar Ofertas - El Caballo Goloso</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link href="../styles/main.css" rel="stylesheet" />
 </head>
 
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
-        <i class="fas fa-tags me-2"></i> Ofertas - El Caballo Goloso
-      </a>
-      <div class="d-flex align-items-center">
-        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
-        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
-      </div>
-    </div>
-  </nav>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="admin_dashboard.html">
+                <i class="fas fa-tags me-2"></i> Ofertas - El Caballo Goloso
+            </a>
+            <div class="d-flex align-items-center">
+                <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
+                <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+            </div>
+        </div>
+    </nav>
 
-  <main class="container mt-5">
-    <div class="row">
-      <!-- Menú lateral -->
-      <aside class="col-md-3">
-        <h4 class="text-danger">Menú</h4>
-        <ul class="list-unstyled">
-          <li><a href="admin_empleados.html">Empleados</a></li>
-          <li><a href="admin_horarios.html">Horarios</a></li>
-          <li><a href="#">Registros Jornada</a></li>
-          <li><strong>Ofertas</strong></li>
-          <li><a href="admin_pedidos.html">Pedidos</a></li>
-          <li><a href="admin_productos.html">Productos</a></li>
-          <li><a href="admin_usuarios.html">Usuarios</a></li>
-          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-        </ul>
-      </aside>
-
-      <!-- Panel principal -->
-      <section class="col-md-9">
-        <h2 class="text-center mb-4">Panel de Administración de Ofertas</h2>
-
-        <!-- Crear oferta manual -->
-        <div class="card mb-5">
-          <div class="card-header bg-light">
-            <h5 class="mb-0">Crear Oferta Manual</h5>
-          </div>
-          <div class="card-body">
-            <form id="formCrearOferta">
-              <div class="row">
-                <div class="col-md-4 mb-3">
-                  <label for="producto" class="form-label">Producto</label>
-                  <select id="producto" class="form-select" required></select>
-                </div>
-                <div class="col-md-4 mb-3">
-                  <label class="form-label">Clientes (opcional)</label>
-                  <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
-                      data-mdb-toggle="dropdown" aria-expanded="false">
-                      Seleccionar clientes
-                    </button>
-                    <ul class="dropdown-menu p-2 w-100" id="lista-clientes"
-                      style="max-height: 200px; overflow-y: auto;">
-                      <!-- JS insertará aquí checkboxes -->
+    <div class="container-fluid mt-5">
+        <div class="row">
+            <div class="col-md-3">
+                <nav class="me-3">
+                    <h4 class="text-danger">Menú</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="dashboard.html">Inicio</a></li>
+                        <li><a href="admin_pedidos.html">Pedidos</a></li>
+                        <li><a href="admin_usuarios.html">Usuarios</a></li>
+                        <li><a href="admin_productos.html">Productos</a></li>
+                        <li><a href="admin_empleados.html">Horarios</a></li>
+                        <li><strong>Ofertas</strong></li>
+                        <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
                     </ul>
-                  </div>
-                  <small class="text-muted">Dejar vacío para aplicar a todos</small>
+                </nav>
+            </div>
+            <div class="col-md-9">
+                <h2 class="mb-4 text-center">Panel de Administración de Ofertas</h2>
+
+                <!-- Crear nueva oferta manual -->
+                <div class="card mb-5">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Crear Oferta Manual</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="formCrearOferta">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="producto" class="form-label">Producto</label>
+                                    <select id="producto" class="form-select" required></select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Clientes (opcional)</label>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button"
+                                            data-mdb-toggle="dropdown" aria-expanded="false">
+                                            Seleccionar clientes
+                                        </button>
+                                        <ul class="dropdown-menu p-2 w-100" id="lista-clientes"
+                                            style="max-height: 200px; overflow-y: auto;"></ul>
+                                    </div>
+                                    <small class="text-muted">Dejar vacío para aplicar a todos</small>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="descuento" class="form-label">Descuento (%)</label>
+                                    <input type="number" id="descuento" class="form-control" min="1" max="100" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="fechaInicio" class="form-label">Fecha inicio</label>
+                                    <input type="date" id="fechaInicio" class="form-control" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="fechaFin" class="form-label">Fecha fin</label>
+                                    <input type="date" id="fechaFin" class="form-control" required>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="motivo" class="form-label">Comentario (opcional)</label>
+                                    <input type="text" id="motivo" class="form-control">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Crear Oferta</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="col-md-2 mb-3">
-                  <label for="descuento" class="form-label">Descuento (%)</label>
-                  <input type="number" id="descuento" class="form-control" min="1" max="100" required />
+
+                <!-- Ofertas sugeridas -->
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Ofertas Sugeridas (IA)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Producto</th>
+                                        <th>Descuento</th>
+                                        <th>Motivo</th>
+                                        <th>Fechas</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaSugeridas">
+                                    <!-- JS insertará ofertas sugeridas -->
+                                    <!-- Ejemplo de fila -->
+                                    <!-- <tr>
+                                    <td>Juan Pérez</td>
+                                    <td>Tarta de Queso</td>
+                                    <td>15%</td>
+                                    <td>Compras frecuentes</td>
+                                    <td>01/04 - 07/04</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning me-1" onclick="editarOferta(1)"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger" onclick="eliminarOferta(1)"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                    </tr> -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                  <label for="fechaInicio" class="form-label">Fecha inicio</label>
-                  <input type="date" id="fechaInicio" class="form-control" required />
+                <!-- Ofertas vigentes -->
+                <div class="card mt-5">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Ofertas Vigentes</h5>
+                    </div>
+                    <div class="card-body" id="contenedor-ofertas-vigentes">
+                        <div class="text-center text-muted">Cargando ofertas...</div>
+                    </div>
                 </div>
-                <div class="col-md-3 mb-3">
-                  <label for="fechaFin" class="form-label">Fecha fin</label>
-                  <input type="date" id="fechaFin" class="form-control" required />
-                </div>
-                <div class="col-12 mb-3">
-                  <label for="motivo" class="form-label">Comentario (opcional)</label>
-                  <input type="text" id="motivo" class="form-control" />
-                </div>
-              </div>
-              <button type="submit" class="btn btn-primary">Crear Oferta</button>
-            </form>
-          </div>
+
+            </div>
+
         </div>
 
-        <!-- Tabla ofertas sugeridas -->
-        <div class="card mb-5">
-          <div class="card-header bg-light">
-            <h5 class="mb-0">Ofertas Sugeridas (IA)</h5>
-          </div>
-          <div class="card-body">
-            <table class="table table-sm table-striped">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Producto</th>
-                  <th>Descuento</th>
-                  <th>Motivo</th>
-                  <th>Fechas</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="tablaSugeridas"></tbody>
-            </table>
-          </div>
+        <!-- Modal para editar oferta -->
+        <div class="modal fade" id="modalEditarOferta" tabindex="-1" aria-labelledby="modalEditarOfertaLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <form class="modal-content" id="formEditarOferta">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditarOfertaLabel">Editar Oferta</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="edit-id" />
+                        <div class="mb-3">
+                            <label for="edit-producto" class="form-label">Producto</label>
+                            <select id="edit-producto" class="form-select" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-descuento" class="form-label">Descuento (%)</label>
+                            <input type="number" id="edit-descuento" class="form-control" min="1" max="100" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-fechaInicio" class="form-label">Fecha de Inicio</label>
+                            <input type="date" id="edit-fechaInicio" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-fechaFin" class="form-label">Fecha de Fin</label>
+                            <input type="date" id="edit-fechaFin" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <!-- Ofertas vigentes -->
-        <div class="card mb-5">
-          <div class="card-header bg-light">
-            <h5 class="mb-0">Ofertas Vigentes</h5>
-          </div>
-          <div class="card-body" id="contenedor-ofertas-vigentes">
-            <div class="text-center text-muted">Cargando ofertas...</div>
-          </div>
-        </div>
-      </section>
-    </div>
-  </main>
+        <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+            <small>
+                <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+                <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+                <i class="fas fa-phone me-1"></i> 91 859 67 11
+            </small>
+            <br />
+            <small>© 2025 Pastelería El Caballo Goloso</small>
+        </footer>
 
-  <!-- Footer -->
-  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
-    <small>
-      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
-      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
-      <i class="fas fa-phone me-1"></i> 91 859 67 11
-    </small>
-    <br />
-    <small>© 2025 Pastelería El Caballo Goloso</small>
-  </footer>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
-  <script>
-    function logout() {
-      localStorage.clear();
-      window.location.href = "../login.html";
-    }
-  </script>
-
+        <!-- Scripts -->
+        <script>
+            function logout() {
+                localStorage.clear();
+                window.location.href = '../login.html';
+            }
+        </script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
                 try {
-                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
                         method: 'DELETE'
-                    });
-                    if (!res.ok) throw new Error();
-                    alert('Oferta eliminada');
-                    location.reload();
-                } catch (err) {
-                    console.error('Error al eliminar oferta:', err);
-                    alert('No se pudo eliminar la oferta');
-                }
+                  });
+                if (!res.ok) throw new Error();
+                alert('Oferta eliminada');
+                location.reload();
+            } catch (err) {
+                console.error('Error al eliminar oferta:', err);
+                alert('No se pudo eliminar la oferta');
             }
+          }
 
             function editarOferta(id) {
-                alert(`Abrir modal para editar oferta ${id}`);
+                alert(Abrir modal para editar oferta ${ id });
                 // Aquí puedes construir un modal dinámico o redireccionar a una página de edición
             }
         </script>
@@ -220,30 +266,30 @@
             async function cargarClientes() {
                 try {
                     const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/all', {
-                        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-                    });
-                    const usuarios = await res.json();
+                        headers: { Authorization: Bearer ${ localStorage.getItem('token') } }
+                  });
+            const usuarios = await res.json();
 
-                    const lista = document.getElementById('lista-clientes');
-                    lista.innerHTML = '';
+            const lista = document.getElementById('lista-clientes');
+            lista.innerHTML = '';
 
-                    usuarios
-                        .filter(u => u.rol === 'cliente')
-                        .forEach(c => {
-                            const li = document.createElement('li');
-                            li.innerHTML = `
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="${c.id}" id="cliente-${c.id}">
+            usuarios
+                .filter(u => u.rol === 'cliente')
+                .forEach(c => {
+                    const li = document.createElement('li');
+                    li.innerHTML =
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="${c.id}" id="cliente-${c.id}">
                                 <label class="form-check-label" for="cliente-${c.id}">${c.nombre}</label>
-                            </div>
-                            `;
-                            lista.appendChild(li);
-                        });
-
-                } catch (err) {
-                    console.error('Error al cargar clientes', err);
-                }
+                        </div>
+                        ;
+                    lista.appendChild(li);
+                });
+  
+              } catch (err) {
+                console.error('Error al cargar clientes', err);
             }
+          }
 
             async function cargarOfertasVigentes() {
                 try {
@@ -253,7 +299,7 @@
                     contenedor.innerHTML = '';
 
                     if (ofertas.length === 0) {
-                        contenedor.innerHTML = `<div class="alert alert-info">No hay ofertas vigentes en este momento.</div>`;
+                        contenedor.innerHTML = <div class="alert alert-info">No hay ofertas vigentes en este momento.</div>;
                         return;
                     }
 
@@ -262,29 +308,29 @@
                         const div = document.createElement('div');
                         div.className = 'alert alert-success d-flex justify-content-between align-items-center flex-wrap';
 
-                        div.innerHTML = `
-                            <div>
-                            <strong>${producto.nombre}</strong><br/>
-                            <small>
-                                ${oferta.descuento}% – del ${new Date(oferta.fechaInicio).toLocaleDateString()} 
-                                al ${new Date(oferta.fechaFin).toLocaleDateString()}
-                            </small>
-                            </div>
-                            <div class="mt-2 mt-md-0">
-                            <button class="btn btn-sm btn-warning me-2" onclick="editarOferta(${oferta.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="eliminarOferta(${oferta.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            </div>
-                        `;
+                        div.innerHTML = 
+                              <div>
+                              <strong>${producto.nombre}</strong><br/>
+                              <small>
+                                  ${oferta.descuento}% – del ${new Date(oferta.fechaInicio).toLocaleDateString()} 
+                                  al ${new Date(oferta.fechaFin).toLocaleDateString()}
+                              </small>
+                              </div>
+                              <div class="mt-2 mt-md-0">
+                              <button class="btn btn-sm btn-warning me-2" onclick="editarOferta(${oferta.id})">
+                                  <i class="fas fa-edit"></i>
+                              </button>
+                              <button class="btn btn-sm btn-danger" onclick="eliminarOferta(${oferta.id})">
+                                  <i class="fas fa-trash"></i>
+                              </button>
+                              </div>
+                            ;
 
                         contenedor.appendChild(div);
                     });
                 } catch (error) {
                     console.error('Error al cargar ofertas vigentes:', error);
-                    document.getElementById('contenedor-ofertas-vigentes').innerHTML = `<div class="text-danger">Error al cargar ofertas.</div>`;
+                    document.getElementById('contenedor-ofertas-vigentes').innerHTML = <div class="text-danger">Error al cargar ofertas.</div>;
                 }
             }
 
@@ -292,78 +338,78 @@
             async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
                 try {
-                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
                         method: 'DELETE'
-                    });
-                    if (!res.ok) throw new Error();
-                    alert('Oferta eliminada');
-                    location.reload();
-                } catch (err) {
-                    console.error('Error al eliminar oferta:', err);
-                    alert('No se pudo eliminar la oferta');
-                }
+                  });
+                if (!res.ok) throw new Error();
+                alert('Oferta eliminada');
+                location.reload();
+            } catch (err) {
+                console.error('Error al eliminar oferta:', err);
+                alert('No se pudo eliminar la oferta');
             }
+          }
 
             async function editarOferta(id) {
                 try {
                     const token = localStorage.getItem('token');
-                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
+                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
+                        headers: { 'Authorization': Bearer ${ token } }
+                  });
 
-                    if (!res.ok) throw new Error('Error al obtener la oferta');
+            if (!res.ok) throw new Error('Error al obtener la oferta');
 
-                    const oferta = await res.json();
+            const oferta = await res.json();
 
-                    // Llenar campos del modal
-                    document.getElementById('edit-id').value = oferta.id;
-                    document.getElementById('edit-descuento').value = oferta.descuento;
-                    document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
-                    document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
+            // Llenar campos del modal
+            document.getElementById('edit-id').value = oferta.id;
+            document.getElementById('edit-descuento').value = oferta.descuento;
+            document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
+            document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
 
-                    // Cargar productos si no están ya
-                    await cargarProductosEnSelect('edit-producto', oferta.productoId);
+            // Cargar productos si no están ya
+            await cargarProductosEnSelect('edit-producto', oferta.productoId);
 
-                    // Abrir modal
-                    const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
-                    modal.show();
-
-                } catch (error) {
-                    console.error('❌ Error al cargar datos de oferta:', error);
-                    alert('No se pudo cargar la información de la oferta.');
-                }
+            // Abrir modal
+            const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
+            modal.show();
+  
+              } catch (error) {
+                console.error('❌ Error al cargar datos de oferta:', error);
+                alert('No se pudo cargar la información de la oferta.');
             }
+          }
 
 
             async function editarOferta(id) {
                 try {
                     const token = localStorage.getItem('token');
-                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
+                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
+                        headers: { 'Authorization': Bearer ${ token } }
+                  });
 
-                    if (!res.ok) throw new Error('Error al obtener la oferta');
+            if (!res.ok) throw new Error('Error al obtener la oferta');
 
-                    const oferta = await res.json();
+            const oferta = await res.json();
 
-                    // Llenar campos del modal
-                    document.getElementById('edit-id').value = oferta.id;
-                    document.getElementById('edit-descuento').value = oferta.descuento;
-                    document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
-                    document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
+            // Llenar campos del modal
+            document.getElementById('edit-id').value = oferta.id;
+            document.getElementById('edit-descuento').value = oferta.descuento;
+            document.getElementById('edit-fechaInicio').value = oferta.fechaInicio.split('T')[0];
+            document.getElementById('edit-fechaFin').value = oferta.fechaFin.split('T')[0];
 
-                    // Cargar productos si no están ya
-                    await cargarProductosEnSelect('edit-producto', oferta.productoId);
+            // Cargar productos si no están ya
+            await cargarProductosEnSelect('edit-producto', oferta.productoId);
 
-                    // Abrir modal
-                    const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
-                    modal.show();
-
-                } catch (error) {
-                    console.error('❌ Error al cargar datos de oferta:', error);
-                    alert('No se pudo cargar la información de la oferta.');
-                }
+            // Abrir modal
+            const modal = new mdb.Modal(document.getElementById('modalEditarOferta'));
+            modal.show();
+  
+              } catch (error) {
+                console.error('❌ Error al cargar datos de oferta:', error);
+                alert('No se pudo cargar la información de la oferta.');
             }
+          }
 
             document.getElementById('formEditarOferta').addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -378,47 +424,47 @@
                 };
 
                 try {
-                    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
+                    const res = await fetch(https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}, {
                         method: 'PUT',
                         headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(body)
-                    });
-
-                    if (!res.ok) throw new Error('Error al actualizar la oferta');
-
-                    alert('✅ Oferta actualizada correctamente');
-                    location.reload();
-                } catch (err) {
-                    console.error('❌ Error al actualizar oferta:', err);
-                    alert('Hubo un error al guardar los cambios.');
-                }
+                        'Authorization': Bearer ${ token },
+                        'Content-Type': 'application/json'
+                      },
+                body: JSON.stringify(body)
             });
 
+            if (!res.ok) throw new Error('Error al actualizar la oferta');
+
+            alert('✅ Oferta actualizada correctamente');
+            location.reload();
+              } catch (err) {
+                console.error('❌ Error al actualizar oferta:', err);
+                alert('Hubo un error al guardar los cambios.');
+            }
+          });
+
             async function cargarProductosEnSelect(selectId, selectedId = null) {
-  try {
-    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/productos');
-    if (!res.ok) throw new Error('Error al cargar productos');
-    
-    const productos = await res.json();
-    const select = document.getElementById(selectId);
-    select.innerHTML = '';
+                try {
+                    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/productos');
+                    if (!res.ok) throw new Error('Error al cargar productos');
 
-    productos.forEach(prod => {
-      const option = document.createElement('option');
-      option.value = prod.id;
-      option.textContent = prod.nombre;
-      if (prod.id === selectedId) option.selected = true;
-      select.appendChild(option);
-    });
+                    const productos = await res.json();
+                    const select = document.getElementById(selectId);
+                    select.innerHTML = '';
 
-  } catch (err) {
-    console.error('❌ Error al cargar productos en el select:', err);
-    alert('No se pudieron cargar los productos.');
-  }
-}
+                    productos.forEach(prod => {
+                        const option = document.createElement('option');
+                        option.value = prod.id;
+                        option.textContent = prod.nombre;
+                        if (prod.id === selectedId) option.selected = true;
+                        select.appendChild(option);
+                    });
+
+                } catch (err) {
+                    console.error('❌ Error al cargar productos en el select:', err);
+                    alert('No se pudieron cargar los productos.');
+                }
+            }
 
         </script>
 </body>
