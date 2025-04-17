@@ -244,7 +244,7 @@
 
         async function marcarComoEntregado() {
             const pedidoId = document.getElementById('pedido-id-detalle').value;
-            const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}`;
+            const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}/estado`;
 
             try {
                 const res = await fetch(API_ACTUALIZAR, {
