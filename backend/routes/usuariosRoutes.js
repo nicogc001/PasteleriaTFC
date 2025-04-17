@@ -144,4 +144,42 @@ router.post('/', async (req, res) => {
   }
 });
 
+// ✅ Eliminar usuario (solo admin)
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.rol !== 'administrador') {
+      return res.status(403).json({ error: 'No autorizado' });
+    }
+
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    await usuario.destroy();
+    res.json({ message: 'Usuario eliminado correctamente' });
+  } catch (err) {
+    console.error('❌ Error eliminando usuario:', err);
+    res.status(500).json({ error: 'Error eliminando usuario' });
+  }
+});
+
+// ✅ Actualizar rol del usuario (solo admin)
+router.put('/:id/rol', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.rol !== 'administrador') {
+      return res.status(403).json({ error: 'No autorizado' });
+    }
+
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (!usuario) return res.status(404).json({ error: 'Usuario no encontrado' });
+
+    usuario.rol = req.body.rol;
+    await usuario.save();
+    res.json({ message: 'Rol actualizado correctamente' });
+  } catch (err) {
+    console.error('❌ Error actualizando rol:', err);
+    res.status(500).json({ error: 'Error actualizando rol' });
+  }
+});
+
+
 module.exports = router;
