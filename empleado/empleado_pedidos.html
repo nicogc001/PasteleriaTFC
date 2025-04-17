@@ -259,7 +259,8 @@
                 const data = await res.json();
 
                 if (!res.ok) {
-                    throw new Error(data.error || 'Error desconocido al actualizar el estado');
+                    console.error('Respuesta backend:', data);
+                    throw new Error(data?.error || 'Error desconocido al actualizar estado');
                 }
 
                 alert('Pedido marcado como entregado');
@@ -271,6 +272,7 @@
                 alert('No se pudo actualizar el pedido: ' + err.message);
             }
         }
+
 
 
         async function verDetallePedido(id) {
@@ -330,7 +332,7 @@
 
 
         async function marcarComoEntregadoDesdeTabla(pedidoId) {
-            const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}`;
+            const API_ACTUALIZAR = `https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/${pedidoId}/estado`; 
 
             try {
                 const res = await fetch(API_ACTUALIZAR, {
@@ -343,6 +345,7 @@
                 });
 
                 if (!res.ok) throw new Error('Error al marcar como entregado');
+
                 alert('Pedido marcado como entregado');
                 await cargarPedidosAsignados();
             } catch (err) {
@@ -350,6 +353,7 @@
                 alert('No se pudo actualizar el pedido');
             }
         }
+
 
         function renderTablaPedidosAsignados(pedidos) {
             const tbody = document.getElementById('tabla-pedidos');
