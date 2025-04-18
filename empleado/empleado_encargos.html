@@ -29,63 +29,67 @@
 
 <body>
     <div id="header-empleado"></div>
-    <main>
-        <div id="menu-empleado"></div>
-
-        <div class="container">
+    
+    <main class="container-fluid mt-4">
+        <div class="row">
+          <div id="menu-empleado" class="col-md-3 col-lg-2"></div>
+      
+          <div class="col-md-9 col-lg-10">
             <h1>Crear Pedido para Cliente</h1>
-
+      
             <!-- Cliente -->
             <div class="section-title"><strong>Cliente</strong></div>
             <div class="form-row align-items-center">
-                <div class="col-sm-6">
-                    <select id="clienteId" class="form-control" required>
-                        <option value="">Selecciona un cliente</option>
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-outline-primary" onclick="abrirModalRegistro()">Registro rápido</button>
-                </div>
+              <div class="col-sm-6">
+                <select id="clienteId" class="form-control" required>
+                  <option value="">Selecciona un cliente</option>
+                </select>
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-outline-primary" onclick="abrirModalRegistro()">Registro rápido</button>
+              </div>
             </div>
-
+      
             <!-- Fecha de entrega -->
             <div class="section-title"><strong>Fecha de entrega</strong></div>
             <input type="date" id="fechaEntrega" class="form-control" />
-
+      
             <!-- Tipo de envío -->
             <div class="section-title"><strong>Tipo de envío</strong></div>
             <select id="tipoEnvio" class="form-control">
-                <option value="recoger">Recogida en tienda</option>
-                <option value="enviar">Envío local (Madrid)</option>
-                <option value="enviar">Envío nacional</option>
+              <option value="recoger">Recogida en tienda</option>
+              <option value="enviar">Envío local (Madrid)</option>
+              <option value="enviar">Envío nacional</option>
             </select>
-
+      
             <!-- Tienda -->
             <div class="section-title"><strong>Tienda</strong></div>
             <select id="tienda" class="form-control" required>
-                <option value="">Selecciona una tienda</option>
-                <option value="Espacio Torrelodones">Espacio Torrelodones</option>
-                <option value="Torrelodones pueblo">Torrelodones pueblo</option>
+              <option value="">Selecciona una tienda</option>
+              <option value="Espacio Torrelodones">Espacio Torrelodones</option>
+              <option value="Torrelodones pueblo">Torrelodones pueblo</option>
             </select>
-
+      
             <!-- Productos -->
             <div class="section-title"><strong>Productos</strong></div>
             <div class="form-group">
-                <input type="text" id="buscarProducto" class="form-control" placeholder="Buscar productos...">
+              <input type="text" id="buscarProducto" class="form-control" placeholder="Buscar productos...">
             </div>
             <div class="row" id="lista-productos"></div>
-
+      
             <!-- Notas -->
             <div class="section-title"><strong>Notas adicionales</strong></div>
             <textarea id="notas" class="form-control" rows="3" placeholder="Alergias, comentarios..."></textarea>
-
+      
             <!-- Confirmación -->
             <div class="section-title"><strong>Resumen del pedido</strong></div>
             <ul class="list-group mb-3" id="resumenPedido"></ul>
             <div class="mb-3 font-weight-bold">Total: <span id="totalPedido">0.00</span> €</div>
             <button class="btn btn-success btn-lg" onclick="confirmarPedido()">Confirmar pedido</button>
+          </div>
         </div>
-    </main>
+      </main>
+      
     <div id="footer-empleado"></div>
 
 
