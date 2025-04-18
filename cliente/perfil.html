@@ -218,7 +218,7 @@
             const passNuevaRep = document.getElementById("inputPassNuevaRep").value;
 
             try {
-                // 1️⃣ Guardar datos de perfil
+                // 1️ Guardar datos de perfil
                 const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/update', {
                     method: 'PUT',
                     headers: {
@@ -230,9 +230,9 @@
                 });
 
                 if (!res.ok) throw new Error("Error actualizando perfil");
-                alert("✅ Perfil actualizado correctamente.");
+                alert("Perfil actualizado correctamente.");
 
-                // 2️⃣ Cambiar contraseña si se han rellenado los campos
+                // 2️ Cambiar contraseña si se han rellenado los campos
                 if (passActual && passNueva && passNueva === passNuevaRep) {
                     const passRes = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/usuarios/password', {
                         method: 'PUT',
@@ -249,13 +249,13 @@
                         throw new Error(error.error || "Error cambiando contraseña");
                     }
 
-                    alert("🔐 Contraseña cambiada correctamente.");
+                    alert("Contraseña cambiada correctamente.");
                 } else if (passActual || passNueva || passNuevaRep) {
-                    alert("❌ Las contraseñas no coinciden o faltan campos.");
+                    alert("Las contraseñas no coinciden o faltan campos.");
                 }
             } catch (error) {
                 console.error(error);
-                alert("❌ Error guardando cambios.");
+                alert("Error guardando cambios.");
             }
         }
     </script>
