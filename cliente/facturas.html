@@ -9,15 +9,42 @@
   <link href="styles/main.css" rel="stylesheet" />
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">El Caballo Goloso</a>
+      <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <a class="navbar-brand mt-2 mt-lg-0 fw-bold" href="index.html">
+          <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="20" alt="Logo"
+            loading="lazy" /> El Caballo Goloso
+        </a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/pasteleria.html">Pastelería</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/bolleria.html">Bollería</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/salado.html">Salado</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/tartas.html">Tartas</a></li>
+        </ul>
+      </div>
       <div class="d-flex align-items-center">
-        <a class="btn btn-outline-dark me-2" href="pedidos.html">Mis Pedidos</a>
-        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+        <a class="link-secondary me-3" href="carrito.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a>
+        <div class="dropdown">
+          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+            id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Avatar"
+              loading="lazy" />
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+            <li><a class="dropdown-item" href="perfil.html">Mi perfil</a></li>
+            <li><a class="dropdown-item" href="#" onclick="logout()">Cerrar sesión</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
+  <div id="barra-tienda"></div>
 
   <main class="container mt-5">
     <h1 class="text-center">Facturas</h1>
@@ -55,11 +82,25 @@
     </div>
   </main>
 
-  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-    <div class="text-center p-4">
-      © 2025 El Caballo Goloso
-    </div>
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br />
+    <small>© 2025 Pastelería El Caballo Goloso</small>
   </footer>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('elementos/barraTienda.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('barra-tienda').innerHTML = html;
+      })
+      .catch(err => console.error('❌ Error cargando barraTienda:', err));
+  });
+</script>
 
   <script>
     const token = localStorage.getItem('token');

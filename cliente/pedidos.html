@@ -12,43 +12,44 @@
 
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary shadow-sm">
     <div class="container-fluid">
       <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
       </button>
-
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-          <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
-            loading="lazy" />
+        <a class="navbar-brand mt-2 mt-lg-0 fw-bold" href="../index.html">
+          <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="20" alt="Logo"
+            loading="lazy" /> El Caballo Goloso
         </a>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
           <li class="nav-item"><a class="nav-link" href="../productos/pasteleria.html">Pastelería</a></li>
-          <li class="nav-item"><a class="nav-link" href="bolleria.html">Bollería</a></li>
-          <li class="nav-item"><a class="nav-link" href="salado.html">Repostería Salada</a></li>
-          <li class="nav-item"><a class="nav-link" href="tartas.html">Tartas</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/bolleria.html">Bollería</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/salado.html">Salado</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/tartas.html">Tartas</a></li>
         </ul>
       </div>
       <div class="d-flex align-items-center">
-        <a class="link-secondary me-3" href="../carrito.html"><i class="fas fa-shopping-cart"></i></a>
+        <a class="link-secondary me-3" href="../carrito.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a>
         <div class="dropdown">
-          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="../login.html"
+          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
             id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25"
-              alt="User Avatar" loading="lazy" />
+            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Avatar"
+              loading="lazy" />
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-            <li><a class="dropdown-item" href="#">My profile</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Logout</a></li>
+            <li><a class="dropdown-item" href="perfil.html">Mi perfil</a></li>
+            <li><a class="dropdown-item" href="#" onclick="logout()">Cerrar sesión</a></li>
           </ul>
         </div>
       </div>
     </div>
   </nav>
+
+    <!-- BARRA SECUNDARIA DE ACCESO RÁPIDO A LA TIENDA -->
+    <div id="barra-tienda"></div>
 
   <main class="container mt-5">
     <h1 class="text-center" id="welcome-message">Mis Pedidos</h1>
@@ -68,7 +69,7 @@
         <div class="mt-4">
           <h3>Historial de Pedidos</h3>
 
-          <!-- ✅ Botón para volver a la tienda -->
+          <!-- Botón para volver a la tienda -->
           <div class="mb-3">
             <a href="../index.html" class="btn btn-outline-primary">
               <i class="fas fa-store"></i> Volver a la tienda
@@ -89,7 +90,7 @@
             </div>
           </form>
 
-          <!-- ✅ Tabla de pedidos -->
+          <!-- Tabla de pedidos -->
           <table class="table table-striped">
             <thead>
               <tr>
@@ -101,7 +102,7 @@
                 <th>Entrega</th>
                 <th>Acciones</th>
               </tr>
-            </thead>            
+            </thead>
             <tbody id="lista-pedidos">
               <!-- JS insertará los pedidos aquí -->
             </tbody>
@@ -112,58 +113,14 @@
   </main>
 
 
-  <!-- Footer -->
-  <footer class="text-center text-lg-start bg-body-tertiary text-muted">
-    <!-- Section: Social media -->
-    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
-      <div class="me-5 d-none d-lg-block">
-        <span>Síguenos en redes: </span>
-      </div>
-      <div>
-        <a href="" class="me-4 text-reset"><i class="fab fa-twitter"></i></a>
-        <a href="" class="me-4 text-reset"><i class="fab fa-instagram"></i></a>
-      </div>
-    </section>
-
-    <!-- Section: Links  -->
-    <section>
-      <div class="container text-center text-md-start mt-5">
-        <div class="row mt-3">
-          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-            <h6 class="text-uppercase fw-bold mb-4">Productos</h6>
-            <p><a href="#!" class="text-reset">Pasteleria</a></p>
-            <p><a href="#!" class="text-reset">Bolleria</a></p>
-            <p><a href="#!" class="text-reset">Salado</a></p>
-            <p><a href="#!" class="text-reset">Tartas</a></p>
-            <p><a href="#!" class="text-reset">Cafetería</a></p>
-          </div>
-
-          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-            <h6 class="text-uppercase fw-bold mb-4">Enlaces de interés</h6>
-            <p><a href="#!" class="text-reset">Alérgenos</a></p>
-            <p><a href="#!" class="text-reset">¿Quienes somos?</a></p>
-            <p><a href="trabajaConNosotros.html" class="text-reset">Trabaja con nosotros</a></p>
-            <p><a href="trabajaConNosotros.html" class="text-reset">Canal compliance</a></p>
-            <p><a href="trabajaConNosotros.html" class="text-reset">Politica de cookies</a></p>
-          </div>
-
-          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-            <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-            <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
-            <p><i class="fas fa-home me-3"></i>CC Espacio Torrelodones, Torrelodones</p>
-            <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
-            <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-            <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Copyright -->
-    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-      © 2025 Copyright:
-      <a class="text-reset fw-bold" href="../index.html">Pastelería El Caballo Goloso</a>
-    </div>
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br />
+    <small>© 2025 Pastelería El Caballo Goloso</small>
   </footer>
 
 
@@ -191,70 +148,70 @@
     </div>
   </div>
 
-<!-- MODAL DE PAGO -->
-<div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalPagoLabel">Selecciona un método de pago</h5>
-        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <form id="formPago">
-          <input type="hidden" id="pedidoIdSeleccionado" />
-          
-          <div class="mb-3">
-            <label for="metodoPago" class="form-label">Método de pago:</label>
-            <select class="form-select" id="metodoPago" required>
-              <option value="">Selecciona una opción</option>
-              <option value="tarjeta">Tarjeta</option>
-              <option value="paypal">PayPal</option>
-              <option value="bizum">Bizum</option>
-              <option value="efectivo">Pagar en tienda (efectivo)</option>
-            </select>
-          </div>
+  <!-- MODAL DE PAGO -->
+  <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPagoLabel">Selecciona un método de pago</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formPago">
+            <input type="hidden" id="pedidoIdSeleccionado" />
 
-          <!-- Dirección (solo visible si es tipoEntrega = enviar) -->
-          <div class="mb-3" id="direccion-wrapper" style="display: none;">
-            <label for="direccionId" class="form-label">Selecciona tu dirección:</label>
-            <select class="form-select" id="direccionId">
-              <option value="">Selecciona una dirección...</option>
-            </select>
-            <div class="mt-2 text-end">
-              <button type="button" class="btn btn-sm btn-outline-primary" onclick="abrirModalDireccionDesdePago()">
-                <i class="fas fa-plus"></i> Añadir nueva dirección
-              </button>
+            <div class="mb-3">
+              <label for="metodoPago" class="form-label">Método de pago:</label>
+              <select class="form-select" id="metodoPago" required>
+                <option value="">Selecciona una opción</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="paypal">PayPal</option>
+                <option value="bizum">Bizum</option>
+                <option value="efectivo">Pagar en tienda (efectivo)</option>
+              </select>
             </div>
-          </div>
-          
 
-          <button type="submit" class="btn btn-success w-100">Finalizar pago</button>
-        </form>
+            <!-- Dirección (solo visible si es tipoEntrega = enviar) -->
+            <div class="mb-3" id="direccion-wrapper" style="display: none;">
+              <label for="direccionId" class="form-label">Selecciona tu dirección:</label>
+              <select class="form-select" id="direccionId">
+                <option value="">Selecciona una dirección...</option>
+              </select>
+              <div class="mt-2 text-end">
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="abrirModalDireccionDesdePago()">
+                  <i class="fas fa-plus"></i> Añadir nueva dirección
+                </button>
+              </div>
+            </div>
+
+
+            <button type="submit" class="btn btn-success w-100">Finalizar pago</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<!-- Modal para agregar/modificar dirección -->
-<div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalDireccionLabel">Dirección</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <input type="text" id="inputCalle" class="form-control mb-2" placeholder="Calle" />
-        <input type="text" id="inputCP" class="form-control mb-2" placeholder="Código Postal" />
-        <input type="text" id="inputProvincia" class="form-control mb-2" placeholder="Provincia" />
-        <input type="text" id="inputLocalidad" class="form-control mb-2" placeholder="Localidad" />
-        <textarea id="inputNotas" class="form-control mb-2" placeholder="Notas (opcional)"></textarea>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" onclick="guardarDireccion()">Guardar</button>
+  <!-- Modal para agregar/modificar dirección -->
+  <div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDireccionLabel">Dirección</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="text" id="inputCalle" class="form-control mb-2" placeholder="Calle" />
+          <input type="text" id="inputCP" class="form-control mb-2" placeholder="Código Postal" />
+          <input type="text" id="inputProvincia" class="form-control mb-2" placeholder="Provincia" />
+          <input type="text" id="inputLocalidad" class="form-control mb-2" placeholder="Localidad" />
+          <textarea id="inputNotas" class="form-control mb-2" placeholder="Notas (opcional)"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" onclick="guardarDireccion()">Guardar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
@@ -262,7 +219,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('elementos/barraTienda.html')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('barra-tienda').innerHTML = html;
+        })
+        .catch(err => console.error('❌ Error cargando barraTienda:', err));
+    });
+  </script>
+  
   <script>
     const token = localStorage.getItem('token');
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
@@ -304,11 +271,11 @@
           const data = await res.json();
 
           if (!res.ok) {
-            throw new Error(data?.error || "❌ No se pudo confirmar el pedido");
+            throw new Error(data?.error || "No se pudo confirmar el pedido");
           }
 
           modalPago.hide();
-          alert("✅ Pedido confirmado correctamente por: " + metodo);
+          alert("Pedido confirmado correctamente por: " + metodo);
 
           // Abrir la factura en nueva pestaña
           window.open(`https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${pedidoId}.pdf`, '_blank');
@@ -394,7 +361,7 @@
             ${esPendiente ? `<button class="btn btn-sm btn-success me-1" onclick="abrirModalPago(${p.id})">Confirmar</button>` : ''}
             ${esConfirmado ? `<button class="btn btn-sm btn-outline-secondary" onclick="window.open('https://pasteleriatfc-back-igmg.onrender.com/facturas/factura_${p.id}.pdf', '_blank')">Ver factura</button>` : ''}
           </td>
-        </tr>`; 
+        </tr>`;
 
         contenedor.appendChild(row);
 
@@ -435,51 +402,51 @@
         const modal = new mdb.Modal(document.getElementById('pedidoModal'));
         modal.show();
       } catch (err) {
-        console.error("❌ Error cargando detalle:", err);
+        console.error("Error cargando detalle:", err);
         alert("No se pudo cargar el detalle del pedido.");
       }
     }
 
     async function abrirModalPago(pedidoId) {
-  document.getElementById('pedidoIdSeleccionado').value = pedidoId;
-  document.getElementById('metodoPago').value = "";
-  document.getElementById('direccion-wrapper').style.display = "none";
-  document.getElementById('direccionId').innerHTML = `<option value="">Selecciona una dirección...</option>`;
+      document.getElementById('pedidoIdSeleccionado').value = pedidoId;
+      document.getElementById('metodoPago').value = "";
+      document.getElementById('direccion-wrapper').style.display = "none";
+      document.getElementById('direccionId').innerHTML = `<option value="">Selecciona una dirección...</option>`;
 
-  // Obtener el pedido para saber el tipoEntrega
-  try {
-    const res = await fetch(`${API_URL}/${pedidoId}`, {
-      headers: { 'Authorization': `Bearer ${token}` },
-      credentials: 'include'
-    });
+      // Obtener el pedido para saber el tipoEntrega
+      try {
+        const res = await fetch(`${API_URL}/${pedidoId}`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
 
-    const pedido = await res.json();
+        const pedido = await res.json();
 
-    if (pedido.tipoEntrega === 'enviar') {
-      const dirRes = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include'
-      });
+        if (pedido.tipoEntrega === 'enviar') {
+          const dirRes = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
+            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include'
+          });
 
-      const direcciones = await dirRes.json();
+          const direcciones = await dirRes.json();
 
-      const select = document.getElementById('direccionId');
-      direcciones.forEach(dir => {
-        const opcion = document.createElement('option');
-        opcion.value = dir.id;
-        opcion.textContent = `${dir.calle}, ${dir.localidad} (${dir.cp})`;
-        select.appendChild(opcion);
-      });
+          const select = document.getElementById('direccionId');
+          direcciones.forEach(dir => {
+            const opcion = document.createElement('option');
+            opcion.value = dir.id;
+            opcion.textContent = `${dir.calle}, ${dir.localidad} (${dir.cp})`;
+            select.appendChild(opcion);
+          });
 
-      document.getElementById('direccion-wrapper').style.display = "block";
+          document.getElementById('direccion-wrapper').style.display = "block";
+        }
+
+        modalPago.show();
+      } catch (err) {
+        console.error("Error cargando direcciones:", err);
+        alert("No se pudo cargar la información del pedido o las direcciones.");
+      }
     }
-
-    modalPago.show();
-  } catch (err) {
-    console.error("❌ Error cargando direcciones:", err);
-    alert("No se pudo cargar la información del pedido o las direcciones.");
-  }
-}
 
 
     function logout() {
@@ -495,87 +462,94 @@
       new bootstrap.Modal(document.getElementById('modalDireccion')).show();
     }
     async function recargarDireccionesSelector() {
-  const select = document.getElementById('direccionId');
-  if (!select) return;
+      const select = document.getElementById('direccionId');
+      if (!select) return;
 
-  try {
-    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
-      headers: { 'Authorization': `Bearer ${token}` },
-      credentials: 'include'
-    });
+      try {
+        const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
 
-    const direcciones = await res.json();
-    select.innerHTML = '<option value="">Selecciona una dirección...</option>';
+        const direcciones = await res.json();
+        select.innerHTML = '<option value="">Selecciona una dirección...</option>';
 
-    direcciones.forEach(d => {
-      const option = document.createElement('option');
-      option.value = d.id;
-      option.textContent = `${d.calle}, ${d.localidad}, ${d.cp}`;
-      select.appendChild(option);
-    });
+        direcciones.forEach(d => {
+          const option = document.createElement('option');
+          option.value = d.id;
+          option.textContent = `${d.calle}, ${d.localidad}, ${d.cp}`;
+          select.appendChild(option);
+        });
 
-  } catch (err) {
-    console.error("❌ Error cargando direcciones:", err);
-    alert("No se pudieron cargar las direcciones");
-  }
-}
+      } catch (err) {
+        console.error("❌ Error cargando direcciones:", err);
+        alert("No se pudieron cargar las direcciones");
+      }
+    }
 
 
     function abrirModalAgregar() {
-    direccionEditando = null;
-    document.getElementById('inputCalle').value = '';
-    document.getElementById('inputCP').value = '';
-    document.getElementById('inputProvincia').value = '';
-    document.getElementById('inputLocalidad').value = '';
-    document.getElementById('inputNotas').value = '';
-  }
+      direccionEditando = null;
+      document.getElementById('inputCalle').value = '';
+      document.getElementById('inputCP').value = '';
+      document.getElementById('inputProvincia').value = '';
+      document.getElementById('inputLocalidad').value = '';
+      document.getElementById('inputNotas').value = '';
+    }
 
-  async function guardarDireccion() {
-  const calle = document.getElementById('inputCalle').value;
-  const cp = document.getElementById('inputCP').value;
-  const provincia = document.getElementById('inputProvincia').value;
-  const localidad = document.getElementById('inputLocalidad').value;
-  const notas = document.getElementById('inputNotas').value;
+    async function guardarDireccion() {
+      const calle = document.getElementById('inputCalle').value;
+      const cp = document.getElementById('inputCP').value;
+      const provincia = document.getElementById('inputProvincia').value;
+      const localidad = document.getElementById('inputLocalidad').value;
+      const notas = document.getElementById('inputNotas').value;
 
-  if (!calle || !cp || !provincia || !localidad) {
-    return alert("Todos los campos obligatorios deben estar completos.");
-  }
+      if (!calle || !cp || !provincia || !localidad) {
+        return alert("Todos los campos obligatorios deben estar completos.");
+      }
 
-  const payload = { calle, cp, provincia, localidad, notas };
+      const payload = { calle, cp, provincia, localidad, notas };
 
-  try {
-    const res = await fetch(direccionEditando ? `${API_URL}/${direccionEditando}` : API_URL, {
-      method: direccionEditando ? 'PUT' : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(payload),
-      credentials: 'include'
-    });
+      try {
+        const res = await fetch(direccionEditando ? `${API_URL}/${direccionEditando}` : API_URL, {
+          method: direccionEditando ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload),
+          credentials: 'include'
+        });
 
-    if (!res.ok) throw new Error("Error guardando dirección");
+        if (!res.ok) throw new Error("Error guardando dirección");
 
-    direccionEditando = null;
+        direccionEditando = null;
 
-    // 🔄 Recargar lista general
-    await cargarDirecciones();
+        // Recargar lista general
+        await cargarDirecciones();
 
-    // ✅ Recargar selector de direcciones (para modal de pago)
-    await recargarDireccionesSelector();
+        // Recargar selector de direcciones (para modal de pago)
+        await recargarDireccionesSelector();
 
-    // 🔒 Cerrar modal
-    bootstrap.Modal.getInstance(document.getElementById('modalDireccion')).hide();
+        // Cerrar modal
+        bootstrap.Modal.getInstance(document.getElementById('modalDireccion')).hide();
 
-  } catch (err) {
-    console.error(err);
-    alert("Error al guardar dirección");
-  }
-}
+      } catch (err) {
+        console.error(err);
+        alert("Error al guardar dirección");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('cart');
+      window.location.href = 'login.html';
+    }
 
   </script>
 
-  
+
 </body>
 
 </html>

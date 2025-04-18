@@ -1,46 +1,82 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Direcciones - Pastelería El Caballo Goloso</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="styles/main.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Direcciones - Pastelería El Caballo Goloso</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="styles/main.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">[...]</nav>
-    
-    <main class="container mt-5">
-        <h1 class="text-center">Mis Direcciones</h1>
-        <div class="d-flex">
-            <nav class="me-4">
-                <h3 class="text-danger">Sección</h3>
-                <ul class="list-unstyled">
-                    <li><a href="pedidos.html">Pedidos</a></li>
-                    <li><a href="facturas.html">Facturas</a></li>
-                    <li><a href="perfil.html">Perfil</a></li>
-                    <li><strong>Direcciones</strong></li>
-                    <li><a href="tarjetas.html">Tarjetas</a></li>
-                    <li><a href="#">Darme de baja</a></li>
-                    <li><a href="#">Salir</a></li>
-                </ul>
-            </nav>
-            <div class="w-100">
-                <div class="mt-4">
-                    <h3>Direcciones Registradas</h3>
-                    <button class="btn btn-success mb-3" onclick="abrirModalAgregar()" data-bs-toggle="modal" data-bs-target="#modalDireccion">Añadir Dirección</button>
-                    <ul class="list-group" id="lista-direcciones">
-                    </ul>
-                </div>
-            </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary shadow-sm">
+    <div class="container-fluid">
+      <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <a class="navbar-brand mt-2 mt-lg-0 fw-bold" href="index.html">
+          <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="20" alt="Logo"
+            loading="lazy" /> El Caballo Goloso
+        </a>
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/pasteleria.html">Pastelería</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/bolleria.html">Bollería</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/salado.html">Salado</a></li>
+          <li class="nav-item"><a class="nav-link" href="../productos/tartas.html">Tartas</a></li>
+        </ul>
+      </div>
+      <div class="d-flex align-items-center">
+        <a class="link-secondary me-3" href="carrito.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a>
+        <div class="dropdown">
+          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+            id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Avatar"
+              loading="lazy" />
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+            <li><a class="dropdown-item" href="perfil.html">Mi perfil</a></li>
+            <li><a class="dropdown-item" href="#" onclick="logout()">Cerrar sesión</a></li>
+          </ul>
         </div>
-    </main>
-    
-<!-- Modal para agregar/modificar dirección -->
-<div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
+      </div>
+    </div>
+  </nav>
+  <div id="barra-tienda"></div>
+  <main class="container mt-5">
+    <h1 class="text-center">Mis Direcciones</h1>
+    <div class="d-flex">
+      <nav class="me-4">
+        <h3 class="text-danger">Sección</h3>
+        <ul class="list-unstyled">
+          <li><a href="pedidos.html">Pedidos</a></li>
+          <li><a href="facturas.html">Facturas</a></li>
+          <li><a href="perfil.html">Perfil</a></li>
+          <li><strong>Direcciones</strong></li>
+          <li><a href="tarjetas.html">Tarjetas</a></li>
+          <li><a href="#">Darme de baja</a></li>
+          <li><a href="#">Salir</a></li>
+        </ul>
+      </nav>
+      <div class="w-100">
+        <div class="mt-4">
+          <h3>Direcciones Registradas</h3>
+          <button class="btn btn-success mb-3" onclick="abrirModalAgregar()" data-bs-toggle="modal"
+            data-bs-target="#modalDireccion">Añadir Dirección</button>
+          <ul class="list-group" id="lista-direcciones">
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal para agregar/modificar dirección -->
+  <div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -59,148 +95,157 @@
         </div>
       </div>
     </div>
-</div>
+  </div>
+
+
+  <!-- Footer -->
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br />
+    <small>© 2025 Pastelería El Caballo Goloso</small>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('elementos/barraTienda.html')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('barra-tienda').innerHTML = html;
+        })
+        .catch(err => console.error('❌ Error cargando barraTienda:', err));
+    });
+  </script>
   
-    
-    <!-- Footer -->
-    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-        <div class="container text-center text-md-start mt-5">
-            <div class="row">
-                <div class="col-md-4 col-lg-3 mx-auto mb-4">
-                    <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-                    <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
-                    <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
-                    <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-                </div>
-            </div>
-        </div>
-        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-            © 2025 Copyright:
-            <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
-        </div>
-    </footer>
-    
-    <script>
-
-  let direcciones = [];
-  let direccionEditando = null;
-  const token = localStorage.getItem('token');
-  const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/direcciones';
-
-  document.addEventListener('DOMContentLoaded', async () => {
-    if (!token) return (window.location.href = 'login.html');
-    await cargarDirecciones();
-  });
-
-  async function cargarDirecciones() {
-    try {
-      const res = await fetch(API_URL, {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include'
-      });
-      if (!res.ok) throw new Error("Error al obtener direcciones");
-
-      direcciones = await res.json();
-      renderDirecciones();
-    } catch (err) {
-      console.error(err);
-      alert("Error cargando direcciones");
+  <script>
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
     }
-  }
 
-  function renderDirecciones() {
-    const lista = document.getElementById('lista-direcciones');
-    lista.innerHTML = '';
-    direcciones.forEach((d) => {
-      const li = document.createElement('li');
-      li.className = 'list-group-item d-flex justify-content-between align-items-center';
-      li.innerHTML = `
+    let direcciones = [];
+    let direccionEditando = null;
+    const token = localStorage.getItem('token');
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/direcciones';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!token) return (window.location.href = 'login.html');
+      await cargarDirecciones();
+    });
+
+    async function cargarDirecciones() {
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
+        if (!res.ok) throw new Error("Error al obtener direcciones");
+
+        direcciones = await res.json();
+        renderDirecciones();
+      } catch (err) {
+        console.error(err);
+        alert("Error cargando direcciones");
+      }
+    }
+
+    function renderDirecciones() {
+      const lista = document.getElementById('lista-direcciones');
+      lista.innerHTML = '';
+      direcciones.forEach((d) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.innerHTML = `
         ${d.calle}, ${d.cp}, ${d.provincia}, ${d.localidad} <br><small>${d.notas || ''}</small>
         <div>
           <button class="btn btn-sm btn-warning me-1" onclick="editarDireccion(${d.id})">Modificar</button>
           <button class="btn btn-sm btn-danger" onclick="eliminarDireccion(${d.id})">Eliminar</button>
         </div>`;
-      lista.appendChild(li);
-    });
-  }
-
-  function abrirModalAgregar() {
-    direccionEditando = null;
-    document.getElementById('inputCalle').value = '';
-    document.getElementById('inputCP').value = '';
-    document.getElementById('inputProvincia').value = '';
-    document.getElementById('inputLocalidad').value = '';
-    document.getElementById('inputNotas').value = '';
-  }
-
-  async function guardarDireccion() {
-    const calle = document.getElementById('inputCalle').value;
-    const cp = document.getElementById('inputCP').value;
-    const provincia = document.getElementById('inputProvincia').value;
-    const localidad = document.getElementById('inputLocalidad').value;
-    const notas = document.getElementById('inputNotas').value;
-
-    if (!calle || !cp || !provincia || !localidad) {
-      return alert("Todos los campos obligatorios deben estar completos.");
+        lista.appendChild(li);
+      });
     }
 
-    const payload = { calle, cp, provincia, localidad, notas };
-
-    try {
-      const res = await fetch(direccionEditando ? `${API_URL}/${direccionEditando}` : API_URL, {
-        method: direccionEditando ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload),
-        credentials: 'include'
-      });
-
-      if (!res.ok) throw new Error("Error guardando dirección");
+    function abrirModalAgregar() {
       direccionEditando = null;
-      await cargarDirecciones();
-      bootstrap.Modal.getInstance(document.getElementById('modalDireccion')).hide();
-    } catch (err) {
-      console.error(err);
-      alert("Error al guardar dirección");
+      document.getElementById('inputCalle').value = '';
+      document.getElementById('inputCP').value = '';
+      document.getElementById('inputProvincia').value = '';
+      document.getElementById('inputLocalidad').value = '';
+      document.getElementById('inputNotas').value = '';
     }
-  }
 
-  function editarDireccion(id) {
-    const dir = direcciones.find(d => d.id === id);
-    if (!dir) return;
+    async function guardarDireccion() {
+      const calle = document.getElementById('inputCalle').value;
+      const cp = document.getElementById('inputCP').value;
+      const provincia = document.getElementById('inputProvincia').value;
+      const localidad = document.getElementById('inputLocalidad').value;
+      const notas = document.getElementById('inputNotas').value;
 
-    direccionEditando = id;
-    document.getElementById('inputCalle').value = dir.calle;
-    document.getElementById('inputCP').value = dir.cp;
-    document.getElementById('inputProvincia').value = dir.provincia;
-    document.getElementById('inputLocalidad').value = dir.localidad;
-    document.getElementById('inputNotas').value = dir.notas || '';
+      if (!calle || !cp || !provincia || !localidad) {
+        return alert("Todos los campos obligatorios deben estar completos.");
+      }
 
-    const modal = new bootstrap.Modal(document.getElementById('modalDireccion'));
-    modal.show();
-  }
+      const payload = { calle, cp, provincia, localidad, notas };
 
-  async function eliminarDireccion(id) {
-    if (!confirm("¿Estás seguro de eliminar esta dirección?")) return;
+      try {
+        const res = await fetch(direccionEditando ? `${API_URL}/${direccionEditando}` : API_URL, {
+          method: direccionEditando ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload),
+          credentials: 'include'
+        });
 
-    try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include'
-      });
-
-      if (!res.ok) throw new Error("Error al eliminar");
-      await cargarDirecciones();
-    } catch (err) {
-      console.error(err);
-      alert("No se pudo eliminar");
+        if (!res.ok) throw new Error("Error guardando dirección");
+        direccionEditando = null;
+        await cargarDirecciones();
+        bootstrap.Modal.getInstance(document.getElementById('modalDireccion')).hide();
+      } catch (err) {
+        console.error(err);
+        alert("Error al guardar dirección");
+      }
     }
-  }
 
-      </script>
-      
+    function editarDireccion(id) {
+      const dir = direcciones.find(d => d.id === id);
+      if (!dir) return;
+
+      direccionEditando = id;
+      document.getElementById('inputCalle').value = dir.calle;
+      document.getElementById('inputCP').value = dir.cp;
+      document.getElementById('inputProvincia').value = dir.provincia;
+      document.getElementById('inputLocalidad').value = dir.localidad;
+      document.getElementById('inputNotas').value = dir.notas || '';
+
+      const modal = new bootstrap.Modal(document.getElementById('modalDireccion'));
+      modal.show();
+    }
+
+    async function eliminarDireccion(id) {
+      if (!confirm("¿Estás seguro de eliminar esta dirección?")) return;
+
+      try {
+        const res = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error("Error al eliminar");
+        await cargarDirecciones();
+      } catch (err) {
+        console.error(err);
+        alert("No se pudo eliminar");
+      }
+    }
+
+  </script>
+
 </body>
+
 </html>
