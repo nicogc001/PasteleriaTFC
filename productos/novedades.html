@@ -1,182 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novedades</title>
-    <!-- MDBootstrap CSS -->
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
-        rel="stylesheet"
-    />
-    <!-- Font Awesome -->
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        rel="stylesheet"
-    />
-    <link href="../styles/main.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Novedades</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+  <link href="../styles/main.css" rel="stylesheet"/>
 </head>
-
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-            <div class="container-fluid">
-                <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <i class="fas fa-bars"></i>
-                </button>
-        
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
-                            loading="lazy" />
-                    </a>
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="pasteleria.html">Pastelería</a></li>
-                        <li class="nav-item"><a class="nav-link" href="bolleria.html">Bollería</a></li>
-                        <li class="nav-item"><a class="nav-link" href="salado.html">Repostería Salada</a></li>
-                        <li class="nav-item"><a class="nav-link" href="tartas.html">Tartas</a></li>
-                    </ul>
-                </div>
-                <div class="d-flex align-items-center">
-                    <a class="link-secondary me-3" href="../carrito.html"><i class="fas fa-shopping-cart"></i></a>
-                    <div class="dropdown">
-                        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="../login.html" id="navbarDropdownMenuAvatar" role="button"
-                            aria-expanded="false">
-                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                            <li><a class="dropdown-item" href="#">My profile</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </nav>
-        
 
-        <!-- Background image -->
-        <div
-            class="p-5 text-center bg-image"
-            style="
-                background-image: url('https://media.scoolinary.app/images/2023/07/294_Bachour_banner2.jpg');
-                height: 300px;
-            "
-        >
-            <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
-                <div class="d-flex justify-content-center align-items-center h-100">
-                    <div class="text-white">
-                        <h1 class="mb-3">Novedades</h1>
-                        <h4 class="mb-3">Descubre nuestras novedades y productos de temporada</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+  <!-- Fragmentos -->
+  <div id="header-productos"></div>
+  <div id="barra-tienda"></div>
 
-    <main>
-         <!-- Nueva barra de navegación con botones -->
-         <div class="container mt-4">
-            <nav class="navbar navbar-expand-lg navbar-light">
-                <div class="container-fluid justify-content-center">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="btn btn-warning mx-2 text-white" href="novedades.html">Novedades</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-warning mx-2 text-white" href="bolleria.html">Bollería</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-warning mx-2 text-white" href="pasteleria.html">Pastelería</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-warning mx-2 text-white" href="pastas.html">Pastas</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-warning mx-2 text-white" href="cafeteria.html">Cafetería</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-warning mx-2 text-white" href="salado.html">Salados</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-warning mx-2 text-white" href="tartas.html">Tartas</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-        <div class="container mt-5">
-            
-            <div class="container mt-5">
-     
-                    <div class="container py-5">
-                        <h2 class="text-center mb-4">Nuestras Novedades</h2>
-                        <div class="row" id="productos-container"></div>                        
-                    </div>
-     
-            </div>
-            
-        </div>
-     
-    </main>
-    <!-- Footer -->
-    <footer class="text-center text-lg-start bg-body-tertiary text-muted">
-        <!-- Section: Social media -->
-        <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
-            <div class="me-5 d-none d-lg-block">
-                <span>Síguenos en redes: </span>
-            </div>
-            <div>
-                <a href="" class="me-4 text-reset"><i class="fab fa-twitter"></i></a>
-                <a href="" class="me-4 text-reset"><i class="fab fa-instagram"></i></a>          
-            </div>
-        </section>
-    
-        <!-- Section: Links  -->
-        <section>
-            <div class="container text-center text-md-start mt-5">
-                <div class="row mt-3">
-                    
-    
-                    <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-                        <h6 class="text-uppercase fw-bold mb-4">Productos</h6>
-                        <p><a href="pasteleria.html" class="text-reset">Pasteleria</a></p>
-                        <p><a href="bolleria.html" class="text-reset">Bolleria</a></p>
-                        <p><a href="salado.html" class="text-reset">Salado</a></p>
-                        <p><a href="tartas.html" class="text-reset">Tartas</a></p>
-                        <p><a href="cafeteria.html" class="text-reset">Cafetería</a></p>
-                    </div>
-    
-                    <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-                        <h6 class="text-uppercase fw-bold mb-4">Enlaces de interés</h6>
-                        <p><a href="#!" class="text-reset">Alérgenos</a></p>
-                        <p><a href="#!" class="text-reset">¿Quienes somos?</a></p>
-                        <p><a href="trabajaConNosotros.html" class="text-reset">Trabaja con nosotros</a></p>
-                        <p><a href="trabajaConNosotros.html" class="text-reset">Canal compliance</a></p>
-                        <p><a href="trabajaConNosotros.html" class="text-reset">Politica de cookies</a></p>
-                    </div>
-    
-                    <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                        <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
-                        <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
-                        <p><i class="fas fa-home me-3"></i>CC Espacio Torrelodones, Torrelodones</p>
-                        <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
-                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-                        <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    
-        <!-- Copyright -->
-        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-            © 2025 Copyright:
-            <a class="text-reset fw-bold" href="https://mdbootstrap.com/">Pastelería El Caballo Goloso</a>
-        </div>
-    </footer>
+  <main class="container mt-5">
+    <h2 class="text-center mb-4">Nuestras Novedades</h2>
+    <div class="row" id="productos-container"></div>
+  </main>
+
+  <div id="footer-productos"></div>
+
+  <!-- MDBootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+
+  <!-- Fragmentos + Personalización -->
+  <script>
+    async function cargarFragmento(id, archivo) {
+      try {
+        const res = await fetch(`elementos/${archivo}`);
+        if (!res.ok) throw new Error(`No se pudo cargar ${archivo}`);
+        const html = await res.text();
+        document.getElementById(id).innerHTML = html;
+        if (id === 'header-productos') actualizarTituloCategoria();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function actualizarTituloCategoria() {
+      const TITULOS = {
+        novedades: [
+          'Novedades',
+          'Descubre nuestras novedades y productos de temporada',
+          'https://images.unsplash.com/photo-1589302168068-964664d93dc0'
+        ]
+      };
+
+      const archivo = location.pathname.split('/').pop().replace('.html', '');
+      const info = TITULOS[archivo];
+      if (info) {
+        const [titulo, descripcion, fondo] = info;
+        const tituloElem = document.getElementById('titulo-categoria');
+        const descElem = document.getElementById('descripcion-categoria');
+        const banner = document.querySelector('.bg-image');
+        if (tituloElem) tituloElem.textContent = titulo;
+        if (descElem) descElem.textContent = descripcion;
+        if (banner) banner.style.backgroundImage = `url('${fondo}')`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarFragmento('header-productos', 'headerProductos.html');
+      cargarFragmento('barra-tienda', 'barraTienda.html');
+      cargarFragmento('footer-productos', 'footerProductos.html');
+      loadProductos();
+    });
+  </script>
 <!-- MDBootstrap JS -->
 <script
     type="text/javascript"
