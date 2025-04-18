@@ -1,124 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrador - Pastelería El Caballo Goloso</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="styles/main.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador - Pastelería El Caballo Goloso</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="styles/main.css" rel="stylesheet" />
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-        <div class="container-fluid">
-          <a class="navbar-brand fw-bold" href="admin_dashboard.html">
-            <i class="fas fa-store"></i> El Caballo Goloso - Admin
-          </a>
-          <div class="d-flex">
-            <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
-            <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
+  <div id="header-admin"></div>
+  <main class="container mt-5">
+    <h1 class="text-center">Panel de Administración</h1>
+    <div class="d-flex">
+      <div class="col-md-3" id="menu-lateral-admin"></div>
+
+      <div class="w-100">
+        <div class="mt-4">
+          <h3>Resumen General</h3>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card text-center p-3">
+                <h5>Total Pedidos</h5>
+                <p id="total-pedidos">0</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card text-center p-3">
+                <h5>Total Usuarios</h5>
+                <p id="total-usuarios">0</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card text-center p-3">
+                <h5>Total Productos</h5>
+                <p id="total-productos">0</p>
+              </div>
+            </div>
+            <div class="col-md-4 mt-3">
+              <div class="card text-center p-3 bg-success text-white">
+                <h5>Facturación Hoy</h5>
+                <p id="facturacion-dia">0 €</p>
+              </div>
+            </div>
+            <div class="col-md-4 mt-3">
+              <div class="card text-center p-3 bg-warning text-dark">
+                <h5>Stock Crítico</h5>
+                <p id="stock-critico">0</p>
+              </div>
+            </div>
           </div>
         </div>
-      </nav>
-    <main class="container mt-5">
-        <h1 class="text-center">Panel de Administración</h1>
-        <div class="d-flex">
-            <nav class="me-4">
-                <h4 class="text-danger">Menú</h4>
-                <ul class="list-unstyled">
-                  <li><a href="admin_dashboard.html">Dashboard</a></li>
-                  <li><a href="admin_empleados.html">Empleados</a></li>
-                  <li><a href="admin_horarios.html">Horarios</a></li>
-                  <li><a href="admin_registroJornada.html">Registros Jornada</a></li> <!-- Enlace aún sin implementar -->
-                  <li><a href="admin_ofertas.html">Ofertas</a></li>
-                  <li><a href="admin_pedidos.html">Pedidos</a></li>
-                  <li><a href="admin_productos.html">Productos</a></li>
-                  <li><a href="admin_usuarios.html">Usuarios</a></li>
-                  <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-                </ul>
-              </nav>
-              
-            <div class="w-100">
-                <div class="mt-4">
-                    <h3>Resumen General</h3>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card text-center p-3">
-                                <h5>Total Pedidos</h5>
-                                <p id="total-pedidos">0</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-center p-3">
-                                <h5>Total Usuarios</h5>
-                                <p id="total-usuarios">0</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-center p-3">
-                                <h5>Total Productos</h5>
-                                <p id="total-productos">0</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mt-3">
-                            <div class="card text-center p-3 bg-success text-white">
-                                <h5>Facturación Hoy</h5>
-                                <p id="facturacion-dia">0 €</p>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mt-3">
-                            <div class="card text-center p-3 bg-warning text-dark">
-                                <h5>Stock Crítico</h5>
-                                <p id="stock-critico">0</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+      </div>
+    </div>
+  </main>
 
-    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">[...]</footer>
+  <div id="footer-admin"></div>
 
-    <script>
-      const token = localStorage.getItem('token');
-      const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/admin/resumen';
-    
-      document.addEventListener('DOMContentLoaded', async () => {
-        if (!token) {
-          alert("Debes iniciar sesión.");
-          return window.location.href = '../login.html';
-        }
-    
-        try {
-          const res = await fetch(API_URL, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-            credentials: 'include'
-          });
-    
-          if (!res.ok) throw new Error('Error al obtener resumen');
-    
-          const data = await res.json();
-    
-          document.getElementById('total-pedidos').textContent = data.totalPedidos;
-          document.getElementById('total-usuarios').textContent = data.totalUsuarios;
-          document.getElementById('total-productos').textContent = data.totalProductos;
-          document.getElementById('facturacion-dia').textContent = `${data.facturacionHoy.toFixed(2)} €`;
-          document.getElementById('stock-critico').textContent = data.stockCritico;
-        } catch (err) {
-          console.error('❌ Error cargando datos del dashboard:', err);
-          alert('No se pudo cargar el resumen.');
-        }
-      });
-    
-      function logout() {
-        localStorage.clear();
-        window.location.href = '../login.html';
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar header
+      fetch('elementos/headerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('header-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar menú lateral
+      fetch('elementos/menuLateralAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('menu-lateral-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar footer
+      fetch('elementos/footerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('footer-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/admin/resumen';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!token) {
+        alert("Debes iniciar sesión.");
+        return window.location.href = '../login.html';
       }
-    </script>
-    
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          credentials: 'include'
+        });
+
+        if (!res.ok) throw new Error('Error al obtener resumen');
+
+        const data = await res.json();
+
+        document.getElementById('total-pedidos').textContent = data.totalPedidos;
+        document.getElementById('total-usuarios').textContent = data.totalUsuarios;
+        document.getElementById('total-productos').textContent = data.totalProductos;
+        document.getElementById('facturacion-dia').textContent = `${data.facturacionHoy.toFixed(2)} €`;
+        document.getElementById('stock-critico').textContent = data.stockCritico;
+      } catch (err) {
+        console.error('Error cargando datos del dashboard:', err);
+        alert('No se pudo cargar el resumen.');
+      }
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
+
 </body>
+
 </html>

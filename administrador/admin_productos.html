@@ -11,34 +11,12 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
-        <i class="fas fa-cog me-1"></i> El Caballo Goloso - Admin
-      </a>
-      <div class="d-flex align-items-center">
-        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
-        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
-      </div>
-    </div>
-  </nav>
-  
+  <div id="header-admin"></div>
+
   <main class="container mt-5">
     <div class="row">
-      <!-- Menú lateral -->
-      <aside class="col-md-3">
-        <h4 class="text-danger">Menú</h4>
-        <ul class="list-unstyled">
-          <li><a href="admin_empleados.html">Empleados</a></li>
-          <li><a href="admin_horarios.html">Horarios</a></li>
-          <li><a href="admin_registroJornada.html">Registros Jornada</a></li>
-          <li><a href="admin_ofertas.html">Ofertas</a></li>
-          <li><a href="admin_pedidos.html">Pedidos</a></li>
-          <li><a href="admin_productos.html" class="fw-bold text-dark">Productos</a></li>
-          <li><a href="admin_usuarios.html">Usuarios</a></li>
-          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-        </ul>
-      </aside>
+      <div class="col-md-3" id="menu-lateral-admin"></div>
+
 
       <!-- Contenido principal -->
       <section class="col-md-9">
@@ -133,36 +111,37 @@
       </section>
     </div>
   </main>
+  <div id="footer-admin"></div>
 
-    <!-- Modal Historial de Stock -->
-    <div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="modalHistorialLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header d-flex justify-content-between align-items-center w-100">
-            <h5 class="modal-title" id="modalHistorialLabel">Historial de variaciones de stock</h5>
-            <div>
-              <button class="btn btn-success btn-sm me-2" id="btnExportarExcelHistorial">Exportar a Excel</button>
-              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-          </div>          
-          <div class="modal-body">
-            <table class="table table-bordered">
-              <thead class="table-light">
-                <tr>
-                  <th>Fecha</th>
-                  <th>Stock anterior</th>
-                  <th>Stock nuevo</th>
-                  <th>Diferencia</th>
-                </tr>
-              </thead>
-              <tbody id="tablaHistorialBody">
-                <!-- Aquí se insertarán las filas con JS -->
-              </tbody>
-            </table>
+  <!-- Modal Historial de Stock -->
+  <div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="modalHistorialLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between align-items-center w-100">
+          <h5 class="modal-title" id="modalHistorialLabel">Historial de variaciones de stock</h5>
+          <div>
+            <button class="btn btn-success btn-sm me-2" id="btnExportarExcelHistorial">Exportar a Excel</button>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
           </div>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Fecha</th>
+                <th>Stock anterior</th>
+                <th>Stock nuevo</th>
+                <th>Diferencia</th>
+              </tr>
+            </thead>
+            <tbody id="tablaHistorialBody">
+              <!-- Aquí se insertarán las filas con JS -->
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
+  </div>
   <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
     <small>
       <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
@@ -176,6 +155,38 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar header
+      fetch('elementos/headerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('header-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar menú lateral
+      fetch('elementos/menuLateralAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('menu-lateral-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar footer
+      fetch('elementos/footerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('footer-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
 
   <script>
     const token = localStorage.getItem('token');
@@ -183,59 +194,26 @@
     let historialActual = []; // Guardamos el historial para exportar
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
 
-    /*document.getElementById('formNuevoProducto').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const nuevoProducto = {
-        nombre: document.getElementById('nombre').value,
-        precio: parseFloat(document.getElementById('precio').value),
-        descripcion: document.getElementById('descripcion').value,
-        stock: parseInt(document.getElementById('stock').value),
-        imagen: document.getElementById('imagen').value,
-        categoria: document.getElementById('categoria').value
-      };
+    async function eliminarProducto(id) {
+      if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
 
       try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
+        const res = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(nuevoProducto)
+          }
         });
 
-        if (!res.ok) throw new Error('Error al crear el producto');
+        if (!res.ok) throw new Error('Error al eliminar el producto');
 
-        alert('✅ Producto creado correctamente');
-        document.getElementById('formNuevoProducto').reset();
+        alert('Producto eliminado');
         cargarProductos();
       } catch (err) {
         console.error(err);
-        alert('❌ Error al crear el producto');
+        alert('Error al eliminar el producto');
       }
-    });*/
-
-    async function eliminarProducto(id) {
-    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
-
-    try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!res.ok) throw new Error('Error al eliminar el producto');
-
-      alert('✅ Producto eliminado');
-      cargarProductos();
-    } catch (err) {
-      console.error(err);
-      alert('❌ Error al eliminar el producto');
     }
-  }
 
 
     async function cargarProductos() {
@@ -246,68 +224,49 @@
         const productos = await res.json();
         productosGlobal = productos; // Guardamos todos los productos globalmente
         filtrarProductos(); // Aplicamos filtros directamente
-
-        //tbody.innerHTML = '';
-/*
-        productos.forEach(p => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-          <td>${p.id}</td>
-          <td>${p.nombre}</td>
-          <td>${p.categoria}</td>
-          <td>${p.stock}</td>
-          <td>
-            <button class="btn btn-sm btn-warning" onclick="editarProducto(${p.id})">Editar</button>
-            <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${p.id})">Eliminar</button>
-          </td>
-        `;
-
-
-          tbody.appendChild(row);
-        });*/
       } catch (err) {
-        console.error('❌ Error al cargar productos:', err);
+        console.error('Error al cargar productos:', err);
       }
     }
 
     function crearProducto(e) {
-  e.preventDefault();
+      e.preventDefault();
 
-  const nuevoProducto = {
-    nombre: document.getElementById('nombre').value,
-    precio: parseFloat(document.getElementById('precio').value),
-    descripcion: document.getElementById('descripcion').value,
-    stock: parseInt(document.getElementById('stock').value),
-    imagen: document.getElementById('imagen').value,
-    categoria: document.getElementById('categoria').value,
-    fechaCreacion: new Date() 
-  };
+      const nuevoProducto = {
+        nombre: document.getElementById('nombre').value,
+        precio: parseFloat(document.getElementById('precio').value),
+        descripcion: document.getElementById('descripcion').value,
+        stock: parseInt(document.getElementById('stock').value),
+        imagen: document.getElementById('imagen').value,
+        categoria: document.getElementById('categoria').value,
+        fechaCreacion: new Date()
+      };
 
-  fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(nuevoProducto)
-  })
-  .then(res => {
-    if (!res.ok) throw new Error('Error al crear producto');
-    return res.json();
-  })
-  .then(() => {
-    alert('✅ Producto creado correctamente');
-    document.getElementById('formNuevoProducto').reset();
-    cargarProductos();
-  })
-  .catch(err => {
-    console.error(err);
-    alert('❌ Error al crear el producto');
-  });
-}
+      fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(nuevoProducto)
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Error al crear producto');
+          return res.json();
+        })
+        .then(() => {
+          alert('Producto creado correctamente');
+          document.getElementById('formNuevoProducto').reset();
+          cargarProductos();
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Error al crear el producto');
+        });
+    }
 
-  // Asegura que el submit inicial sea para crear
-  document.getElementById('formNuevoProducto').onsubmit = crearProducto;
+    // Asegura que el submit inicial sea para crear
+    document.getElementById('formNuevoProducto').onsubmit = crearProducto;
     async function actualizarStock(id) {
       const nuevoStock = document.getElementById(`stock-${id}`).value;
       try {
@@ -322,11 +281,11 @@
 
         if (!res.ok) throw new Error('Error al actualizar el stock');
 
-        alert('✅ Stock actualizado');
+        alert('Stock actualizado');
         cargarProductos();
       } catch (err) {
         console.error(err);
-        alert('❌ Error actualizando stock');
+        alert('Error actualizando stock');
       }
     }
 
@@ -348,110 +307,110 @@
 
 
     async function editarProducto(id) {
-  console.log("🔧 Editando producto con ID:", id);
-
-  try {
-    const res = await fetch(`${API_URL}/${id}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (!res.ok) throw new Error('No se pudo obtener el producto');
-    const producto = await res.json();
-
-    // Rellena el formulario
-    document.getElementById('nombre').value = producto.nombre;
-    document.getElementById('precio').value = producto.precio;
-    document.getElementById('descripcion').value = producto.descripcion;
-    document.getElementById('stock').value = producto.stock;
-    document.getElementById('imagen').value = producto.imagen;
-    document.getElementById('categoria').value = producto.categoria;
-
-    // Cambiar botón
-    const btnCrear = document.querySelector('#formNuevoProducto button');
-    btnCrear.textContent = 'Guardar cambios';
-    btnCrear.classList.remove('btn-success');
-    btnCrear.classList.add('btn-warning');
-
-    // Reasignar onsubmit para guardar cambios
-    document.getElementById('formNuevoProducto').onsubmit = async (e) => {
-      e.preventDefault();
-
-      const productoActualizado = {
-        nombre: document.getElementById('nombre').value,
-        precio: parseFloat(document.getElementById('precio').value),
-        descripcion: document.getElementById('descripcion').value,
-        stock: parseInt(document.getElementById('stock').value),
-        imagen: document.getElementById('imagen').value,
-        categoria: document.getElementById('categoria').value
-      };
+      console.log("🔧 Editando producto con ID:", id);
 
       try {
         const res = await fetch(`${API_URL}/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(productoActualizado)
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (!res.ok) throw new Error('Error al actualizar el producto');
+        if (!res.ok) throw new Error('No se pudo obtener el producto');
+        const producto = await res.json();
 
-        alert('✅ Producto actualizado');
-        document.getElementById('formNuevoProducto').reset();
-        cargarProductos();
+        // Rellena el formulario
+        document.getElementById('nombre').value = producto.nombre;
+        document.getElementById('precio').value = producto.precio;
+        document.getElementById('descripcion').value = producto.descripcion;
+        document.getElementById('stock').value = producto.stock;
+        document.getElementById('imagen').value = producto.imagen;
+        document.getElementById('categoria').value = producto.categoria;
 
-        // Restaurar botón y onsubmit original
-        btnCrear.textContent = 'Crear producto';
-        btnCrear.classList.remove('btn-warning');
-        btnCrear.classList.add('btn-success');
-        document.getElementById('formNuevoProducto').onsubmit = crearProducto;
+        // Cambiar botón
+        const btnCrear = document.querySelector('#formNuevoProducto button');
+        btnCrear.textContent = 'Guardar cambios';
+        btnCrear.classList.remove('btn-success');
+        btnCrear.classList.add('btn-warning');
+
+        // Reasignar onsubmit para guardar cambios
+        document.getElementById('formNuevoProducto').onsubmit = async (e) => {
+          e.preventDefault();
+
+          const productoActualizado = {
+            nombre: document.getElementById('nombre').value,
+            precio: parseFloat(document.getElementById('precio').value),
+            descripcion: document.getElementById('descripcion').value,
+            stock: parseInt(document.getElementById('stock').value),
+            imagen: document.getElementById('imagen').value,
+            categoria: document.getElementById('categoria').value
+          };
+
+          try {
+            const res = await fetch(`${API_URL}/${id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(productoActualizado)
+            });
+
+            if (!res.ok) throw new Error('Error al actualizar el producto');
+
+            alert('Producto actualizado');
+            document.getElementById('formNuevoProducto').reset();
+            cargarProductos();
+
+            // Restaurar botón y onsubmit original
+            btnCrear.textContent = 'Crear producto';
+            btnCrear.classList.remove('btn-warning');
+            btnCrear.classList.add('btn-success');
+            document.getElementById('formNuevoProducto').onsubmit = crearProducto;
+
+          } catch (err) {
+            console.error(err);
+            alert('Error al actualizar el producto');
+          }
+        };
+
+        // Hacer scroll al formulario
+        document.getElementById('formNuevoProducto').scrollIntoView({ behavior: 'smooth' });
 
       } catch (err) {
         console.error(err);
-        alert('❌ Error al actualizar el producto');
+        alert('Error al obtener el producto');
       }
-    };
+    }
 
-    // Hacer scroll al formulario
-    document.getElementById('formNuevoProducto').scrollIntoView({ behavior: 'smooth' });
+    function filtrarProductos() {
+      const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+      const categoria = document.getElementById('filtroCategoria').value;
+      const fechaInicio = document.getElementById('filtroFechaInicio').value;
+      const fechaFin = document.getElementById('filtroFechaFin').value;
 
-  } catch (err) {
-    console.error(err);
-    alert('❌ Error al obtener el producto');
-  }
-}
+      const tbody = document.querySelector('#tablaProductos tbody');
+      tbody.innerHTML = '';
 
-function filtrarProductos() {
-  const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
-  const categoria = document.getElementById('filtroCategoria').value;
-  const fechaInicio = document.getElementById('filtroFechaInicio').value;
-  const fechaFin = document.getElementById('filtroFechaFin').value;
+      const filtrados = productosGlobal.filter(p => {
+        const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+        const coincideCategoria = categoria === '' || p.categoria === categoria;
 
-  const tbody = document.querySelector('#tablaProductos tbody');
-  tbody.innerHTML = '';
+        const fechaProducto = new Date(p.fechaCreacion); // asegúrate que este campo existe
+        const desde = fechaInicio ? new Date(fechaInicio) : null;
+        const hasta = fechaFin ? new Date(fechaFin + 'T23:59:59') : null;
 
-  const filtrados = productosGlobal.filter(p => {
-    const coincideNombre = p.nombre.toLowerCase().includes(nombre);
-    const coincideCategoria = categoria === '' || p.categoria === categoria;
+        const dentroDeRango = (!desde || fechaProducto >= desde) && (!hasta || fechaProducto <= hasta);
 
-    const fechaProducto = new Date(p.fechaCreacion); // asegúrate que este campo existe
-    const desde = fechaInicio ? new Date(fechaInicio) : null;
-    const hasta = fechaFin ? new Date(fechaFin + 'T23:59:59') : null;
+        return coincideNombre && coincideCategoria && dentroDeRango;
+      });
 
-    const dentroDeRango = (!desde || fechaProducto >= desde) && (!hasta || fechaProducto <= hasta);
+      if (filtrados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No se encontraron productos</td></tr>';
+        return;
+      }
 
-    return coincideNombre && coincideCategoria && dentroDeRango;
-  });
-
-  if (filtrados.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No se encontraron productos</td></tr>';
-    return;
-  }
-
-  filtrados.forEach(p => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
+      filtrados.forEach(p => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
       <td>${p.id}</td>
       <td>${p.nombre}</td>
       <td>${p.categoria}</td>
@@ -462,116 +421,116 @@ function filtrarProductos() {
         <button class="btn btn-sm btn-info" onclick="verVariaciones(${p.id})">Ver variaciones</button>
       </td>
     `;
-    tbody.appendChild(row);
-  });
-}
+        tbody.appendChild(row);
+      });
+    }
 
-function exportarPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
-  const categoria = document.getElementById('filtroCategoria').value;
+    function exportarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+      const categoria = document.getElementById('filtroCategoria').value;
 
-  const filtrados = productosGlobal.filter(p => {
-    const coincideNombre = p.nombre.toLowerCase().includes(nombre);
-    const coincideCategoria = categoria === '' || p.categoria === categoria;
-    return coincideNombre && coincideCategoria;
-  });
+      const filtrados = productosGlobal.filter(p => {
+        const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+        const coincideCategoria = categoria === '' || p.categoria === categoria;
+        return coincideNombre && coincideCategoria;
+      });
 
-  const filas = filtrados.map(p => [p.id, p.nombre, p.categoria, p.stock]);
+      const filas = filtrados.map(p => [p.id, p.nombre, p.categoria, p.stock]);
 
 
-  doc.autoTable({
-    head: [['ID', 'Nombre', 'Categoría', 'Stock']],
-    body: filas
-  });
+      doc.autoTable({
+        head: [['ID', 'Nombre', 'Categoría', 'Stock']],
+        body: filas
+      });
 
-  const hoy = new Date();
-  const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-  doc.save(`productos_${fecha}.pdf`);
+      const hoy = new Date();
+      const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+      doc.save(`productos_${fecha}.pdf`);
 
-}
+    }
 
-function exportarExcel() {
-  const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
-  const categoria = document.getElementById('filtroCategoria').value;
+    function exportarExcel() {
+      const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+      const categoria = document.getElementById('filtroCategoria').value;
 
-  const filtrados = productosGlobal.filter(p => {
-    const coincideNombre = p.nombre.toLowerCase().includes(nombre);
-    const coincideCategoria = categoria === '' || p.categoria === categoria;
-    return coincideNombre && coincideCategoria;
-  });
+      const filtrados = productosGlobal.filter(p => {
+        const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+        const coincideCategoria = categoria === '' || p.categoria === categoria;
+        return coincideNombre && coincideCategoria;
+      });
 
-  const data = filtrados.map(p => ({
-    ID: p.id,
-    Nombre: p.nombre,
-    Categoría: p.categoria,
-    Stock: p.stock
-  }));
+      const data = filtrados.map(p => ({
+        ID: p.id,
+        Nombre: p.nombre,
+        Categoría: p.categoria,
+        Stock: p.stock
+      }));
 
-  const ws = XLSX.utils.json_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Productos");
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Productos");
 
-  const hoy = new Date();
-  const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-  XLSX.writeFile(wb, `productos_${fecha}.xlsx`);
-}
+      const hoy = new Date();
+      const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+      XLSX.writeFile(wb, `productos_${fecha}.xlsx`);
+    }
 
-async function verVariaciones(productoId) {
-  try {
-    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${productoId}/historial`);
-    const historial = await res.json();
+    async function verVariaciones(productoId) {
+      try {
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${productoId}/historial`);
+        const historial = await res.json();
 
-    historialActual = historial; // ahora sí, porque 'historial' ya está definido
+        historialActual = historial; 
 
-    const tbody = document.getElementById('tablaHistorialBody');
-    tbody.innerHTML = '';
+        const tbody = document.getElementById('tablaHistorialBody');
+        tbody.innerHTML = '';
 
-    if (!historial.length) {
-      tbody.innerHTML = `<tr><td colspan="4" class="text-center">No hay historial para este producto</td></tr>`;
-    } else {
-      historial.forEach(h => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        if (!historial.length) {
+          tbody.innerHTML = `<tr><td colspan="4" class="text-center">No hay historial para este producto</td></tr>`;
+        } else {
+          historial.forEach(h => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
           <td>${new Date(h.fecha).toLocaleString()}</td>
           <td>${h.stockAnterior}</td>
           <td>${h.stockNuevo}</td>
           <td>${h.diferencia > 0 ? '+' : ''}${h.diferencia}</td>
         `;
-        tbody.appendChild(row);
-      });
+            tbody.appendChild(row);
+          });
+        }
+
+        const modal = new mdb.Modal(document.getElementById('modalHistorial'));
+        modal.show();
+
+      } catch (error) {
+        console.error('Error al cargar historial:', error);
+        alert('Error al obtener historial de stock');
+      }
     }
 
-    const modal = new mdb.Modal(document.getElementById('modalHistorial'));
-    modal.show();
 
-  } catch (error) {
-    console.error('❌ Error al cargar historial:', error);
-    alert('❌ Error al obtener historial de stock');
-  }
-}
+    document.getElementById('btnExportarExcelHistorial').addEventListener('click', () => {
+      if (!historialActual.length) {
+        alert('No hay historial para exportar');
+        return;
+      }
 
+      const data = historialActual.map(h => ({
+        Fecha: new Date(h.fecha).toLocaleString(),
+        'Stock anterior': h.stockAnterior,
+        'Stock nuevo': h.stockNuevo,
+        Diferencia: h.diferencia
+      }));
 
-document.getElementById('btnExportarExcelHistorial').addEventListener('click', () => {
-  if (!historialActual.length) {
-    alert('No hay historial para exportar');
-    return;
-  }
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Historial");
 
-  const data = historialActual.map(h => ({
-    Fecha: new Date(h.fecha).toLocaleString(),
-    'Stock anterior': h.stockAnterior,
-    'Stock nuevo': h.stockNuevo,
-    Diferencia: h.diferencia
-  }));
-
-  const ws = XLSX.utils.json_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Historial");
-
-  XLSX.writeFile(wb, `historial_producto_${historialActual[0].productoId}.xlsx`);
-});
+      XLSX.writeFile(wb, `historial_producto_${historialActual[0].productoId}.xlsx`);
+    });
 
 
   </script>

@@ -18,18 +18,8 @@
     <main class="container mt-5">
         <h1 class="text-center">Perfil</h1>
         <div class="d-flex">
-            <nav class="me-4">
-                <h3 class="text-danger">Sección</h3>
-                <ul class="list-unstyled">
-                    <li><a href="pedidos.html">Pedidos</a></li>
-                    <li><a href="facturas.html">Facturas</a></li>
-                    <li><strong>Perfil</strong></li>
-                    <li><a href="direcciones.html">Direcciones</a></li>
-                    <li><a href="tarjetas.html">Tarjetas</a></li>
-                    <li><a href="#">Darme de baja</a></li>
-                    <li><a href="#">Salir</a></li>
-                </ul>
-            </nav>
+            <!-- Menú lateral dinámico -->
+            <div id="menu-lateral-cliente" class="me-4"></div>
             <div class="w-100">
                 <form onsubmit="guardarPerfil(event)">
                     <div class="row">
@@ -136,6 +126,15 @@
                         .catch(() => console.warn("No se pudo obtener el nombre del cliente"));
                 })
                 .catch(err => console.error('Error cargando headerCliente:', err));
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('elementos/menuLateralCliente.html')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById('menu-lateral-cliente').innerHTML = html;
+                })
+                .catch(err => console.error('Error cargando menú lateral:', err));
         });
     </script>
 

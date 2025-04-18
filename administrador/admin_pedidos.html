@@ -11,34 +11,12 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
-        <i class="fas fa-cog me-1"></i> El Caballo Goloso - Admin
-      </a>
-      <div class="d-flex align-items-center">
-        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
-        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
-      </div>
-    </div>
-  </nav>
+  <div id="header-admin"></div>
 
   <main class="container mt-5">
     <div class="row">
-      <!-- Menú lateral -->
-      <aside class="col-md-3">
-        <h4 class="text-danger">Menú</h4>
-        <ul class="list-unstyled">
-          <li><a href="admin_empleados.html">Empleados</a></li>
-          <li><a href="admin_horarios.html">Horarios</a></li>
-          <li><a href="admin_registroJornada.html">Registros Jornada</a></li>
-          <li><a href="admin_ofertas.html">Ofertas</a></li>
-          <li><a href="admin_pedidos.html" class="fw-bold text-dark">Pedidos</a></li>
-          <li><a href="admin_productos.html">Productos</a></li>
-          <li><a href="admin_usuarios.html">Usuarios</a></li>
-          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-        </ul>
-      </aside>
+      <div class="col-md-3" id="menu-lateral-admin"></div>
+
 
       <!-- Contenido principal -->
       <section class="col-md-9">
@@ -84,8 +62,9 @@
         </div>
       </section>
     </div>
-  </main>
 
+  </main>
+  <div id="footer-admin"></div>
   <!-- Modal de detalle del pedido -->
   <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -119,71 +98,103 @@
   </footer>
 
   <!-- Modal de detalle del pedido -->
-<div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="pedidoModalLabel">Detalle del Pedido</h5>
-        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        <p><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
-        <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
-        <p><strong>Tipo de entrega:</strong> <span id="detalle-entrega"></span></p>
-        <p><strong>Tienda:</strong> <span id="detalle-tienda"></span></p>
-        <p><strong>Total:</strong> <span id="detalle-total"></span></p>
-        <hr />
-        <h6>Productos:</h6>
-        <ul id="detalle-productos" class="list-group"></ul>
+  <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pedidoModalLabel">Detalle del Pedido</h5>
+          <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Fecha:</strong> <span id="detalle-fecha"></span></p>
+          <p><strong>Estado:</strong> <span id="detalle-estado"></span></p>
+          <p><strong>Tipo de entrega:</strong> <span id="detalle-entrega"></span></p>
+          <p><strong>Tienda:</strong> <span id="detalle-tienda"></span></p>
+          <p><strong>Total:</strong> <span id="detalle-total"></span></p>
+          <hr />
+          <h6>Productos:</h6>
+          <ul id="detalle-productos" class="list-group"></ul>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar header
+      fetch('elementos/headerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('header-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar menú lateral
+      fetch('elementos/menuLateralAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('menu-lateral-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar footer
+      fetch('elementos/footerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('footer-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
 
 
   <script>
     const token = localStorage.getItem('token');
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
     let modalDetalle;
-  
+
     document.addEventListener('DOMContentLoaded', async () => {
       if (!token) {
         alert("Debes iniciar sesión como administrador.");
         return window.location.href = "../login.html";
       }
-  
+
       modalDetalle = new mdb.Modal(document.getElementById('pedidoModal'));
-  
+
       try {
         const res = await fetch(API_URL, {
           headers: { 'Authorization': `Bearer ${token}` },
           credentials: 'include'
         });
-  
+
         if (!res.ok) throw new Error("Error obteniendo pedidos");
         const pedidos = await res.json();
         renderPedidos(pedidos);
       } catch (err) {
-        console.error("❌ Error cargando pedidos:", err);
+        console.error("Error cargando pedidos:", err);
         alert("No se pudieron cargar los pedidos.");
       }
     });
-  
+
     function renderPedidos(pedidos) {
       const contenedor = document.getElementById("lista-pedidos");
       contenedor.innerHTML = '';
-  
+
       if (!pedidos.length) {
         contenedor.innerHTML = "<tr><td colspan='6' class='text-center'>No hay pedidos disponibles.</td></tr>";
         return;
       }
-  
+
       pedidos.forEach(p => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -217,7 +228,7 @@
         contenedor.appendChild(row);
       });
     }
-  
+
     function getEstadoColor(estado) {
       switch ((estado || '').toLowerCase()) {
         case 'pendiente_pago': return 'warning text-dark';
@@ -229,7 +240,7 @@
         default: return 'light';
       }
     }
-  
+
     async function cambiarEstado(id, nuevoEstado) {
       try {
         const res = await fetch(`${API_URL}/${id}/estado`, {
@@ -241,34 +252,34 @@
           credentials: 'include',
           body: JSON.stringify({ estado: nuevoEstado })
         });
-  
+
         if (!res.ok) throw new Error("Error actualizando estado del pedido");
-  
-        alert("✅ Estado actualizado correctamente");
+
+        alert("Estado actualizado correctamente");
         location.reload();
       } catch (err) {
-        console.error("❌ Error actualizando estado:", err);
+        console.error("Error actualizando estado:", err);
         alert("No se pudo actualizar el estado del pedido.");
       }
     }
-  
+
     async function verPedido(id) {
       try {
         const res = await fetch(`${API_URL}/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` },
           credentials: 'include'
         });
-  
+
         if (!res.ok) throw new Error("No se pudo obtener el detalle del pedido.");
-  
+
         const pedido = await res.json();
-  
+
         document.getElementById('detalle-fecha').textContent = new Date(pedido.fecha).toLocaleDateString('es-ES');
         document.getElementById('detalle-total').textContent = `${pedido.total.toFixed(2)} €`;
         document.getElementById('detalle-estado').textContent = pedido.estado;
         document.getElementById('detalle-entrega').textContent = pedido.tipoEntrega;
         document.getElementById('detalle-tienda').textContent = pedido.tipoEntrega === 'recoger' ? pedido.tienda : '-';
-  
+
         const lista = document.getElementById('detalle-productos');
         lista.innerHTML = '';
         pedido.productos.forEach(prod => {
@@ -280,41 +291,41 @@
           `;
           lista.appendChild(li);
         });
-  
+
         modalDetalle.show();
       } catch (err) {
-        console.error("❌ Error cargando detalle:", err);
+        console.error("Error cargando detalle:", err);
         alert("No se pudo cargar el detalle del pedido.");
       }
     }
 
     document.getElementById('filtroFechas').addEventListener('submit', async (e) => {
-    e.preventDefault();
+      e.preventDefault();
 
-    const desde = document.getElementById('fechaDesde').value;
-    const hasta = document.getElementById('fechaHasta').value;
+      const desde = document.getElementById('fechaDesde').value;
+      const hasta = document.getElementById('fechaHasta').value;
 
-    try {
-      const url = new URL(API_URL);
-      if (desde) url.searchParams.append('desde', desde);
-      if (hasta) url.searchParams.append('hasta', hasta);
+      try {
+        const url = new URL(API_URL);
+        if (desde) url.searchParams.append('desde', desde);
+        if (hasta) url.searchParams.append('hasta', hasta);
 
-      const res = await fetch(url.toString(), {
-        headers: { 'Authorization': `Bearer ${token}` },
-        credentials: 'include'
-      });
+        const res = await fetch(url.toString(), {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
 
-      if (!res.ok) throw new Error("Error al filtrar pedidos");
+        if (!res.ok) throw new Error("Error al filtrar pedidos");
 
-      const pedidosFiltrados = await res.json();
-      renderPedidos(pedidosFiltrados);
-    } catch (err) {
-      console.error("❌ Error filtrando pedidos:", err);
-      alert("No se pudieron filtrar los pedidos.");
-    }
-  });
+        const pedidosFiltrados = await res.json();
+        renderPedidos(pedidosFiltrados);
+      } catch (err) {
+        console.error("Error filtrando pedidos:", err);
+        alert("No se pudieron filtrar los pedidos.");
+      }
+    });
 
-  
+
     function logout() {
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
@@ -323,45 +334,45 @@
     }
 
     function exportarPedidosPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-    const filas = Array.from(document.querySelectorAll("#lista-pedidos tr")).map(row => {
-      return Array.from(row.querySelectorAll("td")).slice(0, 6).map(td => td.textContent.trim());
-    });
+      const filas = Array.from(document.querySelectorAll("#lista-pedidos tr")).map(row => {
+        return Array.from(row.querySelectorAll("td")).slice(0, 6).map(td => td.textContent.trim());
+      });
 
-    doc.autoTable({
-      head: [['ID', 'Cliente', 'Fecha', 'Total', 'Estado', 'Entrega']],
-      body: filas
-    });
+      doc.autoTable({
+        head: [['ID', 'Cliente', 'Fecha', 'Total', 'Estado', 'Entrega']],
+        body: filas
+      });
 
-    const hoy = new Date().toISOString().split('T')[0];
-    doc.save(`pedidos_${hoy}.pdf`);
-  }
+      const hoy = new Date().toISOString().split('T')[0];
+      doc.save(`pedidos_${hoy}.pdf`);
+    }
 
-  function exportarPedidosExcel() {
-    const filas = Array.from(document.querySelectorAll("#lista-pedidos tr")).map(row => {
-      const celdas = row.querySelectorAll("td");
-      return {
-        ID: celdas[0]?.textContent.trim(),
-        Cliente: celdas[1]?.textContent.trim(),
-        Fecha: celdas[2]?.textContent.trim(),
-        Total: celdas[3]?.textContent.trim(),
-        Estado: celdas[4]?.textContent.trim(),
-        Entrega: celdas[5]?.textContent.trim(),
-      };
-    });
+    function exportarPedidosExcel() {
+      const filas = Array.from(document.querySelectorAll("#lista-pedidos tr")).map(row => {
+        const celdas = row.querySelectorAll("td");
+        return {
+          ID: celdas[0]?.textContent.trim(),
+          Cliente: celdas[1]?.textContent.trim(),
+          Fecha: celdas[2]?.textContent.trim(),
+          Total: celdas[3]?.textContent.trim(),
+          Estado: celdas[4]?.textContent.trim(),
+          Entrega: celdas[5]?.textContent.trim(),
+        };
+      });
 
-    const ws = XLSX.utils.json_to_sheet(filas);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Pedidos");
+      const ws = XLSX.utils.json_to_sheet(filas);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Pedidos");
 
-    const hoy = new Date().toISOString().split('T')[0];
-    XLSX.writeFile(wb, `pedidos_${hoy}.xlsx`);
-  }
+      const hoy = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `pedidos_${hoy}.xlsx`);
+    }
   </script>
-  
-  
+
+
 </body>
 
 </html>

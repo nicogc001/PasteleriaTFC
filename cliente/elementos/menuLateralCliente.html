@@ -1,0 +1,24 @@
+<!-- Menú lateral del cliente -->
+<nav class="me-4">
+    <h4 class="text-danger">Mi cuenta</h4>
+    <ul class="list-unstyled" id="menu-lateral-links">
+      <li><a href="dashboard.html" class="link-dark d-block py-1">Inicio</a></li>
+      <li><a href="pedidos.html" class="link-dark d-block py-1">Pedidos</a></li>
+      <li><a href="facturas.html" class="link-dark d-block py-1">Facturas</a></li>
+      <li><a href="perfil.html" class="link-dark d-block py-1">Perfil</a></li>
+      <li><a href="direcciones.html" class="link-dark d-block py-1">Direcciones</a></li>
+      <li><a href="tarjetas.html" class="link-dark d-block py-1">Tarjetas</a></li>
+      <li><a href="#" onclick="logout()" class="link-danger d-block py-1">Cerrar sesión</a></li>
+    </ul>
+  </nav>
+  
+  <script>
+    // Resaltar automáticamente el enlace activo
+    const currentPage = window.location.pathname.split('/').pop();
+    const enlaces = document.querySelectorAll('#menu-lateral-links a[href]');
+    enlaces.forEach(link => {
+      if (link.getAttribute('href') === currentPage) {
+        link.classList.add('fw-bold', 'text-primary');
+      }
+    });
+  </script>

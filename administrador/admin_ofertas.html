@@ -10,33 +10,12 @@
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.html">El Caballo Goloso</a>
-            <div class="d-flex align-items-center">
-                <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
-                <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
-            </div>
-        </div>
-    </nav>
+
+    <div id="header-admin"></div>
     <div class="container-fluid mt-5">
         <div class="row">
-            <div class="col-md-3">
-                <nav class="me-3">
-                    <h4 class="text-danger">Menú</h4>
-                    <ul class="list-unstyled">
-                        <li><a href="admin_empleados.html">Empleados</a></li>
-                        <li><a href="admin_horarios.html">Horarios</a></li>
-                        <li><a href="#">Registros Jornada</a></li>
-                        <li><strong>Ofertas</strong></li>
-                        <li><a href="admin_pedidos.html">Pedidos</a></li>
-                        <li><a href="admin_productos.html">Productos</a></li>
-                        <li><a href="admin_usuarios.html">Usuarios</a></li>
-                        <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-                    </ul>
-                </nav>
-            </div>
+            <div class="col-md-3" id="menu-lateral-admin"></div>
+
             <div class="col-md-9">
                 <h2 class="mb-4 text-center">Panel de Administración de Ofertas</h2>
 
@@ -136,6 +115,7 @@
             </div>
 
         </div>
+        <div id="footer-admin"></div>
 
         <!-- Modal para editar oferta -->
         <div class="modal fade" id="modalEditarOferta" tabindex="-1" aria-labelledby="modalEditarOfertaLabel"
@@ -172,6 +152,38 @@
                 </form>
             </div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // Cargar header
+                fetch('elementos/headerAdmin.html')
+                    .then(res => res.text())
+                    .then(html => {
+                        const contenedor = document.getElementById('header-admin');
+                        if (contenedor) contenedor.innerHTML = html;
+                    });
+
+                // Cargar menú lateral
+                fetch('elementos/menuLateralAdmin.html')
+                    .then(res => res.text())
+                    .then(html => {
+                        const contenedor = document.getElementById('menu-lateral-admin');
+                        if (contenedor) contenedor.innerHTML = html;
+                    });
+
+                // Cargar footer
+                fetch('elementos/footerAdmin.html')
+                    .then(res => res.text())
+                    .then(html => {
+                        const contenedor = document.getElementById('footer-admin');
+                        if (contenedor) contenedor.innerHTML = html;
+                    });
+            });
+
+            function logout() {
+                localStorage.clear();
+                window.location.href = '../login.html';
+            }
+        </script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
@@ -192,8 +204,7 @@
                 alert(`Abrir modal para editar oferta ${id}`);
                 // Aquí puedes construir un modal dinámico o redireccionar a una página de edición
             }
-        </script>
-        <script>
+
             document.addEventListener('DOMContentLoaded', () => {
                 cargarProductos();
                 cargarClientes();
@@ -385,7 +396,7 @@
                     modal.show();
 
                 } catch (error) {
-                    console.error('❌ Error al cargar datos de oferta:', error);
+                    console.error('Error al cargar datos de oferta:', error);
                     alert('No se pudo cargar la información de la oferta.');
                 }
             }
@@ -417,7 +428,7 @@
                     alert('✅ Oferta actualizada correctamente');
                     location.reload();
                 } catch (err) {
-                    console.error('❌ Error al actualizar oferta:', err);
+                    console.error('Error al actualizar oferta:', err);
                     alert('Hubo un error al guardar los cambios.');
                 }
             });
@@ -440,7 +451,7 @@
                     });
 
                 } catch (err) {
-                    console.error('❌ Error al cargar productos en el select:', err);
+                    console.error('Error al cargar productos en el select:', err);
                     alert('No se pudieron cargar los productos.');
                 }
             }

@@ -11,34 +11,13 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
-        <i class="fas fa-user-shield me-1"></i> El Caballo Goloso - Admin
-      </a>
-      <div class="d-flex align-items-center">
-        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
-        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
-      </div>
-    </div>
-  </nav>
+  <div id="header-admin"></div>
 
   <main class="container mt-5">
     <h1 class="text-center">Gestión de Usuarios</h1>
     <div class="row">
-      <aside class="col-md-3">
-        <h4 class="text-danger">Menú</h4>
-        <ul class="list-unstyled">
-          <li><a href="admin_empleados.html">Empleados</a></li>
-          <li><a href="admin_horarios.html">Horarios</a></li>
-          <li><a href="admin_registroJornada.html">Registros Jornada</a></li>
-          <li><a href="admin_ofertas.html">Ofertas</a></li>
-          <li><a href="admin_pedidos.html">Pedidos</a></li>
-          <li><a href="admin_productos.html">Productos</a></li>
-          <li><strong>Usuarios</strong></li>
-          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-        </ul>
-      </aside>
+      <div class="col-md-3" id="menu-lateral-admin"></div>
+
 
       <section class="col-md-9">
         <div class="d-flex justify-content-between mb-3">
@@ -58,13 +37,13 @@
               <th>Rol</th>
               <th>Acciones</th>
             </tr>
-          </thead>          
+          </thead>
           <tbody id="lista-usuarios"></tbody>
         </table>
       </section>
     </div>
   </main>
-
+  <div id="footer-admin"></div>
   <div class="modal fade" id="modalNuevoUsuario" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -101,13 +80,42 @@
     </div>
   </div>
 
-  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
-    <div class="text-center p-3">
-      © 2025 El Caballo Goloso | Administración
-    </div>
-  </footer>
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar header
+      fetch('elementos/headerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('header-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar menú lateral
+      fetch('elementos/menuLateralAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('menu-lateral-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar footer
+      fetch('elementos/footerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('footer-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
+
   <script>
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api';
     const token = localStorage.getItem('token');

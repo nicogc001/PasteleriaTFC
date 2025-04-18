@@ -11,34 +11,12 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="admin_dashboard.html">
-        <i class="fas fa-clock me-2"></i> Registros de Jornada
-      </a>
-      <div class="d-flex align-items-center">
-        <a class="btn btn-outline-dark me-2" href="admin_dashboard.html">Dashboard</a>
-        <button class="btn btn-danger" onclick="logout()">Cerrar sesión</button>
-      </div>
-    </div>
-  </nav>
+  <div id="header-admin"></div>
 
   <main class="container mt-5">
     <div class="row">
-      <!-- Menú lateral -->
-      <aside class="col-md-3">
-        <h4 class="text-danger">Menú</h4>
-        <ul class="list-unstyled">
-          <li><a href="admin_empleados.html">Empleados</a></li>
-          <li><a href="admin_horarios.html">Horarios</a></li>
-          <li><strong>Registros Jornada</strong></li>
-          <li><a href="admin_ofertas.html">Ofertas</a></li>
-          <li><a href="admin_pedidos.html">Pedidos</a></li>
-          <li><a href="admin_productos.html">Productos</a></li>
-          <li><a href="admin_usuarios.html">Usuarios</a></li>
-          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-        </ul>
-      </aside>
+      <div class="col-md-3" id="menu-lateral-admin"></div>
+
 
       <!-- Panel principal -->
       <section class="col-md-9">
@@ -79,7 +57,9 @@
               </tr>
             </thead>
             <tbody id="tablaJornadas">
-              <tr><td colspan="5" class="text-center text-muted">Cargando registros...</td></tr>
+              <tr>
+                <td colspan="5" class="text-center text-muted">Cargando registros...</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -91,20 +71,45 @@
     </div>
   </main>
 
-  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
-    <small>
-      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
-      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
-      <i class="fas fa-phone me-1"></i> 91 859 67 11
-    </small>
-    <br />
-    <small>© 2025 Pastelería El Caballo Goloso</small>
-  </footer>
+  <div id="footer-admin"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar header
+      fetch('elementos/headerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('header-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar menú lateral
+      fetch('elementos/menuLateralAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('menu-lateral-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar footer
+      fetch('elementos/footerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('footer-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
+
   <script>
     function logout() {
       localStorage.clear();

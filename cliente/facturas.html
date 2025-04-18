@@ -17,17 +17,8 @@
   <main class="container mt-5">
     <h1 class="text-center">Facturas</h1>
     <div class="d-flex">
-      <nav class="me-4">
-        <h4 class="text-danger">Mi cuenta</h4>
-        <ul class="list-unstyled">
-          <li><a href="pedidos.html">Pedidos</a></li>
-          <li><strong>Facturas</strong></li>
-          <li><a href="perfil.html">Perfil</a></li>
-          <li><a href="misDirecciones.html">Direcciones</a></li>
-          <li><a href="tarjetas.html">Tarjetas</a></li>
-          <li><a href="#" onclick="logout()">Salir</a></li>
-        </ul>
-      </nav>
+      <!-- Menú lateral dinámico -->
+      <div id="menu-lateral-cliente" class="me-4"></div>
 
       <div class="w-100">
         <div class="mt-4">
@@ -88,6 +79,15 @@
             .catch(() => console.warn("No se pudo obtener el nombre del cliente"));
         })
         .catch(err => console.error('Error cargando headerCliente:', err));
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('elementos/menuLateralCliente.html')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('menu-lateral-cliente').innerHTML = html;
+        })
+        .catch(err => console.error('Error cargando menú lateral:', err));
     });
   </script>
 
