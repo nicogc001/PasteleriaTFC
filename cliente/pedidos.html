@@ -12,44 +12,8 @@
 
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary shadow-sm">
-    <div class="container-fluid">
-      <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <a class="navbar-brand mt-2 mt-lg-0 fw-bold" href="../index.html">
-          <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="20" alt="Logo"
-            loading="lazy" /> El Caballo Goloso
-        </a>
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="../index.html">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="../productos/pasteleria.html">Pastelería</a></li>
-          <li class="nav-item"><a class="nav-link" href="../productos/bolleria.html">Bollería</a></li>
-          <li class="nav-item"><a class="nav-link" href="../productos/salado.html">Salado</a></li>
-          <li class="nav-item"><a class="nav-link" href="../productos/tartas.html">Tartas</a></li>
-        </ul>
-      </div>
-      <div class="d-flex align-items-center">
-        <a class="link-secondary me-3" href="../carrito.html" title="Carrito"><i class="fas fa-shopping-cart"></i></a>
-        <div class="dropdown">
-          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
-            id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Avatar"
-              loading="lazy" />
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-            <li><a class="dropdown-item" href="perfil.html">Mi perfil</a></li>
-            <li><a class="dropdown-item" href="#" onclick="logout()">Cerrar sesión</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-    <!-- BARRA SECUNDARIA DE ACCESO RÁPIDO A LA TIENDA -->
-    <div id="barra-tienda"></div>
+  <div id="header-cliente"></div>
+  <div id="barra-tienda"></div>
 
   <main class="container mt-5">
     <h1 class="text-center" id="welcome-message">Mis Pedidos</h1>
@@ -226,10 +190,31 @@
         .then(html => {
           document.getElementById('barra-tienda').innerHTML = html;
         })
-        .catch(err => console.error('❌ Error cargando barraTienda:', err));
+        .catch(err => console.error('Error cargando barraTienda:', err));
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('elementos/headerCliente.html')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('header-cliente').innerHTML = html;
+
+          const token = localStorage.getItem('token');
+          if (!token) return;
+
+          fetch('https://pasteleriatfc-back-igmg.onrender.com/api/auth/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+            .then(res => res.json())
+            .then(user => {
+              document.getElementById('nombre-cliente').textContent = `Hola, ${user.nombre}`;
+            })
+            .catch(() => console.warn("No se pudo obtener el nombre del cliente"));
+        })
+        .catch(err => console.error('Error cargando headerCliente:', err));
     });
   </script>
-  
+
   <script>
     const token = localStorage.getItem('token');
     const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos';
@@ -305,7 +290,7 @@
         const pedidos = await res.json();
         renderPedidos(pedidos);
       } catch (error) {
-        console.error('❌ Error cargando pedidos:', error);
+        console.error('Error cargando pedidos:', error);
         alert("No se pudieron cargar los pedidos.");
       }
     });
@@ -329,7 +314,7 @@
         const pedidosFiltrados = await res.json();
         renderPedidos(pedidosFiltrados);
       } catch (err) {
-        console.error("❌ Error filtrando pedidos:", err);
+        console.error("Error filtrando pedidos:", err);
         alert("No se pudieron filtrar los pedidos.");
       }
     });
@@ -482,7 +467,7 @@
         });
 
       } catch (err) {
-        console.error("❌ Error cargando direcciones:", err);
+        console.error("Error cargando direcciones:", err);
         alert("No se pudieron cargar las direcciones");
       }
     }
