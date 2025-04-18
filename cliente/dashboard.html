@@ -367,8 +367,15 @@
 
     async function verProducto(id) {
       try {
-        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${id}`);
-        if (!res.ok) throw new Error('Producto no encontrado');
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${id}`, {
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!res.ok) {
+          const errorMsg = await res.json();
+          throw new Error(errorMsg.error || 'Producto no encontrado.');
+        }
+
         const producto = await res.json();
 
         localStorage.setItem('selectedProduct', JSON.stringify({
@@ -379,11 +386,14 @@
           description: producto.descripcion
         }));
 
-        window.location.href = 'productos/infoProducto.html'; // Ruta relativa correcta
+        window.location.href = 'productos/infoProducto.html';
+
       } catch (err) {
-        alert('No se pudo cargar la información del producto.');
+        console.error("Error al obtener producto:", err.message);
+        alert('No se pudo cargar el producto: ' + err.message);
       }
     }
+
 
 
     document.addEventListener('DOMContentLoaded', () => {
