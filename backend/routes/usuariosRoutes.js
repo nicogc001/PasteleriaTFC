@@ -4,7 +4,7 @@ const { Usuario } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
 const bcrypt = require('bcryptjs');
 
-// 🔐 Obtener datos del usuario autenticado
+// Obtener datos del usuario autenticado
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const user = await Usuario.findByPk(req.user.id, {
@@ -14,12 +14,12 @@ router.get('/', authMiddleware, async (req, res) => {
     if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
     res.json(user);
   } catch (err) {
-    console.error("❌ Error obteniendo usuario:", err);
+    console.error("Error obteniendo usuario:", err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
-// 🔁 Obtener todos los usuarios (solo admin)
+// Obtener todos los usuarios (solo admin)
 router.get('/all', authMiddleware, async (req, res) => {
   try {
     if (req.user.rol !== 'administrador') {
@@ -27,17 +27,17 @@ router.get('/all', authMiddleware, async (req, res) => {
     }
 
     const usuarios = await Usuario.findAll({
-      attributes: ['id', 'nombre', 'email', 'rol']
+      attributes: ['id', 'nombre', 'email', 'telefono', 'rol']
     });
 
     res.json(usuarios);
   } catch (err) {
-    console.error('❌ Error al obtener usuarios:', err);
+    console.error('Error al obtener usuarios:', err);
     res.status(500).json({ error: 'Error al obtener usuarios' });
   }
 });
 
-// ✏️ Actualizar datos del usuario
+// Actualizar datos del usuario
 router.put('/update', authMiddleware, async (req, res) => {
   try {
     const user = await Usuario.findByPk(req.user.id);
@@ -83,7 +83,7 @@ router.get('/filtrar', authMiddleware, async (req, res) => {
 });
 
 
-// 🔐 Cambiar contraseña
+// Cambiar contraseña
 router.put('/password', authMiddleware, async (req, res) => {
   try {
     const { actual, nueva } = req.body;
@@ -109,12 +109,12 @@ router.put('/password', authMiddleware, async (req, res) => {
 
     res.json({ message: 'Contraseña actualizada correctamente' });
   } catch (err) {
-    console.error("❌ Error cambiando contraseña:", err);
+    console.error("Error cambiando contraseña:", err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
-// ➕ Crear nuevo usuario (registro desde admin panel)
+// Crear nuevo usuario (registro desde admin panel)
 router.post('/', async (req, res) => {
   try {
     const { nombre, email, password, rol, telefono, apellidos } = req.body;
@@ -141,13 +141,13 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({ message: 'Usuario creado correctamente', usuario: nuevoUsuario });
   } catch (err) {
-    console.error('❌ Error creando usuario:', err);
+    console.error('Error creando usuario:', err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
 
-// ✅ Eliminar usuario (solo admin)
+// Eliminar usuario (solo admin)
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     if (req.user.rol !== 'administrador') {
@@ -160,12 +160,12 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await usuario.destroy();
     res.json({ message: 'Usuario eliminado correctamente' });
   } catch (err) {
-    console.error('❌ Error eliminando usuario:', err);
+    console.error('Error eliminando usuario:', err);
     res.status(500).json({ error: 'Error eliminando usuario' });
   }
 });
 
-// ✅ Actualizar rol del usuario (solo admin)
+// Actualizar rol del usuario (solo admin)
 router.put('/:id/rol', authMiddleware, async (req, res) => {
   try {
     if (req.user.rol !== 'administrador') {
@@ -179,7 +179,7 @@ router.put('/:id/rol', authMiddleware, async (req, res) => {
     await usuario.save();
     res.json({ message: 'Rol actualizado correctamente' });
   } catch (err) {
-    console.error('❌ Error actualizando rol:', err);
+    console.error('Error actualizando rol:', err);
     res.status(500).json({ error: 'Error actualizando rol' });
   }
 });
