@@ -49,7 +49,7 @@
                 salado: [
                     'Repostería Salada',
                     'Conoce nuestra rica variedad de salado',
-                    'https://okdiario.com/img/2019/10/08/empanada-gallega-de-atun.jpg'
+                    'https://www.bekiacocina.com/images/cocina/0000/932-h.jpg'
                 ]
             };
 
@@ -100,20 +100,20 @@
                 const col = document.createElement('div');
                 col.className = 'col-md-3';
                 col.innerHTML = `
-          <div class="card text-center mb-4">
-            <div class="bg-image hover-overlay">
-              <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" />
-              <a href="producto.html" class="view-product" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}" data-image="${p.imagen}" data-description="${p.descripcion}">
-                <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-              </a>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">${p.nombre}</h5>
-              <p class="card-text fw-bold">${p.precio} €</p>
-              <button class="btn btn-primary add-to-cart" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
-            </div>
-          </div>
-        `;
+                <div class="card text-center mb-4">
+                    <div class="bg-image hover-overlay">
+                    <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" />
+                    <a href="producto.html" class="view-product" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}" data-image="${p.imagen}" data-description="${p.descripcion}">
+                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                    </a>
+                    </div>
+                    <div class="card-body">
+                    <h5 class="card-title">${p.nombre}</h5>
+                    <p class="card-text fw-bold">${p.precio} €</p>
+                    <button class="btn btn-primary add-to-cart" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
+                    </div>
+                </div>
+                `;
                 container.appendChild(col);
             });
         }
