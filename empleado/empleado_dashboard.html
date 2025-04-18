@@ -25,25 +25,31 @@
   
         <!-- Tarjetas resumen -->
         <div class="row mb-4">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="card text-white bg-primary text-center p-3">
               <h5>Turno de hoy</h5>
               <p id="turno-dia">Cargando...</p>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="card text-white bg-success text-center p-3">
               <h5>Pedidos asignados</h5>
               <p id="pedidos-asignados">0</p>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="card text-white bg-warning text-center p-3">
               <h5>Pedidos por aprobar</h5>
               <p id="pedidos-aprobar">0</p>
             </div>
           </div>
-        </div>
+          <div class="col-md-3">
+            <div class="card text-white bg-dark text-center p-3">
+              <h5>Horas esta semana</h5>
+              <p id="horas-semana">0h</p>
+            </div>
+          </div>
+        </div>        
   
         <!-- Tabla de pedidos asignados -->
         <h4 class="mb-3">Pedidos asignados</h4>
@@ -87,6 +93,8 @@
     const token = localStorage.getItem('token');
     const API_PEDIDOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/pedidos/asignados';
     const API_HORARIOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-horario/mis-horarios';
+    let horariosEmpleado = [];
+
 
     document.addEventListener('DOMContentLoaded', async () => {
       if (!token) {
@@ -133,27 +141,60 @@
     }
 
     async function cargarTurnoHoy() {
-      try {
-        const res = await fetch(API_HORARIOS, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error('Error al obtener horarios');
+  try {
+    const res = await fetch(API_HORARIOS, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('Error al obtener horarios');
 
-        const data = await res.json();
-        const hoy = new Date().toISOString().split('T')[0];
-        const turno = data.find(h => h.fecha === hoy);
+    horariosEmpleado = await res.json(); // 👈 Guardamos los horarios
 
-        const entrada = turno?.horaEntrada || '---';
-        const salida = turno?.horaSalida || '---';
-        const tiempo = (turno?.horaEntrada && turno?.horaSalida)
-          ? `\n<small class='text-light'>Tiempo trabajado: ${calcularDiferencia(turno.horaEntrada, turno.horaSalida)}</small>`
-          : '';
+    const hoy = new Date().toISOString().split('T')[0];
+    const turno = horariosEmpleado.find(h => h.fecha === hoy);
 
-        document.getElementById('turno-dia').innerHTML = `${entrada} - ${salida}${tiempo}`;
-      } catch (err) {
-        console.error('Error al cargar turno de hoy:', err);
+    const entrada = turno?.horaEntrada || '---';
+    const salida = turno?.horaSalida || '---';
+    const tiempo = (turno?.horaEntrada && turno?.horaSalida)
+      ? `\n<small class='text-light'>Tiempo trabajado: ${calcularDiferencia(turno.horaEntrada, turno.horaSalida)}</small>`
+      : '';
+
+    document.getElementById('turno-dia').innerHTML = `${entrada} - ${salida}${tiempo}`;
+
+    calcularHorasSemana(); // 👈 Llamamos después
+
+  } catch (err) {
+    console.error('Error al cargar turno de hoy:', err);
+  }
+}
+
+function calcularHorasSemana() {
+  try {
+    const hoy = new Date();
+    const primerDiaSemana = new Date(hoy);
+    primerDiaSemana.setDate(hoy.getDate() - hoy.getDay()); // Domingo
+
+    let totalMinutos = 0;
+
+    horariosEmpleado.forEach(h => {
+      const fecha = new Date(h.fecha);
+      if (fecha >= primerDiaSemana && fecha <= hoy && h.horaEntrada && h.horaSalida) {
+        const [h1, m1] = h.horaEntrada.slice(0, 5).split(':').map(Number);
+        const [h2, m2] = h.horaSalida.slice(0, 5).split(':').map(Number);
+        const minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+        if (minutos > 0) totalMinutos += minutos;
       }
-    }
+    });
+
+    const horas = Math.floor(totalMinutos / 60);
+    const minutos = totalMinutos % 60;
+    document.getElementById('horas-semana').textContent = `${horas}h ${minutos}min`;
+
+  } catch (err) {
+    console.error('❌ Error al calcular horas de la semana:', err);
+    document.getElementById('horas-semana').textContent = '0h';
+  }
+}
+
 
     function calcularDiferencia(horaEntrada, horaSalida) {
       if (!horaEntrada || !horaSalida) return '-';
