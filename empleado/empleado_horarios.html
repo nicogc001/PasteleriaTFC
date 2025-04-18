@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,21 +10,13 @@
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
   <link href="/styles/main.css" rel="stylesheet" />
 </head>
+
 <body>
+  <div id="header-empleado"></div>
+
   <main class="container-fluid mt-5">
     <div class="row">
-      <div class="col-md-3 col-lg-2">
-        <div class="bg-light p-3 rounded shadow-sm">
-          <h4 class="text-primary">Menú</h4>
-          <ul class="list-unstyled">
-            <li class="mb-2"><a class="text-decoration-none" href="empleado_dashboard.html"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-            <li><a href="empleado_pedidos.html">Pedidos</a></li>
-            <li class="mb-2"><strong><i class="fas fa-calendar-alt me-2"></i>Horarios asignados</strong></li>
-            <li class="mb-2"><a class="text-decoration-none" href="empleado_jornada.html"><i class="fas fa-clock me-2"></i>Registro de jornada</a></li>
-            <li><a class="text-decoration-none text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión</a></li>
-          </ul>
-        </div>
-      </div>
+      <div id="menu-empleado"></div>
 
       <div class="col-md-9 col-lg-10">
         <h1 class="text-center mb-4">Mis Horarios Asignados</h1>
@@ -49,23 +42,37 @@
     </div>
 
     <!-- Modal para mostrar horarios del día -->
-<div class="modal fade" id="modalDia" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Mis horarios del día</h5>
-          <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <ul id="lista-horarios-dia" class="list-group"></ul>
+    <div class="modal fade" id="modalDia" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Mis horarios del día</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <ul id="lista-horarios-dia" class="list-group"></ul>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
+
   </main>
+  <div id="footer-empleado"></div>
+
 
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    const cargarFragmento = async (id, archivo) => {
+      const res = await fetch(`elementos/${archivo}`);
+      const html = await res.text();
+      document.getElementById(id).innerHTML = html;
+    };
+
+    cargarFragmento('header-empleado', 'headerEmpleado.html');
+    cargarFragmento('menu-empleado', 'menuEmpleado.html');
+    cargarFragmento('footer-empleado', 'footerEmpleado.html');
+  </script>
+
   <script>
     const token = localStorage.getItem('token');
     const API_HORARIOS = 'https://pasteleriatfc-back-igmg.onrender.com/api/registro-horario/mis-horarios';
@@ -102,50 +109,50 @@
         });
         pintarCalendario(horarios);
       } catch (err) {
-        console.error('❌ Error al cargar horarios asignados:', err);
+        console.error('Error al cargar horarios asignados:', err);
         alert('No se pudieron cargar los horarios asignados.');
       }
     }
 
     function pintarCalendario(horarios) {
-        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-            initialView: 'dayGridMonth',
-            locale: 'es',
-            height: 500,
-            events: horarios.map(h => ({
-            title: `${h.tienda || 'Tienda'}: ${h.horaEntrada || '?'} - ${h.horaSalida || '?'}`,
-            start: h.fecha,
-            color: h.horaSalida ? '#198754' : '#ffc107', // verde si completado, amarillo si pendiente
-            textColor: '#fff',
-            extendedProps: h
-            })),
-            dateClick: info => mostrarHorariosDelDia(info.dateStr, horarios)
-        });
+      const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        height: 500,
+        events: horarios.map(h => ({
+          title: `${h.tienda || 'Tienda'}: ${h.horaEntrada || '?'} - ${h.horaSalida || '?'}`,
+          start: h.fecha,
+          color: h.horaSalida ? '#198754' : '#ffc107', // verde si completado, amarillo si pendiente
+          textColor: '#fff',
+          extendedProps: h
+        })),
+        dateClick: info => mostrarHorariosDelDia(info.dateStr, horarios)
+      });
 
-        calendar.render();
+      calendar.render();
     }
 
     function mostrarHorariosDelDia(fecha, horarios) {
-        const lista = document.getElementById('lista-horarios-dia');
-        lista.innerHTML = '';
-        const delDia = horarios.filter(h => h.fecha.startsWith(fecha));
+      const lista = document.getElementById('lista-horarios-dia');
+      lista.innerHTML = '';
+      const delDia = horarios.filter(h => h.fecha.startsWith(fecha));
 
-        if (delDia.length === 0) {
-            lista.innerHTML = '<li class="list-group-item">No tienes horarios asignados</li>';
-        } else {
-            delDia.forEach(h => {
-            const li = document.createElement('li');
-            const estado = h.horaSalida ? '<span class="badge bg-success ms-2">Completado</span>' : '<span class="badge bg-warning ms-2">Pendiente</span>';
-            li.className = 'list-group-item';
-            li.innerHTML = `
+      if (delDia.length === 0) {
+        lista.innerHTML = '<li class="list-group-item">No tienes horarios asignados</li>';
+      } else {
+        delDia.forEach(h => {
+          const li = document.createElement('li');
+          const estado = h.horaSalida ? '<span class="badge bg-success ms-2">Completado</span>' : '<span class="badge bg-warning ms-2">Pendiente</span>';
+          li.className = 'list-group-item';
+          li.innerHTML = `
                 <strong>${h.tienda}</strong><br>
                 ${h.horaEntrada || '-'} - ${h.horaSalida || '-'} ${estado}
             `;
-            lista.appendChild(li);
-            });
-        }
+          lista.appendChild(li);
+        });
+      }
 
-        new mdb.Modal(document.getElementById('modalDia')).show();
+      new mdb.Modal(document.getElementById('modalDia')).show();
     }
 
 
@@ -156,4 +163,5 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,32 +9,16 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   <link href="styles/main.css" rel="stylesheet" />
 </head>
+
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Empleado</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-  </nav>
+  <div id="header-empleado"></div>
+
 
   <main class="container mt-5">
     <h1 class="text-center">Panel del Empleado</h1>
     <div class="d-flex">
-      <nav class="me-4">
-        <h3 class="text-primary">Menú</h3>
-        <ul class="list-unstyled">
-          <li><strong>Dashboard</strong></li>
-          <li><a href="#">Pedidos asignados</a></li>
-          <li><a href="empleado_pedidos.html">Pedidos</a></li>
-          <li><a href="empleado_encargos.html">Encargos</a></li> 
-          <li><a href="empleado_horarios.html">Horarios</a></li> 
-          <li><a href="empleado_jornada.html">Mi jornada</a></li>
-          <li><a href="empleado_historial.html">Historial</a></li>
-          <li><a href="#" onclick="logout()">Cerrar sesión</a></li>
-        </ul>
-      </nav>
+      <div id="menu-empleado"></div>
+
 
       <div class="w-100">
         <div class="row mb-4">
@@ -79,9 +64,19 @@
     </div>
   </main>
 
-  <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5 p-3">
-    © 2025 Pastelería El Caballo Goloso
-  </footer>
+  <div id="footer-empleado"></div>
+
+  <script>
+    const cargarFragmento = async (id, archivo) => {
+      const res = await fetch(`elementos/${archivo}`);
+      const html = await res.text();
+      document.getElementById(id).innerHTML = html;
+    };
+
+    cargarFragmento('header-empleado', 'headerEmpleado.html');
+    cargarFragmento('menu-empleado', 'menuEmpleado.html');
+    cargarFragmento('footer-empleado', 'footerEmpleado.html');
+  </script>
 
   <script>
     const token = localStorage.getItem('token');
@@ -127,7 +122,7 @@
           tbody.appendChild(tr);
         });
       } catch (err) {
-        console.error('❌ Error al cargar pedidos asignados:', err);
+        console.error('Error al cargar pedidos asignados:', err);
         alert('No se pudo cargar la información.');
       }
     }
@@ -151,7 +146,7 @@
 
         document.getElementById('turno-dia').innerHTML = `${entrada} - ${salida}${tiempo}`;
       } catch (err) {
-        console.error('❌ Error al cargar turno de hoy:', err);
+        console.error('Error al cargar turno de hoy:', err);
       }
     }
 
@@ -181,7 +176,7 @@
         alert('Pedido marcado como preparado');
         location.reload();
       } catch (err) {
-        console.error('❌ Error actualizando pedido:', err);
+        console.error('Error actualizando pedido:', err);
         alert('No se pudo marcar como preparado.');
       }
     }
@@ -193,4 +188,5 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
+
 </html>

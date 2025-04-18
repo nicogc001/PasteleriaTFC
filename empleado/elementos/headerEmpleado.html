@@ -1,0 +1,17 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary px-4">
+    <div class="container-fluid d-flex justify-content-between">
+      <a class="navbar-brand" href="#">Empleado</a>
+      <div class="d-flex align-items-center">
+        <span class="me-3 fw-semibold text-primary" id="nombre-empleado">Bienvenido</span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <script>
+    const nombre = localStorage.getItem('nombre') || 'Empleado';
+    document.getElementById('nombre-empleado').textContent = `Hola, ${nombre}`;
+  </script>
+  
