@@ -185,7 +185,9 @@
             }
         </script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  async function eliminarOferta(id) {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js">  </script>
+        <script>
+        async function eliminarOferta(id) {
                 if (!confirm('¿Estás seguro de que deseas eliminar esta oferta?')) return;
                 try {
                     const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/ofertas/${id}`, {
