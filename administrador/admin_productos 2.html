@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Productos - Admin</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="../styles/main.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="header-admin"></div>
+
+  <main class="container mt-5">
+    <div class="row">
+      <div class="col-md-3" id="menu-lateral-admin"></div>
+
+
+      <!-- Contenido principal -->
+      <section class="col-md-9">
+        <h1 class="text-center mb-4">Agregar nuevo producto</h1>
+        <form id="formNuevoProducto" class="row g-3">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre del producto</label>
+            <input type="text" class="form-control" id="nombre" required>
+          </div>
+          <div class="col-md-6">
+            <label for="precio" class="form-label">Precio</label>
+            <input type="number" step="0.01" class="form-control" id="precio" required>
+          </div>
+          <div class="col-12">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" rows="2" required></textarea>
+          </div>
+          <div class="col-md-6">
+            <label for="stock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="stock" required>
+          </div>
+          <div class="col-md-6">
+            <label for="imagen" class="form-label">URL de la imagen</label>
+            <input type="url" class="form-control" id="imagen" required>
+          </div>
+          <div class="col-md-6">
+            <label for="categoria" class="form-label">Categoría</label>
+            <select class="form-select" id="categoria" required>
+              <option value="">Selecciona una categoría</option>
+              <option value="novedades">Novedades</option>
+              <option value="tartas">Tartas</option>
+              <option value="bolleria">Bollería</option>
+              <option value="salado">Salado</option>
+              <option value="pasteleria">Pastelería</option>
+              <option value="pastas">Pastas</option>
+              <option value="cafeteria">Cafetería</option>
+            </select>
+          </div>
+          <div class="col-12 text-center">
+            <button type="submit" class="btn btn-success">Crear producto</button>
+          </div>
+        </form>
+
+        <hr class="my-5">
+
+        <h2 class="text-center mb-4">Listado de productos</h2>
+        <div class="table-responsive">
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <label>Desde:</label>
+              <input type="date" id="filtroFechaInicio" class="form-control">
+            </div>
+            <div class="col-md-3">
+              <label>Hasta:</label>
+              <input type="date" id="filtroFechaFin" class="form-control">
+            </div>
+            <div class="col-md-3">
+              <label>Nombre:</label>
+              <input type="text" id="buscadorNombre" class="form-control" placeholder="Buscar por nombre...">
+            </div>
+            <div class="col-md-3">
+              <label>Categoría:</label>
+              <select id="filtroCategoria" class="form-select">
+                <option value="">Todas las categorías</option>
+                <option value="novedades">Novedades</option>
+                <option value="tartas">Tartas</option>
+                <option value="bolleria">Bollería</option>
+                <option value="salado">Salado</option>
+                <option value="pasteleria">Pastelería</option>
+                <option value="pastas">Pastas</option>
+                <option value="cafeteria">Cafetería</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <button class="btn btn-outline-danger" onclick="exportarPDF()">Exportar a PDF</button>
+            <button class="btn btn-outline-success ms-2" onclick="exportarExcel()">Exportar a Excel</button>
+          </div>
+          <table class="table table-bordered" id="tablaProductos">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-admin"></div>
+
+  <!-- Modal Historial de Stock -->
+  <div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="modalHistorialLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between align-items-center w-100">
+          <h5 class="modal-title" id="modalHistorialLabel">Historial de variaciones de stock</h5>
+          <div>
+            <button class="btn btn-success btn-sm me-2" id="btnExportarExcelHistorial">Exportar a Excel</button>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Fecha</th>
+                <th>Stock anterior</th>
+                <th>Stock nuevo</th>
+                <th>Diferencia</th>
+              </tr>
+            </thead>
+            <tbody id="tablaHistorialBody">
+              <!-- Aquí se insertarán las filas con JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="text-center text-muted mt-5 p-3 bg-body-tertiary">
+    <small>
+      <i class="fas fa-map-marker-alt me-1"></i> c/ Jose Sanchez Rubio, 2, Torrelodones |
+      <i class="fas fa-envelope me-1"></i> contacto@caballogoloso.com |
+      <i class="fas fa-phone me-1"></i> 91 859 67 11
+    </small>
+    <br />
+    <small>© 2025 Pastelería El Caballo Goloso</small>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Cargar header
+      fetch('elementos/headerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('header-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar menú lateral
+      fetch('elementos/menuLateralAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('menu-lateral-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+
+      // Cargar footer
+      fetch('elementos/footerAdmin.html')
+        .then(res => res.text())
+        .then(html => {
+          const contenedor = document.getElementById('footer-admin');
+          if (contenedor) contenedor.innerHTML = html;
+        });
+    });
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+  </script>
+
+  <script>
+    const token = localStorage.getItem('token');
+    let productosGlobal = [];
+    let historialActual = []; // Guardamos el historial para exportar
+    const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos';
+
+    async function eliminarProducto(id) {
+      if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) return;
+
+      try {
+        const res = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error('Error al eliminar el producto');
+
+        alert('Producto eliminado');
+        cargarProductos();
+      } catch (err) {
+        console.error(err);
+        alert('Error al eliminar el producto');
+      }
+    }
+
+
+    async function cargarProductos() {
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        const productos = await res.json();
+        productosGlobal = productos; // Guardamos todos los productos globalmente
+        filtrarProductos(); // Aplicamos filtros directamente
+      } catch (err) {
+        console.error('Error al cargar productos:', err);
+      }
+    }
+
+    function crearProducto(e) {
+      e.preventDefault();
+
+      const nuevoProducto = {
+        nombre: document.getElementById('nombre').value,
+        precio: parseFloat(document.getElementById('precio').value),
+        descripcion: document.getElementById('descripcion').value,
+        stock: parseInt(document.getElementById('stock').value),
+        imagen: document.getElementById('imagen').value,
+        categoria: document.getElementById('categoria').value,
+        fechaCreacion: new Date()
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(nuevoProducto)
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Error al crear producto');
+          return res.json();
+        })
+        .then(() => {
+          alert('Producto creado correctamente');
+          document.getElementById('formNuevoProducto').reset();
+          cargarProductos();
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Error al crear el producto');
+        });
+    }
+
+    // Asegura que el submit inicial sea para crear
+    document.getElementById('formNuevoProducto').onsubmit = crearProducto;
+    async function actualizarStock(id) {
+      const nuevoStock = document.getElementById(`stock-${id}`).value;
+      try {
+        const res = await fetch(`${API_URL}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ stock: parseInt(nuevoStock) })
+        });
+
+        if (!res.ok) throw new Error('Error al actualizar el stock');
+
+        alert('Stock actualizado');
+        cargarProductos();
+      } catch (err) {
+        console.error(err);
+        alert('Error actualizando stock');
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '../login.html';
+    }
+
+    // Cargar productos al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarProductos();
+
+      document.getElementById('buscadorNombre').addEventListener('input', filtrarProductos);
+      document.getElementById('filtroCategoria').addEventListener('change', filtrarProductos);
+      document.getElementById('filtroFechaInicio').addEventListener('change', filtrarProductos);
+      document.getElementById('filtroFechaFin').addEventListener('change', filtrarProductos);
+
+    });
+
+
+    async function editarProducto(id) {
+      console.log("🔧 Editando producto con ID:", id);
+
+      try {
+        const res = await fetch(`${API_URL}/${id}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) throw new Error('No se pudo obtener el producto');
+        const producto = await res.json();
+
+        // Rellena el formulario
+        document.getElementById('nombre').value = producto.nombre;
+        document.getElementById('precio').value = producto.precio;
+        document.getElementById('descripcion').value = producto.descripcion;
+        document.getElementById('stock').value = producto.stock;
+        document.getElementById('imagen').value = producto.imagen;
+        document.getElementById('categoria').value = producto.categoria;
+
+        // Cambiar botón
+        const btnCrear = document.querySelector('#formNuevoProducto button');
+        btnCrear.textContent = 'Guardar cambios';
+        btnCrear.classList.remove('btn-success');
+        btnCrear.classList.add('btn-warning');
+
+        // Reasignar onsubmit para guardar cambios
+        document.getElementById('formNuevoProducto').onsubmit = async (e) => {
+          e.preventDefault();
+
+          const productoActualizado = {
+            nombre: document.getElementById('nombre').value,
+            precio: parseFloat(document.getElementById('precio').value),
+            descripcion: document.getElementById('descripcion').value,
+            stock: parseInt(document.getElementById('stock').value),
+            imagen: document.getElementById('imagen').value,
+            categoria: document.getElementById('categoria').value
+          };
+
+          try {
+            const res = await fetch(`${API_URL}/${id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(productoActualizado)
+            });
+
+            if (!res.ok) throw new Error('Error al actualizar el producto');
+
+            alert('Producto actualizado');
+            document.getElementById('formNuevoProducto').reset();
+            cargarProductos();
+
+            // Restaurar botón y onsubmit original
+            btnCrear.textContent = 'Crear producto';
+            btnCrear.classList.remove('btn-warning');
+            btnCrear.classList.add('btn-success');
+            document.getElementById('formNuevoProducto').onsubmit = crearProducto;
+
+          } catch (err) {
+            console.error(err);
+            alert('Error al actualizar el producto');
+          }
+        };
+
+        // Hacer scroll al formulario
+        document.getElementById('formNuevoProducto').scrollIntoView({ behavior: 'smooth' });
+
+      } catch (err) {
+        console.error(err);
+        alert('Error al obtener el producto');
+      }
+    }
+
+    function filtrarProductos() {
+      const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+      const categoria = document.getElementById('filtroCategoria').value;
+      const fechaInicio = document.getElementById('filtroFechaInicio').value;
+      const fechaFin = document.getElementById('filtroFechaFin').value;
+
+      const tbody = document.querySelector('#tablaProductos tbody');
+      tbody.innerHTML = '';
+
+      const filtrados = productosGlobal.filter(p => {
+        const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+        const coincideCategoria = categoria === '' || p.categoria === categoria;
+
+        const fechaProducto = new Date(p.fechaCreacion); // asegúrate que este campo existe
+        const desde = fechaInicio ? new Date(fechaInicio) : null;
+        const hasta = fechaFin ? new Date(fechaFin + 'T23:59:59') : null;
+
+        const dentroDeRango = (!desde || fechaProducto >= desde) && (!hasta || fechaProducto <= hasta);
+
+        return coincideNombre && coincideCategoria && dentroDeRango;
+      });
+
+      if (filtrados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No se encontraron productos</td></tr>';
+        return;
+      }
+
+      filtrados.forEach(p => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+      <td>${p.id}</td>
+      <td>${p.nombre}</td>
+      <td>${p.categoria}</td>
+      <td>${p.stock}</td>
+      <td>
+        <button class="btn btn-sm btn-warning" onclick="editarProducto(${p.id})">Editar</button>
+        <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${p.id})">Eliminar</button>
+        <button class="btn btn-sm btn-info" onclick="verVariaciones(${p.id})">Ver variaciones</button>
+      </td>
+    `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function exportarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+      const categoria = document.getElementById('filtroCategoria').value;
+
+      const filtrados = productosGlobal.filter(p => {
+        const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+        const coincideCategoria = categoria === '' || p.categoria === categoria;
+        return coincideNombre && coincideCategoria;
+      });
+
+      const filas = filtrados.map(p => [p.id, p.nombre, p.categoria, p.stock]);
+
+
+      doc.autoTable({
+        head: [['ID', 'Nombre', 'Categoría', 'Stock']],
+        body: filas
+      });
+
+      const hoy = new Date();
+      const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+      doc.save(`productos_${fecha}.pdf`);
+
+    }
+
+    function exportarExcel() {
+      const nombre = document.getElementById('buscadorNombre').value.toLowerCase();
+      const categoria = document.getElementById('filtroCategoria').value;
+
+      const filtrados = productosGlobal.filter(p => {
+        const coincideNombre = p.nombre.toLowerCase().includes(nombre);
+        const coincideCategoria = categoria === '' || p.categoria === categoria;
+        return coincideNombre && coincideCategoria;
+      });
+
+      const data = filtrados.map(p => ({
+        ID: p.id,
+        Nombre: p.nombre,
+        Categoría: p.categoria,
+        Stock: p.stock
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Productos");
+
+      const hoy = new Date();
+      const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+      XLSX.writeFile(wb, `productos_${fecha}.xlsx`);
+    }
+
+    async function verVariaciones(productoId) {
+      try {
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/productos/${productoId}/historial`);
+        const historial = await res.json();
+
+        historialActual = historial; 
+
+        const tbody = document.getElementById('tablaHistorialBody');
+        tbody.innerHTML = '';
+
+        if (!historial.length) {
+          tbody.innerHTML = `<tr><td colspan="4" class="text-center">No hay historial para este producto</td></tr>`;
+        } else {
+          historial.forEach(h => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+          <td>${new Date(h.fecha).toLocaleString()}</td>
+          <td>${h.stockAnterior}</td>
+          <td>${h.stockNuevo}</td>
+          <td>${h.diferencia > 0 ? '+' : ''}${h.diferencia}</td>
+        `;
+            tbody.appendChild(row);
+          });
+        }
+
+        const modal = new mdb.Modal(document.getElementById('modalHistorial'));
+        modal.show();
+
+      } catch (error) {
+        console.error('Error al cargar historial:', error);
+        alert('Error al obtener historial de stock');
+      }
+    }
+
+
+    document.getElementById('btnExportarExcelHistorial').addEventListener('click', () => {
+      if (!historialActual.length) {
+        alert('No hay historial para exportar');
+        return;
+      }
+
+      const data = historialActual.map(h => ({
+        Fecha: new Date(h.fecha).toLocaleString(),
+        'Stock anterior': h.stockAnterior,
+        'Stock nuevo': h.stockNuevo,
+        Diferencia: h.diferencia
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Historial");
+
+      XLSX.writeFile(wb, `historial_producto_${historialActual[0].productoId}.xlsx`);
+    });
+
+
+  </script>
+</body>
+
+</html>
