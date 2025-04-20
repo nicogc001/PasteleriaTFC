@@ -74,6 +74,11 @@
         }
     </script>
     <script>
+        function logout() {
+            localStorage.clear();
+            window.location.href = '../login.html';
+        }
+
         async function cargarSolicitudes() {
             try {
                 const API_URL = window.location.hostname.includes('localhost')
@@ -85,16 +90,25 @@
                 const cuerpoTabla = document.getElementById('tabla-solicitudes');
                 cuerpoTabla.innerHTML = '';
 
+                if (data.length === 0) {
+                    cuerpoTabla.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No hay solicitudes registradas</td>
+                    </tr>
+                `;
+                    return;
+                }
+
                 data.forEach(s => {
                     const fila = document.createElement('tr');
                     fila.innerHTML = `
-                        <td>${s.nombre}</td>
-                        <td>${s.email}</td>
-                        <td>${s.telefono}</td>
-                        <td>${s.mensaje}</td>
-                        <td>${new Date(s.fecha).toLocaleDateString()}</td>
-                        <td>${s.cv_url ? `<a href="${s.cv_url}" target="_blank">📄 Descargar</a>` : '—'}</td>
-                    `;
+                    <td>${s.nombre}</td>
+                    <td>${s.email}</td>
+                    <td>${s.telefono}</td>
+                    <td>${s.mensaje}</td>
+                    <td>${new Date(s.fecha).toLocaleDateString()}</td>
+                    <td>${s.cv_url ? `<a href="${s.cv_url}" target="_blank">📄 Descargar</a>` : '—'}</td>
+                `;
                     cuerpoTabla.appendChild(fila);
                 });
             } catch (error) {

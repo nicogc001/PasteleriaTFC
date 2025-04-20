@@ -3,34 +3,27 @@ const multer = require('multer');
 const path = require('path');
 const router = express.Router();
 const SolicitudEmpleo = require('../models/SolicitudEmpleo');
-
-// Configuración multer para solo aceptar PDF
-const storage = multer.diskStorage({
-  destination: '/tmp',
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
-
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'application/pdf') {
-    cb(null, true);
-  } else {
-    cb(new Error('Solo se permiten archivos PDF'));
-  }
-};
+const { storage } = require('../config/cloudinary'); // <--- usamos Cloudinary
 
 const upload = multer({
   storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Solo se permiten archivos PDF'));
+    }
+  }
 });
 
-// Ruta POST - guardar solicitud de empleo
+// POST - subir solicitud y CV a Cloudinary
 router.post('/', upload.single('cv'), async (req, res) => {
   try {
     const { nombre, email, telefono, mensaje } = req.body;
-    const cv_url = req.file ? `/cv/${req.file.filename}` : null;
+
+    // URL segura generada por Cloudinary
+    const cv_url = req.file?.path || null;
 
     const nuevaSolicitud = await SolicitudEmpleo.create({
       nombre,
@@ -50,7 +43,7 @@ router.post('/', upload.single('cv'), async (req, res) => {
   }
 });
 
-// Ruta GET - listar todas las solicitudes
+// GET - listar solicitudes
 router.get('/', async (req, res) => {
   try {
     const solicitudes = await SolicitudEmpleo.findAll({ order: [['fecha', 'DESC']] });
