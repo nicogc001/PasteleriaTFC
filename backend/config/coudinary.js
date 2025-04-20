@@ -1,3 +1,4 @@
+// backend/config/cloudinary.js
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
@@ -11,8 +12,8 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'cv-empleo',
-    resource_type: 'raw', // para PDF
-    format: async (req, file) => 'pdf',
+    resource_type: 'raw',
+    format: async () => 'pdf',
     public_id: (req, file) => `${Date.now()}-${file.originalname.split('.')[0]}`
   }
 });
