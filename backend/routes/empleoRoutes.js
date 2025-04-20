@@ -2,11 +2,11 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const router = express.Router();
-const { crearSolicitud, obtenerSolicitudes } = require('../models/SolicitudEmpleo');
+const SolicitudEmpleo = require('../models/SolicitudEmpleo');
 
 // Configuración multer para solo aceptar PDF
 const storage = multer.diskStorage({
-  destination: '/tmp', // En Render, solo se puede escribir en /tmp
+  destination: '/tmp',
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
   }
@@ -23,7 +23,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB máximo
+  limits: { fileSize: 5 * 1024 * 1024 }
 });
 
 // Ruta POST - guardar solicitud de empleo
@@ -32,7 +32,14 @@ router.post('/', upload.single('cv'), async (req, res) => {
     const { nombre, email, telefono, mensaje } = req.body;
     const cv_url = req.file ? `/cv/${req.file.filename}` : null;
 
-    const nuevaSolicitud = await crearSolicitud({ nombre, email, telefono, mensaje, cv_url });
+    const nuevaSolicitud = await SolicitudEmpleo.create({
+      nombre,
+      email,
+      telefono,
+      mensaje,
+      cv_url
+    });
+
     res.status(201).json(nuevaSolicitud);
   } catch (error) {
     console.error(error);
@@ -43,10 +50,10 @@ router.post('/', upload.single('cv'), async (req, res) => {
   }
 });
 
-// Ruta GET - listar todas las solicitudes (para admin)
+// Ruta GET - listar todas las solicitudes
 router.get('/', async (req, res) => {
   try {
-    const solicitudes = await obtenerSolicitudes();
+    const solicitudes = await SolicitudEmpleo.findAll({ order: [['fecha', 'DESC']] });
     res.json(solicitudes);
   } catch (error) {
     console.error(error);

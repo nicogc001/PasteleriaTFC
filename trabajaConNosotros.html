@@ -178,13 +178,18 @@
                     body: formData,
                 });
 
-                const data = await res.json();
+                let data = {};
+                try {
+                    data = await res.json();
+                } catch (e) {
+                    console.warn('La respuesta no fue JSON:', e);
+                }
 
                 if (res.ok) {
                     estado.innerHTML = `<div class="alert alert-success">Enviado correctamente</div>`;
                     form.reset();
                 } else {
-                    estado.innerHTML = `<div class="alert alert-danger">${data.error || 'Error al enviar'}</div>`;
+                    estado.innerHTML = `<div class="alert alert-danger">${data?.error || 'Error al enviar el formulario'}</div>`;
                 }
             } catch (err) {
                 console.error(err);
