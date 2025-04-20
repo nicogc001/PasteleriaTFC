@@ -41,17 +41,24 @@
   <div id="admin-footer"></div>
 
   <script>
-    // Cargar fragmentos
-    document.getElementById('admin-header').innerHTML = await (await fetch('../admin/elementos/adminHeader.html')).text();
-    document.getElementById('admin-menu').innerHTML = await (await fetch('../admin/elementos/adminMenuLateral.html')).text();
-    const footerPath = '../admin/elementos/adminFooter.html';
-    if (document.getElementById('admin-footer')) {
-      fetch(footerPath)
-        .then(res => res.ok ? res.text() : '')
-        .then(html => document.getElementById('admin-footer').innerHTML = html);
+    async function cargarFragmentos() {
+      try {
+        const headerHTML = await fetch('../admin/elementos/adminHeader.html').then(r => r.text());
+        document.getElementById('admin-header').innerHTML = headerHTML;
+
+        const menuHTML = await fetch('../admin/elementos/adminMenuLateral.html').then(r => r.text());
+        document.getElementById('admin-menu').innerHTML = menuHTML;
+
+        const footer = document.getElementById('admin-footer');
+        if (footer) {
+          const footerHTML = await fetch('../admin/elementos/adminFooter.html').then(r => r.text());
+          footer.innerHTML = footerHTML;
+        }
+      } catch (err) {
+        console.error('Error al cargar fragmentos:', err);
+      }
     }
 
-    // Cargar solicitudes
     async function cargarSolicitudes() {
       try {
         const res = await fetch('/api/empleo');
@@ -78,7 +85,10 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', cargarSolicitudes);
+    document.addEventListener('DOMContentLoaded', async () => {
+      await cargarFragmentos();
+      await cargarSolicitudes();
+    });
   </script>
 </body>
 </html>
