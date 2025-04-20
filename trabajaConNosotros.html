@@ -163,9 +163,15 @@
     </footer>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
     <script>
         const form = document.getElementById('form-empleo');
         const estado = document.getElementById('estado-envio');
+
+        // URL del backend (local o render)
+        const API_URL = window.location.hostname.includes('localhost')
+            ? 'http://localhost:4000/api/empleo'
+            : 'https://pasteleriatfc-back-igmg.onrender.com/api/empleo';
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -173,7 +179,7 @@
             const formData = new FormData(form);
 
             try {
-                const res = await fetch('/api/empleo', {
+                const res = await fetch(API_URL, {
                     method: 'POST',
                     body: formData,
                 });
@@ -197,6 +203,7 @@
             }
         });
     </script>
+
 
 
 </html>
