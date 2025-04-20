@@ -1,33 +1,92 @@
+/* === TARJETAS DE PRODUCTOS === */
 .card img {
     height: 250px;
     object-fit: cover;
     width: 100%;
-}
-.card {
+  }
+  
+  .card {
     height: 100%;
     display: flex;
     flex-direction: column;
-}
-.card-body {
+  }
+  
+  .card-body {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-.btn-orange {
-    background-color: #FFA500;
-    color: white;
-}
-.row.card-deck {
+  }
+  
+  /* === BOTÓN NARANJA GENERAL === */
+  .btn-orange {
+    background-color: #FFA94D !important; /* naranja claro */
+    color: white !important;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.4rem;
+  }
+  
+  .btn-orange:hover {
+    background-color: #ff8c1a !important;
+    color: white !important;
+  }
+  
+  /* === CONTENEDOR DE TARJETAS (DESKTOP) === */
+  .row.card-deck {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
-}
-#intro-example {
+    gap: 1rem;
+    overflow-x: auto;
+  }
+  
+  /* === HERO HEADER === */
+  #intro-example {
     background-size: cover;
     background-position: center;
     height: 500px;
-}
-.mask {
+    position: relative;
+  }
+  
+  .mask {
     background-color: rgba(0, 0, 0, 0.5);
-}
+  }
+  
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    /* Ajuste del alto del hero para móviles */
+    #intro-example {
+      height: auto;
+      padding: 3rem 1rem;
+    }
+  
+    /* Botones grandes en el hero */
+    #intro-example .btn {
+      font-size: 1.2rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 0.5rem;
+    }
+  
+    .row.card-deck {
+      flex-direction: column;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+  
+    .card {
+      margin: 0 auto;
+      width: 100%;
+    }
+  
+    .card img {
+      height: 200px;
+    }
+  
+    .text-center h1, .text-center h5 {
+      font-size: 1.5rem;
+    }
+  }
+  

@@ -1,6 +1,35 @@
-<!-- Barra de navegación con botones de categorías -->
+<!-- barraTienda.html -->
 <div class="container mt-4">
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <style>
+      .barra-categorias .btn {
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.4rem;
+        white-space: nowrap;
+      }
+  
+      @media (max-width: 576px) {
+        .barra-categorias .btn {
+          font-size: 1rem;
+          padding: 0.8rem 1.4rem;
+          width: 100%;
+          text-align: center;
+        }
+  
+        .barra-categorias .nav-item {
+          width: 100%;
+          margin-bottom: 0.5rem;
+        }
+  
+        .barra-categorias ul {
+          flex-direction: column !important;
+          align-items: center;
+        }
+      }
+    </style>
+  
+    <nav class="navbar navbar-expand-lg navbar-light barra-categorias">
       <div class="container-fluid justify-content-center">
         <ul class="navbar-nav flex-wrap justify-content-center">
           <li class="nav-item">
@@ -28,4 +57,5 @@
       </div>
     </nav>
   </div>
+  
   
