@@ -11,11 +11,11 @@
 
 <body>
     <!-- HEADER -->
-    <div id="admin-header"></div>
+    <div id="header-admin"></div>
 
     <div class="d-flex">
         <!-- MENÚ LATERAL -->
-        <div id="admin-menu" class="bg-light"></div>
+        <div class="col-md-3" id="menu-lateral-admin"></div>
 
         <!-- CONTENIDO PRINCIPAL -->
         <main class="container my-5">
@@ -39,28 +39,41 @@
     </div>
 
     <!-- FOOTER opcional -->
-    <div id="admin-footer"></div>
+    <div id="footer-admin"></div>
 
     <script>
-        async function cargarFragmentos() {
-            try {
-                const headerHTML = await fetch('../admin/elementos/headerAdmin.html').then(r => r.text());
-                document.getElementById('admin-header').innerHTML = headerHTML;
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar header
+            fetch('elementos/headerAdmin.html')
+                .then(res => res.text())
+                .then(html => {
+                    const contenedor = document.getElementById('header-admin');
+                    if (contenedor) contenedor.innerHTML = html;
+                });
 
-                const menuHTML = await fetch('../admin/elementos/menuLateralAdmin.html').then(r => r.text());
-                document.getElementById('admin-menu').innerHTML = menuHTML;
+            // Cargar menú lateral
+            fetch('elementos/menuLateralAdmin.html')
+                .then(res => res.text())
+                .then(html => {
+                    const contenedor = document.getElementById('menu-lateral-admin');
+                    if (contenedor) contenedor.innerHTML = html;
+                });
 
-                const footer = document.getElementById('admin-footer');
-                if (footer) {
-                    const footerHTML = await fetch('../admin/elementos/footerAdmin.html').then(r => r.text());
-                    footer.innerHTML = footerHTML;
-                }
-            } catch (err) {
-                console.error('Error al cargar fragmentos:', err);
-            }
+            // Cargar footer
+            fetch('elementos/footerAdmin.html')
+                .then(res => res.text())
+                .then(html => {
+                    const contenedor = document.getElementById('footer-admin');
+                    if (contenedor) contenedor.innerHTML = html;
+                });
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '../login.html';
         }
-
-
+    </script>
+    <script>
         async function cargarSolicitudes() {
             try {
                 const API_URL = window.location.hostname.includes('localhost')
