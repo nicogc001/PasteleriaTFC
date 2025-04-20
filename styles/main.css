@@ -94,26 +94,30 @@
 }
 
 /* === BOTÓN DESTACADO: PEDIDO PARA RECOGER === */
-#btnRecoger {
-    font-size: 1.3rem;
-    padding: 1.2rem 2rem;
-    border-radius: 0.6rem;
-    font-weight: bold;
+/* === BOTONES DE PEDIDO === */
+.btn-pedido {
     background-color: #FFA94D !important;
     color: white !important;
     border: none;
-}
-
-#btnRecoger:hover {
+    font-weight: bold;
+    font-size: 1.3rem;
+    padding: 1.2rem 2rem;
+    border-radius: 0.6rem;
+    white-space: nowrap;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .btn-pedido:hover {
     background-color: #ff8c1a !important;
-}
-
-/* Ajuste adicional para móviles */
-@media (max-width: 576px) {
-    #btnRecoger {
-        font-size: 1.5rem;
-        padding: 1.4rem 2.2rem;
-        width: 100%;
-        text-align: center;
+    color: white !important;
+  }
+  
+  /* Mejoras para móviles */
+  @media (max-width: 576px) {
+    .btn-pedido {
+      font-size: 1.5rem;
+      padding: 1.4rem 2.2rem;
     }
-}
+  }  
