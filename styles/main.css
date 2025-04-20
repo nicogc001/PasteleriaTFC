@@ -95,18 +95,19 @@
 
 /* === BOTONES DE PEDIDO (naranja claro) === */
 .btn-pedido {
-    background-color: #FFA94D !important;   /* Naranja clarito */
+    background-color: #FFA94D !important;
     color: white !important;
     border: none;
     font-weight: bold;
-    font-size: 1.3rem;
+    font-size: 1rem;
     padding: 1.2rem 2rem;
     border-radius: 0.6rem;
-    white-space: nowrap;
     text-align: center;
     width: 100%;
     max-width: 400px;
     transition: background-color 0.3s ease;
+    white-space: normal; /* <-- aquí el cambio */
+    line-height: 1.3;
   }
   
   .btn-pedido:hover {
