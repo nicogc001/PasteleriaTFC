@@ -93,10 +93,9 @@
     }
 }
 
-/* === BOTÓN DESTACADO: PEDIDO PARA RECOGER === */
-/* === BOTONES DE PEDIDO === */
+/* === BOTONES DE PEDIDO (naranja claro) === */
 .btn-pedido {
-    background-color: #FFA94D !important;
+    background-color: #FFA94D !important;   /* Naranja clarito */
     color: white !important;
     border: none;
     font-weight: bold;
@@ -107,17 +106,18 @@
     text-align: center;
     width: 100%;
     max-width: 400px;
+    transition: background-color 0.3s ease;
   }
   
   .btn-pedido:hover {
-    background-color: #ff8c1a !important;
+    background-color: #ffb866 !important;  
     color: white !important;
   }
   
-  /* Mejoras para móviles */
+  /* Responsive móvil */
   @media (max-width: 576px) {
     .btn-pedido {
       font-size: 1.5rem;
       padding: 1.4rem 2.2rem;
     }
-  }  
+  }
