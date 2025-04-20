@@ -12,6 +12,7 @@ const RegistroHorarios = require('./RegistroHorarios');
 const Direccion = require('./Direccion');
 const HistorialStock = require('./HistorialStock');
 const OfertasCliente = require('./OfertasCliente');
+const SolicitudEmpleo = require('./SolicitudEmpleo');
 
 // Reunimos todos los modelos
 const models = {
@@ -26,7 +27,8 @@ const models = {
   RegistroHorarios,
   Direccion,
   HistorialStock,
-  OfertasCliente
+  OfertasCliente,
+  SolicitudEmpleo
 };
 
 // Asociaciones por separado (por si hay lógica en associate())
@@ -86,9 +88,9 @@ Usuario.belongsToMany(Ofertas, {
 const syncDB = async () => {
   try {
     await db.sync({ alter: true });
-    console.log('✅ Base de datos sincronizada correctamente');
+    console.log('Base de datos sincronizada correctamente');
   } catch (error) {
-    console.error('❌ Error al sincronizar la base de datos:', error);
+    console.error('Error al sincronizar la base de datos:', error);
   }
 };
 

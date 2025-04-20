@@ -6,15 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trabaja con Nosotros</title>
     <!-- MDBootstrap CSS -->
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
-        rel="stylesheet"
-    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
     <!-- Font Awesome -->
-    <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-        rel="stylesheet"
-    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -23,15 +17,9 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
             <div class="container-fluid">
                 <!-- Toggle button -->
-                <button
-                    data-mdb-collapse-init
-                    class="navbar-toggler"
-                    type="button"
-                    data-mdb-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
+                <button data-mdb-collapse-init class="navbar-toggler" type="button"
+                    data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fas fa-bars"></i>
                 </button>
 
@@ -39,12 +27,8 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Navbar brand -->
                     <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                        <img
-                            src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
-                            height="15"
-                            alt="MDB Logo"
-                            loading="lazy"
-                        />
+                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15"
+                            alt="MDB Logo" loading="lazy" />
                     </a>
                     <!-- Left links -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -64,10 +48,10 @@
                             <a class="nav-link" href="tartas.html">Tartas</a>
                         </li>
                         <li class="nav-item"></li>
-                            <a class="nav-link" href="trabajaConNosotros.html">Trabaja con nostros</a>
+                        <a class="nav-link" href="trabajaConNosotros.html">Trabaja con nostros</a>
                         </li>
                         <li class="nav-item"></li>
-                            <a class="nav-link" href="DondeEstamos.html">Donde estamos</a>
+                        <a class="nav-link" href="DondeEstamos.html">Donde estamos</a>
                         </li>
                     </ul>
                 </div>
@@ -81,21 +65,10 @@
 
                     <!-- Avatar -->
                     <div class="dropdown">
-                        <a
-                            data-mdb-dropdown-init
-                            class="dropdown-toggle d-flex align-items-center hidden-arrow"
-                            href="login.html"
-                            id="navbarDropdownMenuAvatar"
-                            role="button"
-                            aria-expanded="false"
-                        >
-                            <img
-                                src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                                class="rounded-circle"
-                                height="25"
-                                alt="User Avatar"
-                                loading="lazy"
-                            />
+                        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow"
+                            href="login.html" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle"
+                                height="25" alt="User Avatar" loading="lazy" />
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                             <li>
@@ -114,13 +87,10 @@
         </nav>
 
         <!-- Background image -->
-        <div
-            class="p-5 text-center bg-image"
-            style="
+        <div class="p-5 text-center bg-image" style="
                 background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/044.webp');
                 height: 300px;
-            "
-        >
+            ">
             <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <div class="text-white">
@@ -134,30 +104,30 @@
 
     <main>
         <div class="container py-5">
-            <h2 class="text-center mb-4">Formulario de Solicitud</h2>
-            <p class="text-center">Por favor, completa el siguiente formulario para aplicar a nuestras vacantes.</p>
-            <form>
+            <h2 class="text-center mb-4">Únete a Nuestro Equipo</h2>
+            <form id="form-empleo" action="/api/empleo" method="POST" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre Completo</label>
-                    <input type="text" class="form-control" id="nombre" placeholder="Introduce tu nombre completo">
+                    <label for="nombre" class="form-label">Nombre completo</label>
+                    <input type="text" class="form-control" name="nombre" required>
                 </div>
                 <div class="mb-3">
-                    <label for="email" class="form-label">Correo Electrónico</label>
-                    <input type="email" class="form-control" id="email" placeholder="nombre@ejemplo.com">
+                    <label for="email" class="form-label">Correo electrónico</label>
+                    <input type="email" class="form-control" name="email" required>
                 </div>
                 <div class="mb-3">
                     <label for="telefono" class="form-label">Teléfono</label>
-                    <input type="tel" class="form-control" id="telefono" placeholder="Introduce tu teléfono">
+                    <input type="tel" class="form-control" name="telefono" required>
                 </div>
                 <div class="mb-3">
                     <label for="mensaje" class="form-label">Mensaje</label>
-                    <textarea class="form-control" id="mensaje" rows="3" placeholder="Cuéntanos por qué quieres trabajar con nosotros"></textarea>
+                    <textarea class="form-control" name="mensaje" rows="4" required></textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="cv" class="form-label">Sube tu CV</label>
-                    <input class="form-control" type="file" id="cv">
+                    <label for="cv" class="form-label">Sube tu CV (PDF)</label>
+                    <input class="form-control" type="file" name="cv" accept="application/pdf" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
+                <div id="estado-envio" class="mt-3"></div>
             </form>
         </div>
     </main>
@@ -192,10 +162,36 @@
         </div>
     </footer>
 
-    <script
-        type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
-    ></script>
-</body>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+    <script>
+        const form = document.getElementById('form-empleo');
+        const estado = document.getElementById('estado-envio');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            try {
+                const res = await fetch('/api/empleo', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    estado.innerHTML = `<div class="alert alert-success">Enviado correctamente</div>`;
+                    form.reset();
+                } else {
+                    estado.innerHTML = `<div class="alert alert-danger">${data.error || 'Error al enviar'}</div>`;
+                }
+            } catch (err) {
+                console.error(err);
+                estado.innerHTML = `<div class="alert alert-danger">Error inesperado</div>`;
+            }
+        });
+    </script>
+
 
 </html>
