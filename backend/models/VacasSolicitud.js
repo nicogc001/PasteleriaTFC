@@ -43,11 +43,5 @@ const VacasSolicitud = db.define('VacasSolicitud', {
   timestamps: false
 });
 
-VacasSolicitud.associate = models => {
-    VacasSolicitud.belongsTo(models.Usuario, {
-      foreignKey: 'empleado_id',
-      as: 'empleado'
-    });
-  };
   
 module.exports = VacasSolicitud;
