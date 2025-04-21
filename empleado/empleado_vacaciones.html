@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis Vacaciones</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+  <link href="/styles/main.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="header-empleado"></div>
+
+  <main class="container-fluid mt-4">
+    <div class="row">
+      <div id="menu-empleado" class="col-md-2 col-lg-2"></div>
+
+      <div class="col-md-10 col-lg-10">
+        <h2 class="text-center mb-4">Solicitud de Vacaciones</h2>
+
+        <div class="row">
+          <div class="col-md-5">
+            <form id="form-vacaciones">
+              <div class="mb-3">
+                <label for="fecha_inicio" class="form-label">Fecha inicio</label>
+                <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label for="fecha_fin" class="form-label">Fecha fin</label>
+                <input type="date" name="fecha_fin" id="fecha_fin" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label for="motivo" class="form-label">Motivo (opcional)</label>
+                <textarea name="motivo" id="motivo" class="form-control" rows="2"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Solicitar</button>
+              <div id="estado-solicitud" class="mt-3"></div>
+            </form>
+          </div>
+
+          <div class="col-md-7">
+            <div id="calendario-vacaciones"></div>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <h4>Mis solicitudes</h4>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>Rango</th>
+                <th>Estado</th>
+                <th>Comentario</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-solicitudes"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-empleado"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    const token = localStorage.getItem('token');
+    const API = 'https://pasteleriatfc-back-igmg.onrender.com/api/vacaciones';
+
+    const cargarFragmento = async (id, archivo) => {
+      const res = await fetch(`elementos/${archivo}`);
+      const html = await res.text();
+      document.getElementById(id).innerHTML = html;
+    };
+
+    cargarFragmento('header-empleado', 'headerEmpleado.html');
+    cargarFragmento('menu-empleado', 'menuEmpleado.html');
+    cargarFragmento('footer-empleado', 'footerEmpleado.html');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!token) return location.href = '../login.html';
+
+      cargarSolicitudes();
+      cargarCalendario();
+
+      document.getElementById('form-vacaciones').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fecha_inicio = document.getElementById('fecha_inicio').value;
+        const fecha_fin = document.getElementById('fecha_fin').value;
+        const motivo = document.getElementById('motivo').value;
+        const estadoDiv = document.getElementById('estado-solicitud');
+
+        if (fecha_inicio > fecha_fin) {
+          return estadoDiv.innerHTML = `<div class="alert alert-warning">La fecha de inicio debe ser menor o igual a la de fin.</div>`;
+        }
+
+        try {
+          const res = await fetch(`${API}/solicitar`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ fecha_inicio, fecha_fin, motivo })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Error al solicitar vacaciones');
+          estadoDiv.innerHTML = `<div class="alert alert-success">Solicitud enviada correctamente.</div>`;
+          document.getElementById('form-vacaciones').reset();
+          cargarSolicitudes();
+          cargarCalendario();
+        } catch (err) {
+          estadoDiv.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+        }
+      });
+    });
+
+    async function cargarSolicitudes() {
+      try {
+        const usuario = JSON.parse(localStorage.getItem('usuario'));
+        const res = await fetch(`${API}/mis-solicitudes/${usuario.id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const solicitudes = await res.json();
+        const tbody = document.getElementById('tabla-solicitudes');
+        tbody.innerHTML = '';
+
+        solicitudes.forEach(s => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${s.fecha_inicio} a ${s.fecha_fin}</td>
+            <td><span class="badge bg-${estadoColor(s.estado)}">${s.estado}</span></td>
+            <td>${s.comentario_admin || '—'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Error cargando solicitudes:', error);
+      }
+    }
+
+    async function cargarCalendario() {
+      const calendarioEl = document.getElementById('calendario-vacaciones');
+      const calendar = new FullCalendar.Calendar(calendarioEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        height: 500,
+        events: async (fetchInfo, successCallback, failureCallback) => {
+          try {
+            const res = await fetch(`${API}/calendario`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
+            const eventos = data.map(v => ({
+              title: 'Vacaciones',
+              start: v.fecha_inicio,
+              end: v.fecha_fin,
+              color: '#33b5e5'
+            }));
+            successCallback(eventos);
+          } catch (err) {
+            console.error('Error al cargar calendario:', err);
+            failureCallback(err);
+          }
+        }
+      });
+      calendar.render();
+    }
+
+    function estadoColor(estado) {
+      return estado === 'aprobado' ? 'success' :
+             estado === 'pendiente' ? 'warning' : 'danger';
+    }
+  </script>
+</body>
+
+</html>

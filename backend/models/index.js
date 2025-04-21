@@ -13,6 +13,7 @@ const Direccion = require('./Direccion');
 const HistorialStock = require('./HistorialStock');
 const OfertasCliente = require('./OfertasCliente');
 const SolicitudEmpleo = require('./SolicitudEmpleo');
+const VacasSolicitud = require('./VacasSolicitud');
 
 // Reunimos todos los modelos
 const models = {
@@ -28,7 +29,8 @@ const models = {
   Direccion,
   HistorialStock,
   OfertasCliente,
-  SolicitudEmpleo
+  SolicitudEmpleo,
+  VacasSolicitud
 };
 
 // Asociaciones por separado (por si hay lógica en associate())
