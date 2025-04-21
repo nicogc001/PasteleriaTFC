@@ -11,7 +11,7 @@ const isAdmin = require('../middleware/isAdmin');
 router.post('/solicitar', authMiddleware, async (req, res) => {
   try {
     const { fecha_inicio, fecha_fin, motivo } = req.body;
-    const empleado_id = req.usuario.id;
+    const empleado_id = req.user.id;
 
     const nueva = await VacasSolicitud.create({
       empleado_id,
