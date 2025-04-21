@@ -1,7 +1,7 @@
 const express = require('express');
 const Productos = require('../models/Productos');
 const Pedidos = require('../models/Pedidos');
-const authMiddleware = require('../middleware/authMiddleware'); // ✅ IMPORTADO
+const authMiddleware = require('../middleware/authMiddleware'); 
 const router = express.Router();
 
 // Crear un nuevo producto
