@@ -71,6 +71,9 @@ HistorialStock.belongsTo(Productos, { foreignKey: 'productoId' });
 Usuario.hasMany(RegistroHorarios, { foreignKey: 'empleadoId', onDelete: 'CASCADE' });
 RegistroHorarios.belongsTo(Usuario, { foreignKey: 'empleadoId' });
 
+Usuario.hasMany(VacasSolicitud, { foreignKey: 'empleado_id', onDelete: 'CASCADE' });
+VacasSolicitud.belongsTo(Usuario, { foreignKey: 'empleado_id', as: 'empleado' });
+
 Ofertas.belongsToMany(Usuario, {
   through: OfertasCliente,
   foreignKey: 'ofertaId',

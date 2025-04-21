@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const VacasSolicitud = require('../models/VacasSolicitud');
 const Usuario = require('../models/Usuario');
-const authMiddleware = require('../middlewares/authMiddleware');
-const isAdmin = require('../middlewares/isAdmin');
+const authMiddleware = require('../middleware/authMiddleware');
+const isAdmin = require('../middleware/isAdmin');
 
 // ===================== EMPLEADOS =====================
 
