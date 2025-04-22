@@ -1,12 +1,36 @@
 // models/Chat.js
-const mongoose = require('mongoose');
-
-const chatSchema = new mongoose.Schema({
-    clienteId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Usuario' },
-    empleadoId: { type: mongoose.Schema.Types.ObjectId, ref: 'Empleado' }, // se asigna cuando responde
-    estado: { type: String, enum: ['abierto', 'cerrado'], default: 'abierto' },
-    creadoEn: { type: Date, default: Date.now },
-    actualizadoEn: { type: Date, default: Date.now }
-});
-
-module.exports = mongoose.model('Chat', chatSchema);
+module.exports = (sequelize, DataTypes) => {
+    const Chat = sequelize.define('Chat', {
+      clienteId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      empleadoId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      estado: {
+        type: DataTypes.STRING,
+        defaultValue: 'abierto'
+      },
+      creadoEn: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      },
+      actualizadoEn: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+      }
+    }, {
+      tableName: 'Chats',
+      timestamps: false
+    });
+  
+    Chat.associate = (models) => {
+      Chat.hasMany(models.Mensaje, { foreignKey: 'chatId', as: 'mensajes' });
+      Chat.belongsTo(models.Usuario, { foreignKey: 'clienteId', as: 'cliente' });
+      Chat.belongsTo(models.Usuario, { foreignKey: 'empleadoId', as: 'empleado' });
+    };
+  
+    return Chat;
+  };
