@@ -18,11 +18,11 @@
     <div class="row">
       <!-- Menú lateral -->
       <div id="menu-empleado" class="col-md-3 col-lg-2"></div>
-  
+
       <!-- Contenido principal -->
       <div class="col-md-9 col-lg-10">
         <h1 class="text-center mb-4">Panel del Empleado</h1>
-  
+
         <!-- Tarjetas resumen -->
         <div class="row mb-4">
           <div class="col-md-3">
@@ -49,8 +49,8 @@
               <p id="horas-semana">0h</p>
             </div>
           </div>
-        </div>        
-  
+        </div>
+
         <!-- Tabla de pedidos asignados -->
         <h4 class="mb-3">Pedidos asignados</h4>
         <div class="table-responsive">
@@ -73,7 +73,7 @@
       </div>
     </div>
   </main>
-  
+
 
   <div id="footer-empleado"></div>
 
@@ -141,59 +141,59 @@
     }
 
     async function cargarTurnoHoy() {
-  try {
-    const res = await fetch(API_HORARIOS, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error('Error al obtener horarios');
+      try {
+        const res = await fetch(API_HORARIOS, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Error al obtener horarios');
 
-    horariosEmpleado = await res.json(); // 👈 Guardamos los horarios
+        horariosEmpleado = await res.json(); // 👈 Guardamos los horarios
 
-    const hoy = new Date().toISOString().split('T')[0];
-    const turno = horariosEmpleado.find(h => h.fecha === hoy);
+        const hoy = new Date().toISOString().split('T')[0];
+        const turno = horariosEmpleado.find(h => h.fecha === hoy);
 
-    const entrada = turno?.horaEntrada || '---';
-    const salida = turno?.horaSalida || '---';
-    const tiempo = (turno?.horaEntrada && turno?.horaSalida)
-      ? `\n<small class='text-light'>Tiempo trabajado: ${calcularDiferencia(turno.horaEntrada, turno.horaSalida)}</small>`
-      : '';
+        const entrada = turno?.horaEntrada || '---';
+        const salida = turno?.horaSalida || '---';
+        const tiempo = (turno?.horaEntrada && turno?.horaSalida)
+          ? `\n<small class='text-light'>Tiempo trabajado: ${calcularDiferencia(turno.horaEntrada, turno.horaSalida)}</small>`
+          : '';
 
-    document.getElementById('turno-dia').innerHTML = `${entrada} - ${salida}${tiempo}`;
+        document.getElementById('turno-dia').innerHTML = `${entrada} - ${salida}${tiempo}`;
 
-    calcularHorasSemana(); // 👈 Llamamos después
+        calcularHorasSemana(); // 👈 Llamamos después
 
-  } catch (err) {
-    console.error('Error al cargar turno de hoy:', err);
-  }
-}
-
-function calcularHorasSemana() {
-  try {
-    const hoy = new Date();
-    const primerDiaSemana = new Date(hoy);
-    primerDiaSemana.setDate(hoy.getDate() - hoy.getDay()); // Domingo
-
-    let totalMinutos = 0;
-
-    horariosEmpleado.forEach(h => {
-      const fecha = new Date(h.fecha);
-      if (fecha >= primerDiaSemana && fecha <= hoy && h.horaEntrada && h.horaSalida) {
-        const [h1, m1] = h.horaEntrada.slice(0, 5).split(':').map(Number);
-        const [h2, m2] = h.horaSalida.slice(0, 5).split(':').map(Number);
-        const minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
-        if (minutos > 0) totalMinutos += minutos;
+      } catch (err) {
+        console.error('Error al cargar turno de hoy:', err);
       }
-    });
+    }
 
-    const horas = Math.floor(totalMinutos / 60);
-    const minutos = totalMinutos % 60;
-    document.getElementById('horas-semana').textContent = `${horas}h ${minutos}min`;
+    function calcularHorasSemana() {
+      try {
+        const hoy = new Date();
+        const primerDiaSemana = new Date(hoy);
+        primerDiaSemana.setDate(hoy.getDate() - hoy.getDay()); // Domingo
 
-  } catch (err) {
-    console.error('❌ Error al calcular horas de la semana:', err);
-    document.getElementById('horas-semana').textContent = '0h';
-  }
-}
+        let totalMinutos = 0;
+
+        horariosEmpleado.forEach(h => {
+          const fecha = new Date(h.fecha);
+          if (fecha >= primerDiaSemana && fecha <= hoy && h.horaEntrada && h.horaSalida) {
+            const [h1, m1] = h.horaEntrada.slice(0, 5).split(':').map(Number);
+            const [h2, m2] = h.horaSalida.slice(0, 5).split(':').map(Number);
+            const minutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+            if (minutos > 0) totalMinutos += minutos;
+          }
+        });
+
+        const horas = Math.floor(totalMinutos / 60);
+        const minutos = totalMinutos % 60;
+        document.getElementById('horas-semana').textContent = `${horas}h ${minutos}min`;
+
+      } catch (err) {
+        console.error('❌ Error al calcular horas de la semana:', err);
+        document.getElementById('horas-semana').textContent = '0h';
+      }
+    }
 
 
     function calcularDiferencia(horaEntrada, horaSalida) {

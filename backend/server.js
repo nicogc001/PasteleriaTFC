@@ -4,6 +4,9 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
+const http = require('http'); // <-- importante para Socket.IO
+const iniciarSockets = require('./sockets/socket'); // <-- tu archivo socket.js
+
 const { syncDB } = require('./models');
 const db = require('./config/db');
 
@@ -61,6 +64,7 @@ app.use('/api/facturas', require('./routes/facturasRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/ofertas', require('./routes/ofertasRoutes'));
 app.use('/api/vacaciones', require('./routes/vacacionesRoutes'));
+app.use('/api/chats', require('./routes/chatRoutes'));
 
 // Facturación diaria automática
 require('./jobs/facturacionDiaria');
@@ -97,14 +101,15 @@ app.use((err, req, res, next) => {
     console.log('Base de datos sincronizada correctamente');
 
     const { db: models } = require('./models');
-
     console.log('Modelos registrados en Sequelize:');
     console.log(Object.keys(models.models || models));
 
-
     const PORT = process.env.PORT || 4000;
-    app.listen(PORT, () => {
-      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    const server = http.createServer(app); // Reemplaza app.listen()
+    iniciarSockets(server); // Socket.IO aquí
+
+    server.listen(PORT, () => {
+      console.log(`Servidor con sockets corriendo en http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('Error conectando a la base de datos:', error);

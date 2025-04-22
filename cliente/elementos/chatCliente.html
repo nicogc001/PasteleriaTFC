@@ -1,0 +1,131 @@
+<!-- chatCliente.html -->
+<div id="chat-boton" onclick="abrirChatCliente()">💬</div>
+
+<div id="chat-panel-cliente" class="chat-oculto">
+  <div class="chat-cabecera">¿Necesitas ayuda?</div>
+  <div id="chat-mensajes-cliente" class="chat-mensajes"></div>
+  <input type="text" id="chat-input-cliente" placeholder="Escribe tu mensaje..." onkeydown="enviarMensajeCliente(event)">
+</div>
+
+<style>
+  #chat-boton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #d43b2b;
+    color: white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #0003;
+    z-index: 999;
+  }
+
+  #chat-panel-cliente {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 280px;
+    max-height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px #0003;
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+  }
+
+  #chat-panel-cliente.abierto {
+    display: flex;
+  }
+
+  .chat-cabecera {
+    background: #d43b2b;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .chat-mensajes {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+    background-color: #f9f9f9;
+  }
+
+  #chat-input-cliente {
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-top: 1px solid #eee;
+    outline: none;
+  }
+</style>
+
+<!-- Socket.IO -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+  const token = localStorage.getItem("token");
+  const usuarioId = JSON.parse(atob(token.split('.')[1])).id; // decodificar JWT para obtener ID
+
+  let empleadoAsignado = null; // se debe setear cuando lo sepas
+
+  const socket = io("https://pasteleriatfc-back-igmg.onrender.com", {
+    auth: { token }
+  });
+
+  socket.on("connect", () => {
+    console.log("🟢 Conectado al servidor de sockets");
+  });
+
+  socket.on("mensaje", (mensaje) => {
+    if (mensaje.de === usuarioId) return; // ya lo mostramos al enviarlo
+    mostrarMensajeCliente(mensaje.contenido, "izquierda");
+    if (!empleadoAsignado) empleadoAsignado = mensaje.de; // guardar empleado destino
+  });
+
+  function abrirChatCliente() {
+    const panel = document.getElementById("chat-panel-cliente");
+    panel.classList.toggle("abierto");
+  }
+
+  function enviarMensajeCliente(e) {
+    if (e.key === "Enter") {
+      const input = document.getElementById("chat-input-cliente");
+      const contenido = input.value.trim();
+      if (!contenido) return;
+
+      if (!empleadoAsignado) {
+        alert("Aún no se ha conectado un empleado. Inténtalo más tarde.");
+        return;
+      }
+
+      mostrarMensajeCliente(contenido, "derecha");
+
+      socket.emit("mensaje", {
+        paraId: empleadoAsignado,
+        contenido
+      });
+
+      input.value = "";
+    }
+  }
+
+  function mostrarMensajeCliente(texto, lado) {
+    const contenedor = document.getElementById("chat-mensajes-cliente");
+    const burbuja = document.createElement("div");
+    burbuja.textContent = texto;
+    burbuja.style.margin = "5px 0";
+    burbuja.style.textAlign = lado;
+    contenedor.appendChild(burbuja);
+    contenedor.scrollTop = contenedor.scrollHeight;
+  }
+</script>

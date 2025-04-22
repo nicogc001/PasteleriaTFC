@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Empleado</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="/styles/main.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="header-empleado"></div>
+
+  <main class="container-fluid mt-5">
+    <div class="row">
+      <div id="menu-empleado" class="col-md-3 col-lg-2"></div>
+
+      <div class="col-md-9 col-lg-10">
+        <h1 class="text-center mb-4">Mensajes de Clientes</h1>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="list-group" id="lista-chats"></div>
+          </div>
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header bg-primary text-white" id="chat-header">Selecciona un chat</div>
+              <div class="card-body" id="mensajes-chat" style="height: 300px; overflow-y: auto;"></div>
+              <div class="card-footer d-flex">
+                <input type="text" id="mensaje-input" class="form-control me-2" placeholder="Escribe un mensaje...">
+                <button class="btn btn-primary" onclick="enviarMensajeEmpleado()"><i class="fas fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-empleado"></div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const cargarFragmento = async (id, archivo) => {
+      const res = await fetch(`elementos/${archivo}`);
+      const html = await res.text();
+      document.getElementById(id).innerHTML = html;
+    };
+
+    cargarFragmento('header-empleado', 'headerEmpleado.html');
+    cargarFragmento('menu-empleado', 'menuEmpleado.html');
+    cargarFragmento('footer-empleado', 'footerEmpleado.html');
+  </script>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
+    const socket = io("https://pasteleriatfc-back-igmg.onrender.com", {
+      auth: { token }
+    });
+
+    let chatActual = null;
+    let clienteActual = null;
+
+    socket.on("connect", () => {
+      console.log("🟢 Conectado como empleado");
+    });
+
+    socket.on("mensaje", (mensaje) => {
+      if (mensaje.chatId !== chatActual) return;
+      mostrarMensaje(mensaje, mensaje.de === usuarioId);
+    });
+
+    async function cargarChatsActivos() {
+      const res = await fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/abiertos", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const chats = await res.json();
+      const lista = document.getElementById("lista-chats");
+      lista.innerHTML = "";
+      chats.forEach(chat => {
+        const item = document.createElement("button");
+        item.className = "list-group-item list-group-item-action";
+        item.textContent = `Cliente ${chat.clienteId}`;
+        item.onclick = () => seleccionarChat(chat);
+        lista.appendChild(item);
+      });
+    }
+
+    async function seleccionarChat(chat) {
+      chatActual = chat._id;
+      clienteActual = chat.clienteId;
+      document.getElementById("chat-header").textContent = `Chat con Cliente ${clienteActual}`;
+      document.getElementById("mensajes-chat").innerHTML = "";
+      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chat._id}/mensajes`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const mensajes = await res.json();
+      mensajes.forEach(m => mostrarMensaje(m, m.de === usuarioId));
+    }
+
+    function mostrarMensaje(mensaje, soyYo) {
+      const contenedor = document.getElementById("mensajes-chat");
+      const div = document.createElement("div");
+      div.textContent = mensaje.contenido;
+      div.className = "mb-2 p-2 rounded " + (soyYo ? "bg-primary text-white text-end" : "bg-light text-start");
+      contenedor.appendChild(div);
+      contenedor.scrollTop = contenedor.scrollHeight;
+    }
+
+    function enviarMensajeEmpleado() {
+      const input = document.getElementById("mensaje-input");
+      const contenido = input.value.trim();
+      if (!contenido || !clienteActual) return;
+      socket.emit("mensaje", {
+        paraId: clienteActual,
+        contenido
+      });
+      mostrarMensaje({ contenido }, true);
+      input.value = "";
+    }
+
+    cargarChatsActivos();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+</body>
+
+</html>

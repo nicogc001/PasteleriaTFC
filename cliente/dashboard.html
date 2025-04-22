@@ -171,6 +171,14 @@
         .catch(err => console.error('Error cargando menú lateral:', err));
     });
   </script>
+
+  <!-- Chat flotante empleado -->
+  <script>
+    fetch("elementos/chatEmpleado.html")
+      .then(res => res.text())
+      .then(html => document.body.insertAdjacentHTML("beforeend", html));
+  </script>
+
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem('token');
