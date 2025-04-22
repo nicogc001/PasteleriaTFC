@@ -4,7 +4,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Chat = require('../models/Chat');
 const Mensaje = require('../models/Mensaje');
-const { verificarTokenEmpleado, verificarTokenCliente } = require('../middlewares/rolCheck');
+const { verificarTokenEmpleado, verificarTokenCliente } = require('../middleware/rolCheck');
 
 // ==============================
 // EMPLEADO
