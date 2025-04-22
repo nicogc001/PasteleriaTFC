@@ -181,7 +181,7 @@
         template.innerHTML = html.trim();
         const fragment = template.content;
 
-        // Ejecutar scripts manualmente
+        // Reejecutar los scripts incluidos
         fragment.querySelectorAll("script").forEach(oldScript => {
           const newScript = document.createElement("script");
           if (oldScript.src) {
