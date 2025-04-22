@@ -74,9 +74,9 @@
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
   const token = localStorage.getItem("token");
-  const usuarioId = JSON.parse(atob(token.split('.')[1])).id; // decodificar JWT para obtener ID
+  const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
 
-  let empleadoAsignado = null; // se debe setear cuando lo sepas
+  let empleadoAsignado = null;
 
   const socket = io("https://pasteleriatfc-back-igmg.onrender.com", {
     auth: { token }
@@ -87,17 +87,17 @@
   });
 
   socket.on("mensaje", (mensaje) => {
-    if (mensaje.de === usuarioId) return; // ya lo mostramos al enviarlo
+    if (mensaje.de === usuarioId) return;
     mostrarMensajeCliente(mensaje.contenido, "izquierda");
-    if (!empleadoAsignado) empleadoAsignado = mensaje.de; // guardar empleado destino
+    if (!empleadoAsignado) empleadoAsignado = mensaje.de;
   });
 
-  function abrirChatCliente() {
+  window.abrirChatCliente = function () {
     const panel = document.getElementById("chat-panel-cliente");
     panel.classList.toggle("abierto");
-  }
+  };
 
-  function enviarMensajeCliente(e) {
+  window.enviarMensajeCliente = function (e) {
     if (e.key === "Enter") {
       const input = document.getElementById("chat-input-cliente");
       const contenido = input.value.trim();
@@ -117,7 +117,7 @@
 
       input.value = "";
     }
-  }
+  };
 
   function mostrarMensajeCliente(texto, lado) {
     const contenedor = document.getElementById("chat-mensajes-cliente");
