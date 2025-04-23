@@ -66,7 +66,7 @@ router.get('/:chatId/mensajes', verificarTokenEmpleado, async (req, res, next) =
 }, obtenerMensajes);
 
 // ==============================
-// FUNCION COMPARTIDA
+// FUNCION COMPARTIDA PARA OBTENER MENSAJES
 // ==============================
 
 async function obtenerMensajes(req, res) {

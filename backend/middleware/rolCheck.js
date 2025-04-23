@@ -18,7 +18,4 @@ const verificarTokenCliente = (req, res, next) => {
   });
 };
 
-module.exports = {
-  verificarTokenEmpleado,
-  verificarTokenCliente
-};
+module.exports = { verificarTokenEmpleado, verificarTokenCliente };
