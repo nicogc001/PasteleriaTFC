@@ -1,9 +1,9 @@
+// routes/chatRoutes.js
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { Chat, Mensaje } = require('../models'); // ✅ IMPORTACIÓN CORRECTA
+const { Chat, Mensaje } = require('../models');
 const { verificarTokenEmpleado, verificarTokenCliente } = require('../middleware/rolCheck');
-
 
 // ==============================
 // CLIENTE
@@ -12,10 +12,12 @@ const { verificarTokenEmpleado, verificarTokenCliente } = require('../middleware
 // GET /api/chats/mis-chats
 router.get('/mis-chats', verificarTokenCliente, async (req, res) => {
   try {
+    console.log("🔍 Buscando chat del cliente:", req.user.id);
     let chat = await Chat.findOne({ where: { clienteId: req.user.id } });
 
     // Si no existe, lo creamos automáticamente
     if (!chat) {
+      console.log("🆕 No existe chat, creando nuevo...");
       chat = await Chat.create({
         clienteId: req.user.id,
         estado: 'abierto',
@@ -25,7 +27,7 @@ router.get('/mis-chats', verificarTokenCliente, async (req, res) => {
 
     res.json([chat]);
   } catch (err) {
-    console.error('Error al obtener o crear el chat del cliente:', err);
+    console.error('❌ Error al obtener/crear chat del cliente:', err);
     res.status(500).json({ error: 'Error al procesar el chat del cliente' });
   }
 });
@@ -45,11 +47,11 @@ router.get('/abiertos', verificarTokenEmpleado, async (req, res) => {
   try {
     const chats = await Chat.findAll({
       where: { estado: 'abierto' },
-      include: ['cliente'] // opcional: incluir relación si está definida
+      include: ['cliente'] // opcional si tienes definida la relación
     });
     res.json(chats);
   } catch (err) {
-    console.error('Error al obtener chats abiertos:', err);
+    console.error('❌ Error al obtener chats abiertos:', err);
     res.status(500).json({ error: 'Error al cargar los chats abiertos' });
   }
 });
@@ -89,7 +91,7 @@ async function obtenerMensajes(req, res) {
 
     res.json(mensajes);
   } catch (err) {
-    console.error('Error al obtener mensajes:', err);
+    console.error('❌ Error al obtener mensajes:', err);
     res.status(500).json({ error: 'Error al cargar los mensajes' });
   }
 }
