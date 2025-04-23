@@ -68,14 +68,11 @@
     outline: none;
   }
 </style>
-
 <script>
   const token = localStorage.getItem("token");
   const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
   let chatId = null;
   let mensajesAnteriores = [];
-
-  const input = document.getElementById("chat-input-cliente");
 
   function mostrarMensaje(texto, lado) {
     const contenedor = document.getElementById("chat-mensajes-cliente");
@@ -108,26 +105,6 @@
     }
   }
 
-  window.enviarMensajeCliente = async function (e) {
-    if (e.key !== "Enter") return;
-    const contenido = input.value.trim();
-    if (!contenido || !chatId) return;
-
-    mostrarMensaje(contenido, "derecha");
-
-    await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ contenido, paraId: null })
-    });
-
-    input.value = "";
-    setTimeout(cargarMensajes, 300); // Refrescar rápido después de enviar
-  };
-
   // Obtener chat y empezar polling
   fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
     headers: { Authorization: `Bearer ${token}` }
@@ -136,9 +113,35 @@
     .then(chats => {
       if (chats && chats.length > 0) {
         chatId = chats[0].id;
-        input.disabled = false;
+
+        const input = document.getElementById("chat-input-cliente");
+        if (input) {
+          input.disabled = false;
+
+          // Evento para enviar mensaje
+          window.enviarMensajeCliente = async function (e) {
+            if (e.key !== "Enter") return;
+            const contenido = input.value.trim();
+            if (!contenido || !chatId) return;
+
+            mostrarMensaje(contenido, "derecha");
+
+            await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ contenido, paraId: null })
+            });
+
+            input.value = "";
+            setTimeout(cargarMensajes, 300);
+          };
+        }
+
         cargarMensajes();
-        setInterval(cargarMensajes, 5000); // polling cada 5 seg
+        setInterval(cargarMensajes, 5000);
       }
     });
 
