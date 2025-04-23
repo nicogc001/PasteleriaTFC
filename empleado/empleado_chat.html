@@ -131,34 +131,45 @@
     }
 
     async function cargarMensajes() {
-      if (!chatActual) return;
+  if (!chatActual) return;
 
-      try {
-        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        const mensajes = await res.json();
-
-        if (!Array.isArray(mensajes)) {
-          console.error("❌ La respuesta no es una lista de mensajes:", mensajes);
-          return;
-        }
-
-        if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
-          mensajesAnteriores = mensajes;
-          const contenedor = document.getElementById("mensajes-chat");
-          contenedor.innerHTML = "";
-          mensajes.forEach(msg => {
-            mostrarMensaje(msg.contenido, msg.de === usuarioId);
-          });
-        }
-
-      } catch (err) {
-        console.error("❌ Error al obtener mensajes:", err);
+  try {
+    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      console.error("❌ Error al obtener mensajes:", err);
+      alert(`Error al obtener mensajes: ${err.error || res.status}`);
+      return;
     }
+
+    const mensajes = await res.json();
+
+    if (!Array.isArray(mensajes)) {
+      console.error("❌ La respuesta no es una lista de mensajes:", mensajes);
+      alert("El servidor devolvió una respuesta inesperada al cargar los mensajes.");
+      return;
+    }
+
+    if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
+      mensajesAnteriores = mensajes;
+      const contenedor = document.getElementById("mensajes-chat");
+      contenedor.innerHTML = "";
+      mensajes.forEach(msg => {
+        mostrarMensaje(msg.contenido, msg.de === usuarioId);
+      });
+    }
+
+  } catch (err) {
+    console.error("❌ Error inesperado al cargar mensajes:", err);
+    alert("Ocurrió un error inesperado al cargar los mensajes.");
+  }
+}
+
 
     function mostrarMensaje(texto, soyYo) {
       const contenedor = document.getElementById("mensajes-chat");
