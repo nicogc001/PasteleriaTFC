@@ -13,9 +13,9 @@ const { verificarTokenEmpleado, verificarTokenCliente } = require('../middleware
 router.get('/mis-chats', verificarTokenCliente, async (req, res) => {
   try {
     console.log("🔍 Buscando chat del cliente:", req.user.id);
+
     let chat = await Chat.findOne({ where: { clienteId: req.user.id } });
 
-    // Si no existe, lo creamos automáticamente
     if (!chat) {
       console.log("🆕 No existe chat, creando nuevo...");
       chat = await Chat.create({
@@ -47,7 +47,7 @@ router.get('/abiertos', verificarTokenEmpleado, async (req, res) => {
   try {
     const chats = await Chat.findAll({
       where: { estado: 'abierto' },
-      include: ['cliente'] // opcional si tienes definida la relación
+      include: ['cliente'] // Asegúrate de que 'cliente' esté definida en las asociaciones
     });
     res.json(chats);
   } catch (err) {
@@ -74,7 +74,6 @@ async function obtenerMensajes(req, res) {
     if (!chat) return res.status(404).json({ error: 'Chat no encontrado' });
 
     if (req._rol === 'empleado') {
-      // Empleados pueden ver todos los chats abiertos
       if (chat.estado !== 'abierto') {
         return res.status(403).json({ error: 'Chat cerrado o no accesible' });
       }

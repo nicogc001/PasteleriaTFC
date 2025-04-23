@@ -4,7 +4,13 @@ const { Chat, Mensaje } = require("../models");
 
 function iniciarSockets(server) {
   const io = new Server(server, {
-    cors: { origin: "*" },
+    cors: {
+      origin: [
+        "http://localhost:5500",
+        "https://pasteleriatfc.vercel.app"
+      ],
+      credentials: true
+    }
   });
 
   // Middleware de autenticación
@@ -25,21 +31,23 @@ function iniciarSockets(server) {
     const usuario = socket.usuario;
     const usuarioId = usuario.id;
 
-    console.log(`🟢 Usuario conectado: ${usuarioId}`);
+    console.log(`🟢 Usuario conectado: ${usuarioId} (${usuario.rol})`);
 
     // Cliente: sala individual
-    socket.join(usuarioId);
+    socket.join(usuarioId.toString());
 
     // Empleado: sala común
     if (usuario.rol === "empleado") {
       socket.join("sala-empleados");
+      console.log(`👨‍💻 Empleado ${usuarioId} unido a sala-empleados`);
     }
 
+    // Evento de mensaje
     socket.on("mensaje", async ({ paraId, contenido }) => {
       try {
         if (!contenido) return;
 
-        // Encontrar o crear el chat
+        // Buscar o crear el chat
         let chat = await Chat.findOne({
           where: {
             clienteId: usuario.rol === 'cliente' ? usuarioId : paraId,
@@ -55,7 +63,13 @@ function iniciarSockets(server) {
           });
         }
 
-        // Guardar mensaje
+        // Si es empleado y no está asignado aún
+        if (usuario.rol === 'empleado' && !chat.empleadoId) {
+          chat.empleadoId = usuarioId;
+          await chat.save();
+        }
+
+        // Crear mensaje
         const mensaje = await Mensaje.create({
           chatId: chat.id,
           de: usuarioId,
@@ -64,15 +78,15 @@ function iniciarSockets(server) {
           timestamp: new Date()
         });
 
-        // Enviar al destinatario (cliente o empleado)
-        io.to(paraId).emit("mensaje", mensaje);
+        // Emitir al destinatario
+        io.to(paraId.toString()).emit("mensaje", mensaje);
 
-        // Si es cliente, también enviar a la sala de empleados
+        // Si es cliente, mandar a la sala de empleados
         if (usuario.rol === 'cliente') {
           io.to("sala-empleados").emit("mensaje", mensaje);
         }
 
-        // Echo al remitente
+        // Echo para el remitente
         socket.emit("mensaje", mensaje);
 
       } catch (err) {

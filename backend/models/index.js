@@ -1,5 +1,6 @@
 const db = require('../config/db');
 
+// Importación de modelos
 const Usuario = require('./Usuario');
 const Rol = require('./Rol');
 const Carrito = require('./Carrito');
@@ -17,7 +18,7 @@ const VacasSolicitud = require('./VacasSolicitud');
 const Chat = require('./Chat');
 const Mensaje = require('./Mensaje');
 
-// Reunimos todos los modelos
+// Registro de modelos en un objeto
 const models = {
   Usuario,
   Rol,
@@ -33,18 +34,18 @@ const models = {
   OfertasCliente,
   SolicitudEmpleo,
   VacasSolicitud,
-  Chat,           
+  Chat,
   Mensaje
 };
 
-// Asociaciones por separado (por si hay lógica en associate())
+// Asociaciones si existen
 Object.values(models).forEach(model => {
   if (typeof model.associate === 'function') {
     model.associate(models);
   }
 });
 
-// Relaciones explícitas (puedes mantenerlas si quieres control extra)
+// Relaciones explícitas
 Usuario.hasOne(Carrito, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
 Carrito.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
@@ -92,8 +93,7 @@ Usuario.belongsToMany(Ofertas, {
   as: 'ofertas'
 });
 
-
-// Sync
+// Sincronización
 const syncDB = async () => {
   try {
     await db.sync({ alter: true });
@@ -103,6 +103,7 @@ const syncDB = async () => {
   }
 };
 
+// Exportación unificada
 module.exports = {
   db,
   syncDB,
