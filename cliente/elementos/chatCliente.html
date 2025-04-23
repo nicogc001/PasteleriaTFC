@@ -1,5 +1,5 @@
 <!-- chatCliente.html -->
-<div id="chat-boton" onclick="abrirChatCliente()">💬</div>
+<div id="chat-boton">💬</div>
 
 <div id="chat-panel-cliente" class="chat-oculto">
   <div class="chat-cabecera">¿Necesitas ayuda?</div>
@@ -76,6 +76,22 @@
   const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
 
   let empleadoAsignado = null;
+  let chatId = null;
+
+  // Obtener el ID del chat del cliente
+  fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(res => res.json())
+    .then(chats => {
+      if (Array.isArray(chats) && chats.length > 0) {
+        chatId = chats[0].id;
+      } else {
+        console.warn("No hay chats activos para este cliente.");
+      }
+    });
 
   const socket = io("https://pasteleriatfc-back-igmg.onrender.com", {
     auth: { token }
@@ -108,8 +124,8 @@
       const contenido = input.value.trim();
       if (!contenido) return;
 
-      if (!empleadoAsignado) {
-        alert("Aún no se ha conectado un empleado. Inténtalo más tarde.");
+      if (!empleadoAsignado || !chatId) {
+        alert("El chat aún no está disponible. Inténtalo más tarde.");
         return;
       }
 
@@ -118,6 +134,19 @@
       socket.emit("mensaje", {
         paraId: empleadoAsignado,
         contenido
+      });
+
+      // Guardar el mensaje en la base de datos
+      fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          contenido,
+          paraId: empleadoAsignado
+        })
       });
 
       input.value = "";
