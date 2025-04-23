@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const Chat = require('../models/Chat');
-const Mensaje = require('../models/Mensaje');
+const { Chat, Mensaje } = require('../models'); // ✅ IMPORTACIÓN CORRECTA
 const { verificarTokenEmpleado, verificarTokenCliente } = require('../middleware/rolCheck');
+
 
 // ==============================
 // CLIENTE
