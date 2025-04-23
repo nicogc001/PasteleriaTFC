@@ -84,26 +84,43 @@
     contenedor.scrollTop = contenedor.scrollHeight;
   }
 
+
   async function cargarMensajes() {
     if (!chatId) return;
 
-    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    const mensajes = await res.json();
-
-    if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
-      mensajesAnteriores = mensajes;
-      const contenedor = document.getElementById("chat-mensajes-cliente");
-      contenedor.innerHTML = "";
-      mensajes.forEach(msg => {
-        mostrarMensaje(msg.contenido, msg.de === usuarioId ? "derecha" : "izquierda");
+    try {
+      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatId}/mensajes`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
+
+      if (!res.ok) {
+        const error = await res.json();
+        console.error("❌ Error al obtener mensajes:", error);
+        return;
+      }
+
+      const mensajes = await res.json();
+
+      if (!Array.isArray(mensajes)) {
+        console.error("❌ La respuesta no es una lista de mensajes:", mensajes);
+        return;
+      }
+
+      if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
+        mensajesAnteriores = mensajes;
+        const contenedor = document.getElementById("chat-mensajes-cliente");
+        contenedor.innerHTML = "";
+        mensajes.forEach(msg => {
+          mostrarMensaje(msg.contenido, msg.de === usuarioId ? "derecha" : "izquierda");
+        });
+      }
+    } catch (err) {
+      console.error("❌ Error inesperado al cargar mensajes:", err);
     }
   }
+
 
   // Obtener chat y empezar polling
   fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
