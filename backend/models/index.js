@@ -15,8 +15,8 @@ const HistorialStock = require('./HistorialStock');
 const OfertasCliente = require('./OfertasCliente');
 const SolicitudEmpleo = require('./SolicitudEmpleo');
 const VacasSolicitud = require('./VacasSolicitud');
-const Chat = require('./Chat');
-const Mensaje = require('./Mensaje');
+const Chat = require('./Chat')(db, DataTypes);
+const Mensaje = require('./Mensaje')(db, DataTypes);
 
 // Registro de modelos en un objeto
 const models = {
