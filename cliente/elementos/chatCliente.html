@@ -91,10 +91,16 @@
     if (!empleadoAsignado) empleadoAsignado = mensaje.de;
   });
 
-  window.abrirChatCliente = function () {
-    const panel = document.getElementById("chat-panel-cliente");
-    panel.classList.toggle("abierto");
-  };
+  // Enlazar botón dinámicamente
+  setTimeout(() => {
+    const boton = document.getElementById("chat-boton");
+    if (boton) {
+      boton.addEventListener("click", () => {
+        const panel = document.getElementById("chat-panel-cliente");
+        panel.classList.toggle("abierto");
+      });
+    }
+  }, 0);
 
   window.enviarMensajeCliente = function (e) {
     if (e.key === "Enter") {

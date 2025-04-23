@@ -87,4 +87,33 @@ async function obtenerMensajes(req, res) {
   }
 }
 
+// POST /api/chats/:chatId/mensajes - guardar mensaje nuevo
+router.post('/:chatId/mensajes', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: 'Token requerido' });
+  
+    const token = authHeader.split(' ')[1];
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const { chatId } = req.params;
+      const { contenido, paraId } = req.body;
+  
+      if (!contenido) return res.status(400).json({ error: 'Mensaje vacío' });
+  
+      const nuevo = await Mensaje.create({
+        chatId,
+        de: decoded.id,
+        para: paraId,
+        contenido,
+        timestamp: new Date()
+      });
+  
+      res.status(201).json(nuevo);
+    } catch (err) {
+      console.error('❌ Error al guardar mensaje:', err);
+      res.status(500).json({ error: 'No se pudo guardar el mensaje' });
+    }
+  });
+  
+
 module.exports = router;
