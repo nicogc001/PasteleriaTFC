@@ -1,9 +1,12 @@
-// routes/chatRoutes.js
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { Chat, Mensaje } = require('../models');
 const { verificarTokenEmpleado, verificarTokenCliente } = require('../middleware/rolCheck');
+
+// Verificación para depuración
+console.log("📦 Chat model disponible:", typeof Chat?.findOne === "function");
+
 
 // ==============================
 // CLIENTE
