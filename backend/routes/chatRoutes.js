@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const models = require('../models');
-const Chat = models.Chat;
-const Mensaje = models.Mensaje;
+const { Chat, Mensaje } = require('../models');
 const { verificarTokenEmpleado, verificarTokenCliente } = require('../middleware/rolCheck');
 
 console.log("📦 Chat model disponible:", typeof Chat?.findOne === "function");
@@ -41,16 +39,14 @@ router.get('/cliente/:chatId/mensajes', verificarTokenCliente, async (req, res) 
     const chat = await Chat.findByPk(chatId);
 
     if (!chat) return res.status(404).json({ error: 'Chat no encontrado' });
-
-    if (chat.clienteId !== req.user.id) {
-      return res.status(403).json({ error: 'No autorizado para este chat' });
-    }
+    if (chat.clienteId !== req.user.id) return res.status(403).json({ error: 'No autorizado para este chat' });
 
     const mensajes = await Mensaje.findAll({
       where: { chatId },
       order: [['timestamp', 'ASC']]
     });
 
+    console.log(`📨 Cliente ${req.user.id} cargó ${mensajes.length} mensajes`);
     res.json(mensajes);
   } catch (err) {
     console.error('❌ Error al obtener mensajes (cliente):', err);
@@ -70,6 +66,8 @@ router.get('/abiertos', verificarTokenEmpleado, async (req, res) => {
       where: { estado: 'abierto' },
       include: [{ association: 'cliente' }]
     });
+
+    console.log(`📡 Empleado ${req.user.id} cargó ${chats.length} chats abiertos`);
     res.json(chats);
   } catch (err) {
     console.error('❌ Error al obtener chats abiertos:', err);
@@ -82,7 +80,6 @@ router.get('/:chatId/mensajes', verificarTokenEmpleado, async (req, res) => {
   try {
     const { chatId } = req.params;
     const chat = await Chat.findByPk(chatId);
-
     if (!chat) return res.status(404).json({ error: 'Chat no encontrado' });
 
     const mensajes = await Mensaje.findAll({
@@ -90,6 +87,7 @@ router.get('/:chatId/mensajes', verificarTokenEmpleado, async (req, res) => {
       order: [['timestamp', 'ASC']]
     });
 
+    console.log(`📨 Empleado ${req.user.id} cargó ${mensajes.length} mensajes de chat ${chatId}`);
     res.json(mensajes);
   } catch (err) {
     console.error('❌ Error al obtener mensajes (empleado):', err);
@@ -122,6 +120,7 @@ router.post('/:chatId/mensajes', async (req, res) => {
       timestamp: new Date()
     });
 
+    console.log(`✉️ Nuevo mensaje en chat ${chatId} de ${decoded.id} a ${paraId || "desconocido"}`);
     res.status(201).json(nuevo);
   } catch (err) {
     console.error('❌ Error al guardar mensaje:', err);
