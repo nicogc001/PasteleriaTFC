@@ -43,7 +43,23 @@
   </main>
 
   <div id="footer-empleado"></div>
-
+  <script>
+    // Cargar componentes del layout empleado
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/elementos/headerEmpleado.html')
+        .then(res => res.text())
+        .then(html => document.getElementById('header-empleado').innerHTML = html);
+  
+      fetch('/elementos/menuEmpleado.html')
+        .then(res => res.text())
+        .then(html => document.getElementById('menu-empleado').innerHTML = html);
+  
+      fetch('/elementos/footerEmpleado.html')
+        .then(res => res.text())
+        .then(html => document.getElementById('footer-empleado').innerHTML = html);
+    });
+  </script>
+  
   <script>
     const token = localStorage.getItem("token");
     const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
