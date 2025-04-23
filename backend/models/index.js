@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { DataTypes } = require('sequelize');
 
 // Importación de modelos
 const Usuario = require('./Usuario');
