@@ -1,10 +1,9 @@
-<!-- chatCliente.html -->
 <div id="chat-boton">💬</div>
 
 <div id="chat-panel-cliente" class="chat-oculto">
   <div class="chat-cabecera">¿Necesitas ayuda?</div>
   <div id="chat-mensajes-cliente" class="chat-mensajes"></div>
-  <input type="text" id="chat-input-cliente" placeholder="Escribe tu mensaje..." onkeydown="enviarMensajeCliente(event)">
+  <input type="text" id="chat-input-cliente" placeholder="Escribe tu mensaje..." onkeydown="enviarMensajeCliente(event)" disabled>
 </div>
 
 <style>
@@ -78,21 +77,6 @@
   let empleadoAsignado = null;
   let chatId = null;
 
-  // Obtener el ID del chat del cliente
-  fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-    .then(res => res.json())
-    .then(chats => {
-      if (Array.isArray(chats) && chats.length > 0) {
-        chatId = chats[0].id;
-      } else {
-        console.warn("No hay chats activos para este cliente.");
-      }
-    });
-
   const socket = io("https://pasteleriatfc-back-igmg.onrender.com", {
     auth: { token }
   });
@@ -107,7 +91,26 @@
     if (!empleadoAsignado) empleadoAsignado = mensaje.de;
   });
 
-  // Enlazar botón dinámicamente
+  // Obtener el ID del chat del cliente y habilitar el input
+  fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(res => res.json())
+    .then(chats => {
+      if (Array.isArray(chats) && chats.length > 0) {
+        chatId = chats[0].id;
+        document.getElementById("chat-input-cliente").disabled = false;
+      } else {
+        console.warn("No hay chats activos para este cliente.");
+      }
+    })
+    .catch(err => {
+      console.error("Error obteniendo el chat del cliente:", err);
+    });
+
+  // Mostrar/Ocultar el panel de chat
   setTimeout(() => {
     const boton = document.getElementById("chat-boton");
     if (boton) {
@@ -118,39 +121,40 @@
     }
   }, 0);
 
+  // Enviar mensaje
   window.enviarMensajeCliente = function (e) {
-    if (e.key === "Enter") {
-      const input = document.getElementById("chat-input-cliente");
-      const contenido = input.value.trim();
-      if (!contenido) return;
+    if (e.key !== "Enter") return;
 
-      if (!empleadoAsignado || !chatId) {
-        alert("El chat aún no está disponible. Inténtalo más tarde.");
-        return;
-      }
+    const input = document.getElementById("chat-input-cliente");
+    const contenido = input.value.trim();
+    if (!contenido) return;
 
-      mostrarMensajeCliente(contenido, "derecha");
-
-      socket.emit("mensaje", {
-        paraId: empleadoAsignado,
-        contenido
-      });
-
-      // Guardar el mensaje en la base de datos
-      fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          contenido,
-          paraId: empleadoAsignado
-        })
-      });
-
-      input.value = "";
+    if (!chatId) {
+      alert("El chat aún no está disponible. Inténtalo más tarde.");
+      return;
     }
+
+    mostrarMensajeCliente(contenido, "derecha");
+
+    socket.emit("mensaje", {
+      paraId: empleadoAsignado || "sala-empleados",
+      contenido
+    });
+
+    // Guardar el mensaje en la base de datos
+    fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contenido,
+        paraId: empleadoAsignado || null
+      })
+    });
+
+    input.value = "";
   };
 
   function mostrarMensajeCliente(texto, lado) {
