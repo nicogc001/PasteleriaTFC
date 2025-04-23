@@ -90,11 +90,11 @@
     }
 
     async function seleccionarChat(chat) {
-      chatActual = chat._id;
+      chatActual = chat.id || chat._id;
       clienteActual = chat.clienteId;
       document.getElementById("chat-header").textContent = `Chat con Cliente ${clienteActual}`;
       document.getElementById("mensajes-chat").innerHTML = "";
-      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chat._id}/mensajes`, {
+      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const mensajes = await res.json();
@@ -113,11 +113,22 @@
     function enviarMensajeEmpleado() {
       const input = document.getElementById("mensaje-input");
       const contenido = input.value.trim();
-      if (!contenido || !clienteActual) return;
+      if (!contenido || !clienteActual || !chatActual) return;
+
       socket.emit("mensaje", {
         paraId: clienteActual,
         contenido
       });
+
+      fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ contenido, paraId: clienteActual })
+      });
+
       mostrarMensaje({ contenido }, true);
       input.value = "";
     }
