@@ -44,20 +44,15 @@
 
   <div id="footer-empleado"></div>
   <script>
-    // Cargar componentes del layout empleado
-    document.addEventListener('DOMContentLoaded', () => {
-      fetch('/elementos/headerEmpleado.html')
-        .then(res => res.text())
-        .then(html => document.getElementById('header-empleado').innerHTML = html);
-  
-      fetch('/elementos/menuEmpleado.html')
-        .then(res => res.text())
-        .then(html => document.getElementById('menu-empleado').innerHTML = html);
-  
-      fetch('/elementos/footerEmpleado.html')
-        .then(res => res.text())
-        .then(html => document.getElementById('footer-empleado').innerHTML = html);
-    });
+    const cargarFragmento = async (id, archivo) => {
+      const res = await fetch(`elementos/${archivo}`);
+      const html = await res.text();
+      document.getElementById(id).innerHTML = html;
+    };
+
+    cargarFragmento('header-empleado', 'headerEmpleado.html');
+    cargarFragmento('menu-empleado', 'menuEmpleado.html');
+    cargarFragmento('footer-empleado', 'footerEmpleado.html');
   </script>
   
   <script>
