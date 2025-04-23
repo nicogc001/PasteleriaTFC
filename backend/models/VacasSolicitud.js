@@ -15,7 +15,7 @@ const VacasSolicitud = db.define('VacasSolicitud', {
     allowNull: false
   },
   estado: {
-    type: DataTypes.ENUM('pendiente', 'aprobado', 'rechazado'),
+    type: DataTypes.STRING, // ← ✅ CAMBIO TEMPORAL para evitar errores
     defaultValue: 'pendiente'
   },
   motivo: {
