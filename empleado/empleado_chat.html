@@ -54,6 +54,21 @@
     cargarFragmento('menu-empleado', 'menuEmpleado.html');
     cargarFragmento('footer-empleado', 'footerEmpleado.html');
   </script>
+
+<script>
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Debes iniciar sesión primero");
+    window.location.href = "/login.html";
+  } else {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (payload.rol !== "empleado") {
+      alert("Solo los empleados pueden acceder a esta sección");
+      window.location.href = "/login.html";
+    }
+  }
+</script>
+
   
   <script>
     const token = localStorage.getItem("token");
