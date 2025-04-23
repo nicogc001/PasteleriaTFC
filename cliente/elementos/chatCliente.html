@@ -69,95 +69,15 @@
   }
 </style>
 
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
   const token = localStorage.getItem("token");
   const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
-
-  let empleadoAsignado = null;
   let chatId = null;
+  let mensajesAnteriores = [];
 
-  const socket = io("https://pasteleriatfc-back-igmg.onrender.com", {
-    auth: { token }
-  });
+  const input = document.getElementById("chat-input-cliente");
 
-  socket.on("connect", () => {
-    console.log("🟢 Conectado al servidor de sockets");
-  });
-
-  socket.on("mensaje", (mensaje) => {
-    if (mensaje.de === usuarioId) return;
-    mostrarMensajeCliente(mensaje.contenido, "izquierda");
-    if (!empleadoAsignado) empleadoAsignado = mensaje.de;
-  });
-
-  // Obtener el ID del chat del cliente y habilitar el input
-  fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-    .then(res => res.json())
-    .then(chats => {
-      if (Array.isArray(chats) && chats.length > 0) {
-        chatId = chats[0].id;
-        document.getElementById("chat-input-cliente").disabled = false;
-      } else {
-        console.warn("No hay chats activos para este cliente.");
-      }
-    })
-    .catch(err => {
-      console.error("Error obteniendo el chat del cliente:", err);
-    });
-
-  // Mostrar/Ocultar el panel de chat
-  setTimeout(() => {
-    const boton = document.getElementById("chat-boton");
-    if (boton) {
-      boton.addEventListener("click", () => {
-        const panel = document.getElementById("chat-panel-cliente");
-        panel.classList.toggle("abierto");
-      });
-    }
-  }, 0);
-
-  // Enviar mensaje
-  window.enviarMensajeCliente = function (e) {
-    if (e.key !== "Enter") return;
-
-    const input = document.getElementById("chat-input-cliente");
-    const contenido = input.value.trim();
-    if (!contenido) return;
-
-    if (!chatId) {
-      alert("El chat aún no está disponible. Inténtalo más tarde.");
-      return;
-    }
-
-    mostrarMensajeCliente(contenido, "derecha");
-
-    socket.emit("mensaje", {
-      paraId: empleadoAsignado || "sala-empleados",
-      contenido
-    });
-
-    // Guardar el mensaje en la base de datos
-    fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        contenido,
-        paraId: empleadoAsignado || null
-      })
-    });
-
-    input.value = "";
-  };
-
-  function mostrarMensajeCliente(texto, lado) {
+  function mostrarMensaje(texto, lado) {
     const contenedor = document.getElementById("chat-mensajes-cliente");
     const burbuja = document.createElement("div");
     burbuja.textContent = texto;
@@ -166,4 +86,68 @@
     contenedor.appendChild(burbuja);
     contenedor.scrollTop = contenedor.scrollHeight;
   }
+
+  async function cargarMensajes() {
+    if (!chatId) return;
+
+    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const mensajes = await res.json();
+
+    if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
+      mensajesAnteriores = mensajes;
+      const contenedor = document.getElementById("chat-mensajes-cliente");
+      contenedor.innerHTML = "";
+      mensajes.forEach(msg => {
+        mostrarMensaje(msg.contenido, msg.de === usuarioId ? "derecha" : "izquierda");
+      });
+    }
+  }
+
+  window.enviarMensajeCliente = async function (e) {
+    if (e.key !== "Enter") return;
+    const contenido = input.value.trim();
+    if (!contenido || !chatId) return;
+
+    mostrarMensaje(contenido, "derecha");
+
+    await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ contenido, paraId: null })
+    });
+
+    input.value = "";
+    setTimeout(cargarMensajes, 300); // Refrescar rápido después de enviar
+  };
+
+  // Obtener chat y empezar polling
+  fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(chats => {
+      if (chats && chats.length > 0) {
+        chatId = chats[0].id;
+        input.disabled = false;
+        cargarMensajes();
+        setInterval(cargarMensajes, 5000); // polling cada 5 seg
+      }
+    });
+
+  // Mostrar/ocultar panel de chat
+  setTimeout(() => {
+    const boton = document.getElementById("chat-boton");
+    boton.addEventListener("click", () => {
+      const panel = document.getElementById("chat-panel-cliente");
+      panel.classList.toggle("abierto");
+    });
+  }, 0);
 </script>

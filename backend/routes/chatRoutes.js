@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { Chat, Mensaje } = require('../models');
+const models = require('../models');
+const Chat = models.Chat;
+const Mensaje = models.Mensaje;
 const { verificarTokenEmpleado, verificarTokenCliente } = require('../middleware/rolCheck');
 
-// Verificación para depuración
 console.log("📦 Chat model disponible:", typeof Chat?.findOne === "function");
-
 
 // ==============================
 // CLIENTE
@@ -50,7 +50,7 @@ router.get('/abiertos', verificarTokenEmpleado, async (req, res) => {
   try {
     const chats = await Chat.findAll({
       where: { estado: 'abierto' },
-      include: ['cliente'] // Asegúrate de que 'cliente' esté definida en las asociaciones
+      include: [{ association: 'cliente' }]
     });
     res.json(chats);
   } catch (err) {

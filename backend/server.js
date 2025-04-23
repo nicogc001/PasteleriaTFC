@@ -4,8 +4,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
-const http = require('http'); // <-- importante para Socket.IO
-const iniciarSockets = require('./sockets/socket'); // <-- tu archivo socket.js
 
 const { syncDB } = require('./models');
 const db = require('./config/db');
@@ -15,7 +13,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// CORS: permitir solo orígenes específicos (no comodines si hay credenciales)
+// CORS: permitir solo orígenes específicos
 const allowedOrigins = [
   'https://pasteleriatfc.vercel.app',
   'http://localhost:5500'
@@ -26,7 +24,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin) || vercelSubdomainRegex.test(origin)) {
       console.log('CORS permitido para:', origin);
-      callback(null, origin); // Devuelve el origin en vez de '*'
+      callback(null, origin);
     } else {
       console.warn('CORS bloqueado para:', origin);
       callback(new Error('No permitido por CORS'));
@@ -38,9 +36,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Preflight requests
+app.options('*', cors(corsOptions));
 
-// Cabecera manual para habilitar credenciales
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
@@ -49,10 +46,11 @@ app.use((req, res, next) => {
 app.use(helmet());
 app.use(morgan('dev'));
 
-// Archivos estáticos: facturas PDF
+// Archivos estáticos
 app.use('/facturas', express.static(path.join(__dirname, 'facturas')));
+app.use('/cv', express.static('/tmp'));
 
-// Rutas de la API
+// Rutas API
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/pedidos', require('./routes/pedidosRoutes'));
 app.use('/api/productos', require('./routes/productosRoutes'));
@@ -65,27 +63,22 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/ofertas', require('./routes/ofertasRoutes'));
 app.use('/api/vacaciones', require('./routes/vacacionesRoutes'));
 app.use('/api/chats', require('./routes/chatRoutes'));
+app.use('/api/empleo', require('./routes/empleoRoutes'));
 
-// Facturación diaria automática
+// Tareas programadas
 require('./jobs/facturacionDiaria');
 
-// Ruta de prueba
+// Ruta raíz
 app.get('/', (req, res) => {
   res.send('Backend funcionando correctamente');
 });
-
-// Subida de CVs: servir archivos temporales desde /tmp
-app.use('/cv', express.static('/tmp'));
-
-// Nueva ruta para solicitudes de empleo
-app.use('/api/empleo', require('./routes/empleoRoutes'));
 
 // Ruta no encontrada
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
-// Middleware global de errores
+// Middleware de errores
 app.use((err, req, res, next) => {
   console.error('Error en el servidor:', err.message);
   res.status(500).json({ error: 'Error interno del servidor' });
@@ -105,11 +98,8 @@ app.use((err, req, res, next) => {
     console.log(Object.keys(models.models || models));
 
     const PORT = process.env.PORT || 4000;
-    const server = http.createServer(app); // Reemplaza app.listen()
-    iniciarSockets(server); // Socket.IO aquí
-
-    server.listen(PORT, () => {
-      console.log(`Servidor con sockets corriendo en http://localhost:${PORT}`);
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('Error conectando a la base de datos:', error);
