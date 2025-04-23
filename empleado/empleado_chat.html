@@ -65,27 +65,39 @@
     let mensajesAnteriores = [];
 
     async function cargarChatsActivos() {
-      try {
-        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/abiertos`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        const chats = await res.json();
-        const lista = document.getElementById("lista-chats");
-        lista.innerHTML = "";
+  try {
+    const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/chats/abiertos', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
-        chats.forEach(chat => {
-          const item = document.createElement("button");
-          item.className = "list-group-item list-group-item-action";
-          item.textContent = `Cliente ${chat.clienteId}`;
-          item.onclick = () => seleccionarChat(chat);
-          lista.appendChild(item);
-        });
-      } catch (err) {
-        console.error("❌ Error al cargar chats abiertos:", err);
-      }
+    if (!res.ok) {
+      const error = await res.json();
+      console.error("❌ Error al cargar chats abiertos:", error);
+      return;
     }
+
+    const chats = await res.json();
+    if (!Array.isArray(chats)) {
+      console.error("❌ La respuesta no es una lista de chats:", chats);
+      return;
+    }
+
+    const lista = document.getElementById("lista-chats");
+    lista.innerHTML = "";
+
+    chats.forEach(chat => {
+      const item = document.createElement("button");
+      item.className = "list-group-item list-group-item-action";
+      item.textContent = `Cliente ${chat.clienteId}`;
+      item.onclick = () => seleccionarChat(chat);
+      lista.appendChild(item);
+    });
+
+  } catch (err) {
+    console.error("❌ Error inesperado al cargar chats:", err);
+  }
+}
+
 
     async function seleccionarChat(chat) {
       chatActual = chat.id;
