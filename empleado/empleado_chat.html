@@ -1,99 +1,112 @@
-<!DOCTYPE html>
-<html lang="es">
+<!-- chatCliente.html -->
+<div id="chat-boton">💬</div>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat Empleado</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-  <link href="/styles/main.css" rel="stylesheet" />
-</head>
+<div id="chat-panel-cliente" class="chat-oculto">
+  <div class="chat-cabecera">¿Necesitas ayuda?</div>
+  <div id="chat-mensajes-cliente" class="chat-mensajes"></div>
+  <input type="text" id="chat-input-cliente" placeholder="Escribe tu mensaje..." onkeydown="enviarMensajeCliente(event)" disabled>
+</div>
 
-<body>
-  <div id="header-empleado"></div>
+<style>
+  #chat-boton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #d43b2b;
+    color: white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #0003;
+    z-index: 999;
+  }
 
-  <main class="container-fluid mt-5">
-    <div class="row">
-      <div id="menu-empleado" class="col-md-3 col-lg-2"></div>
+  #chat-panel-cliente {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 280px;
+    max-height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px #0003;
+    display: none;
+    flex-direction: column;
+    z-index: 999;
+  }
 
-      <div class="col-md-9 col-lg-10">
-        <h1 class="text-center mb-4">Mensajes de Clientes</h1>
+  #chat-panel-cliente.abierto {
+    display: flex;
+  }
 
-        <div class="row">
-          <div class="col-md-4">
-            <div class="list-group" id="lista-chats"></div>
-          </div>
-          <div class="col-md-8">
-            <div class="card">
-              <div class="card-header bg-primary text-white" id="chat-header">Selecciona un chat</div>
-              <div class="card-body" id="mensajes-chat" style="height: 300px; overflow-y: auto;"></div>
-              <div class="card-footer d-flex">
-                <input type="text" id="mensaje-input" class="form-control me-2" placeholder="Escribe un mensaje..."
-                  disabled>
-                <button class="btn btn-primary" onclick="enviarMensajeEmpleado()"><i
-                    class="fas fa-paper-plane"></i></button>
-              </div>
-            </div>
-          </div>
-        </div>
+  .chat-cabecera {
+    background: #d43b2b;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+  }
 
-      </div>
-    </div>
-  </main>
+  .chat-mensajes {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+    background-color: #f9f9f9;
+  }
 
-  <div id="footer-empleado"></div>
+  #chat-input-cliente {
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-top: 1px solid #eee;
+    outline: none;
+  }
+</style>
 
-  <script>
-    const token = localStorage.getItem("token");
-    const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
+<script>
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("❌ No hay token en localStorage");
+    return;
+  }
 
-    let chatActual = null;
-    let clienteActual = null;
-    let intervaloMensajes = null;
+  const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
+  let chatId = null;
+  let mensajesAnteriores = [];
+  const input = document.getElementById("chat-input-cliente");
 
-    async function cargarChatsActivos() {
+  function mostrarMensaje(texto, lado) {
+    const contenedor = document.getElementById("chat-mensajes-cliente");
+    const burbuja = document.createElement("div");
+    burbuja.textContent = texto;
+    burbuja.style.margin = "5px 0";
+    burbuja.style.textAlign = lado;
+    contenedor.appendChild(burbuja);
+    contenedor.scrollTop = contenedor.scrollHeight;
+  }
+
+  async function cargarMensajes() {
+    if (!chatId) return;
+
+    try {
       const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatId}/mensajes`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      const chats = await res.json();
-      const lista = document.getElementById("lista-chats");
-      lista.innerHTML = "";
-      chats.forEach(chat => {
-        const item = document.createElement("button");
-        item.className = "list-group-item list-group-item-action";
-        item.textContent = `Cliente ${chat.clienteId}`;
-        item.onclick = () => seleccionarChat(chat);
-        lista.appendChild(item);
-      });
-    }
-
-    async function seleccionarChat(chat) {
-      chatActual = chat.id || chat._id;
-      clienteActual = chat.clienteId;
-      document.getElementById("chat-header").textContent = `Chat con Cliente ${clienteActual}`;
-      await cargarMensajes();
-
-      // Reiniciar intervalo
-      if (intervaloMensajes) clearInterval(intervaloMensajes);
-      intervaloMensajes = setInterval(cargarMensajes, 5000);
-    }
-
-    async function cargarMensajes() {
-      if (!chatId) return;
-
-      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatId}/mensajes`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      if (!res.ok) {
+        console.error("❌ Error al obtener mensajes:", res.status);
+        return;
+      }
 
       const mensajes = await res.json();
 
-      // Validar que la respuesta sea un array
       if (!Array.isArray(mensajes)) {
         console.error("❌ La respuesta no es una lista de mensajes:", mensajes);
         return;
@@ -107,41 +120,60 @@
           mostrarMensaje(msg.contenido, msg.de === usuarioId ? "derecha" : "izquierda");
         });
       }
+    } catch (err) {
+      console.error("❌ Error al cargar mensajes:", err);
     }
+  }
 
+  window.enviarMensajeCliente = async function (e) {
+    if (e.key !== "Enter") return;
+    const contenido = input.value.trim();
+    if (!contenido || !chatId) return;
 
-    function mostrarMensaje(mensaje, soyYo) {
-      const contenedor = document.getElementById("mensajes-chat");
-      const div = document.createElement("div");
-      div.textContent = mensaje.contenido;
-      div.className = "mb-2 p-2 rounded " + (soyYo ? "bg-primary text-white text-end" : "bg-light text-start");
-      contenedor.appendChild(div);
-      contenedor.scrollTop = contenedor.scrollHeight;
-    }
+    mostrarMensaje(contenido, "derecha");
 
-    function enviarMensajeEmpleado() {
-      const input = document.getElementById("mensaje-input");
-      const contenido = input.value.trim();
-      if (!contenido || !clienteActual || !chatActual) return;
-
-      fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
+    try {
+      await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatId}/mensajes`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ contenido, paraId: clienteActual })
+        body: JSON.stringify({ contenido, paraId: null })
       });
 
-      mostrarMensaje({ contenido }, true);
       input.value = "";
+      setTimeout(cargarMensajes, 300);
+    } catch (err) {
+      console.error("❌ Error al enviar mensaje:", err);
     }
+  };
 
-    cargarChatsActivos();
-  </script>
+  // Inicializar chat al cargar
+  fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(chats => {
+      if (Array.isArray(chats) && chats.length > 0) {
+        chatId = chats[0].id;
+        input.disabled = false;
+        cargarMensajes();
+        setInterval(cargarMensajes, 5000);
+      } else {
+        console.warn("⚠️ No hay chats disponibles o respuesta no válida:", chats);
+      }
+    })
+    .catch(err => {
+      console.error("❌ Error al obtener chat del cliente:", err);
+    });
 
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
-</body>
-
-</html>
+  // Mostrar/ocultar chat
+  setTimeout(() => {
+    const boton = document.getElementById("chat-boton");
+    boton.addEventListener("click", () => {
+      const panel = document.getElementById("chat-panel-cliente");
+      panel.classList.toggle("abierto");
+    });
+  }, 0);
+</script>
