@@ -29,8 +29,10 @@
               <div class="card-header bg-primary text-white" id="chat-header">Selecciona un chat</div>
               <div class="card-body" id="mensajes-chat" style="height: 300px; overflow-y: auto;"></div>
               <div class="card-footer d-flex">
-                <input type="text" id="mensaje-input" class="form-control me-2" placeholder="Escribe un mensaje..." disabled>
-                <button class="btn btn-primary" onclick="enviarMensajeEmpleado()"><i class="fas fa-paper-plane"></i></button>
+                <input type="text" id="mensaje-input" class="form-control me-2" placeholder="Escribe un mensaje..."
+                  disabled>
+                <button class="btn btn-primary" onclick="enviarMensajeEmpleado()"><i
+                    class="fas fa-paper-plane"></i></button>
               </div>
             </div>
           </div>
@@ -45,15 +47,18 @@
   <script>
     const token = localStorage.getItem("token");
     const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
-  
+
     let chatActual = null;
     let clienteActual = null;
     let intervaloMensajes = null;
-  
+
     async function cargarChatsActivos() {
-      const res = await fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/abiertos", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatId}/mensajes`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
+
       const chats = await res.json();
       const lista = document.getElementById("lista-chats");
       lista.innerHTML = "";
@@ -65,29 +70,46 @@
         lista.appendChild(item);
       });
     }
-  
+
     async function seleccionarChat(chat) {
       chatActual = chat.id || chat._id;
       clienteActual = chat.clienteId;
       document.getElementById("chat-header").textContent = `Chat con Cliente ${clienteActual}`;
       await cargarMensajes();
-  
+
       // Reiniciar intervalo
       if (intervaloMensajes) clearInterval(intervaloMensajes);
       intervaloMensajes = setInterval(cargarMensajes, 5000);
     }
-  
+
     async function cargarMensajes() {
-      if (!chatActual) return;
-      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
-        headers: { Authorization: `Bearer ${token}` }
+      if (!chatId) return;
+
+      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatId}/mensajes`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
+
       const mensajes = await res.json();
-      const contenedor = document.getElementById("mensajes-chat");
-      contenedor.innerHTML = '';
-      mensajes.forEach(m => mostrarMensaje(m, m.de === usuarioId));
+
+      // Validar que la respuesta sea un array
+      if (!Array.isArray(mensajes)) {
+        console.error("❌ La respuesta no es una lista de mensajes:", mensajes);
+        return;
+      }
+
+      if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
+        mensajesAnteriores = mensajes;
+        const contenedor = document.getElementById("chat-mensajes-cliente");
+        contenedor.innerHTML = "";
+        mensajes.forEach(msg => {
+          mostrarMensaje(msg.contenido, msg.de === usuarioId ? "derecha" : "izquierda");
+        });
+      }
     }
-  
+
+
     function mostrarMensaje(mensaje, soyYo) {
       const contenedor = document.getElementById("mensajes-chat");
       const div = document.createElement("div");
@@ -96,12 +118,12 @@
       contenedor.appendChild(div);
       contenedor.scrollTop = contenedor.scrollHeight;
     }
-  
+
     function enviarMensajeEmpleado() {
       const input = document.getElementById("mensaje-input");
       const contenido = input.value.trim();
       if (!contenido || !clienteActual || !chatActual) return;
-  
+
       fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
         method: "POST",
         headers: {
@@ -110,14 +132,14 @@
         },
         body: JSON.stringify({ contenido, paraId: clienteActual })
       });
-  
+
       mostrarMensaje({ contenido }, true);
       input.value = "";
     }
-  
+
     cargarChatsActivos();
   </script>
-  
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
