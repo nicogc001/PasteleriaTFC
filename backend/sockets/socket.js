@@ -1,75 +1,82 @@
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
-const Chat = require("../models/Chat");
-const Mensaje = require("../models/Mensaje");
+const { Chat, Mensaje } = require("../models");
 
 function iniciarSockets(server) {
   const io = new Server(server, {
     cors: { origin: "*" },
   });
 
-  // Middleware para autenticar al conectar
+  // Middleware de autenticación
   io.use((socket, next) => {
     const token = socket.handshake.auth.token;
     if (!token) return next(new Error("Token no proporcionado"));
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      socket.usuario = decoded; // Guardamos el usuario autenticado
+      socket.usuario = decoded;
       next();
-    } catch (error) {
-      return next(new Error("Token inválido"));
+    } catch (err) {
+      next(new Error("Token inválido"));
     }
   });
 
-  // Conexión
   io.on("connection", (socket) => {
     const usuario = socket.usuario;
     const usuarioId = usuario.id;
+
     console.log(`🟢 Usuario conectado: ${usuarioId}`);
 
-    // Entrar a una sala personal para recibir mensajes
+    // Cliente: sala individual
     socket.join(usuarioId);
 
-    // Recibir mensaje
+    // Empleado: sala común
+    if (usuario.rol === "empleado") {
+      socket.join("sala-empleados");
+    }
+
     socket.on("mensaje", async ({ paraId, contenido }) => {
       try {
-        // Buscar si ya existe un chat entre estas personas
+        if (!contenido) return;
+
+        // Encontrar o crear el chat
         let chat = await Chat.findOne({
-          clienteId: usuario.rol === 'cliente' ? usuarioId : paraId,
-          empleadoId: usuario.rol === 'empleado' ? usuarioId : paraId,
-          estado: 'abierto',
+          where: {
+            clienteId: usuario.rol === 'cliente' ? usuarioId : paraId,
+            estado: 'abierto'
+          }
         });
 
-        // Si no existe, crearlo
         if (!chat) {
           chat = await Chat.create({
             clienteId: usuario.rol === 'cliente' ? usuarioId : paraId,
-            empleadoId: usuario.rol === 'empleado' ? usuarioId : null,
+            empleadoId: null,
+            estado: 'abierto'
           });
         }
 
-        // Si el empleado responde y el chat no tenía asignado uno, lo asignamos
-        if (usuario.rol === 'empleado' && !chat.empleadoId) {
-          chat.empleadoId = usuarioId;
-          await chat.save();
-        }
-
-        // Guardar mensaje en DB
+        // Guardar mensaje
         const mensaje = await Mensaje.create({
-          chatId: chat._id,
+          chatId: chat.id,
           de: usuarioId,
           para: paraId,
           contenido,
+          timestamp: new Date()
         });
 
-        // Emitir al destinatario (si está conectado)
+        // Enviar al destinatario (cliente o empleado)
         io.to(paraId).emit("mensaje", mensaje);
 
-        // Emitir también al remitente para mostrar el eco
+        // Si es cliente, también enviar a la sala de empleados
+        if (usuario.rol === 'cliente') {
+          io.to("sala-empleados").emit("mensaje", mensaje);
+        }
+
+        // Echo al remitente
         socket.emit("mensaje", mensaje);
+
       } catch (err) {
-        console.error("❌ Error al enviar mensaje:", err);
+        console.error("❌ Error al procesar mensaje:", err);
       }
     });
 
