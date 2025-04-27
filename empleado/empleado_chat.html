@@ -20,6 +20,12 @@
       <div class="col-md-9 col-lg-10">
         <h1 class="text-center mb-4">Mensajes de Clientes</h1>
 
+        <div class="d-flex justify-content-center mb-3">
+          <button class="btn btn-outline-primary mx-1" onclick="filtrarChats('todos')">Todos</button>
+          <button class="btn btn-outline-warning mx-1" onclick="filtrarChats('pendientes')">Pendientes</button>
+          <button class="btn btn-outline-success mx-1" onclick="filtrarChats('respondidos')">Respondidos</button>
+        </div>
+
         <div class="row">
           <div class="col-md-4">
             <div class="list-group" id="lista-chats"></div>
@@ -29,10 +35,8 @@
               <div class="card-header bg-primary text-white" id="chat-header">Selecciona un chat</div>
               <div class="card-body" id="mensajes-chat" style="height: 300px; overflow-y: auto;"></div>
               <div class="card-footer d-flex">
-                <input type="text" id="mensaje-input" class="form-control me-2" placeholder="Escribe un mensaje..."
-                  disabled>
-                <button class="btn btn-primary" onclick="enviarMensajeEmpleado()"><i
-                    class="fas fa-paper-plane"></i></button>
+                <input type="text" id="mensaje-input" class="form-control me-2" placeholder="Escribe un mensaje..." disabled>
+                <button class="btn btn-primary" onclick="enviarMensajeEmpleado()"><i class="fas fa-paper-plane"></i></button>
               </div>
             </div>
           </div>
@@ -43,10 +47,10 @@
   </main>
 
   <div id="footer-empleado"></div>
+
   <script>
     const token = localStorage.getItem("token");
 
-    // Verificar autenticación
     if (!token) {
       alert("Debes iniciar sesión primero");
       window.location.href = "/login.html";
@@ -64,7 +68,7 @@
       }
     }
 
-    // const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
+    const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
 
     const cargarFragmento = async (id, archivo) => {
       const res = await fetch(`elementos/${archivo}`);
@@ -76,8 +80,8 @@
     cargarFragmento('menu-empleado', 'menuEmpleado.html');
     cargarFragmento('footer-empleado', 'footerEmpleado.html');
 
-    const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
-
+    let chatsGlobal = [];
+    let filtroActual = 'todos';
     let chatActual = null;
     let clienteActual = null;
     let intervaloMensajes = null;
@@ -89,34 +93,46 @@
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        if (!res.ok) {
-          const error = await res.json();
-          console.error("❌ Error al cargar chats abiertos:", error);
-          return;
-        }
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error("Formato de datos incorrecto");
 
-        const chats = await res.json();
-        if (!Array.isArray(chats)) {
-          console.error("❌ La respuesta no es una lista de chats:", chats);
-          return;
-        }
-
-        const lista = document.getElementById("lista-chats");
-        lista.innerHTML = "";
-
-        chats.forEach(chat => {
-          const item = document.createElement("button");
-          item.className = "list-group-item list-group-item-action";
-          item.textContent = `Cliente ${chat.clienteId}`;
-          item.onclick = () => seleccionarChat(chat);
-          lista.appendChild(item);
-        });
-
+        chatsGlobal = data;
+        mostrarChats();
       } catch (err) {
-        console.error("❌ Error inesperado al cargar chats:", err);
+        console.error("Error cargando chats:", err);
       }
     }
 
+    function mostrarChats() {
+      const lista = document.getElementById("lista-chats");
+      lista.innerHTML = "";
+
+      let filtrados = chatsGlobal;
+
+      if (filtroActual === 'pendientes') {
+        filtrados = chatsGlobal.filter(chat => chat.estado === 'abierto' && !chat.empleadoId);
+      } else if (filtroActual === 'respondidos') {
+        filtrados = chatsGlobal.filter(chat => chat.estado === 'abierto' && chat.empleadoId);
+      }
+
+      if (filtrados.length === 0) {
+        lista.innerHTML = '<div class="alert alert-info">No hay chats.</div>';
+        return;
+      }
+
+      filtrados.forEach(chat => {
+        const item = document.createElement("button");
+        item.className = "list-group-item list-group-item-action";
+        item.textContent = `Cliente ${chat.clienteId} ${chat.empleadoId ? '(Respondido)' : '(Pendiente)'}`;
+        item.onclick = () => seleccionarChat(chat);
+        lista.appendChild(item);
+      });
+    }
+
+    function filtrarChats(tipo) {
+      filtroActual = tipo;
+      mostrarChats();
+    }
 
     async function seleccionarChat(chat) {
       chatActual = chat.id;
@@ -131,45 +147,28 @@
     }
 
     async function cargarMensajes() {
-  if (!chatActual) return;
+      if (!chatActual) return;
+      try {
+        const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const mensajes = await res.json();
 
-  try {
-    const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
-      headers: {
-        Authorization: `Bearer ${token}`
+        if (!Array.isArray(mensajes)) throw new Error("Formato incorrecto de mensajes");
+
+        if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
+          mensajesAnteriores = mensajes;
+          const contenedor = document.getElementById("mensajes-chat");
+          contenedor.innerHTML = "";
+          mensajes.forEach(msg => {
+            mostrarMensaje(msg.contenido, msg.de === usuarioId);
+          });
+        }
+
+      } catch (err) {
+        console.error("Error cargando mensajes:", err);
       }
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      console.error("❌ Error al obtener mensajes:", err);
-      alert(`Error al obtener mensajes: ${err.error || res.status}`);
-      return;
     }
-
-    const mensajes = await res.json();
-
-    if (!Array.isArray(mensajes)) {
-      console.error("❌ La respuesta no es una lista de mensajes:", mensajes);
-      alert("El servidor devolvió una respuesta inesperada al cargar los mensajes.");
-      return;
-    }
-
-    if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
-      mensajesAnteriores = mensajes;
-      const contenedor = document.getElementById("mensajes-chat");
-      contenedor.innerHTML = "";
-      mensajes.forEach(msg => {
-        mostrarMensaje(msg.contenido, msg.de === usuarioId);
-      });
-    }
-
-  } catch (err) {
-    console.error("❌ Error inesperado al cargar mensajes:", err);
-    alert("Ocurrió un error inesperado al cargar los mensajes.");
-  }
-}
-
 
     function mostrarMensaje(texto, soyYo) {
       const contenedor = document.getElementById("mensajes-chat");
@@ -189,7 +188,7 @@
         await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({ contenido, paraId: clienteActual })
@@ -199,7 +198,7 @@
         input.value = "";
         setTimeout(cargarMensajes, 300);
       } catch (err) {
-        console.error("❌ Error al enviar mensaje:", err);
+        console.error("Error enviando mensaje:", err);
       }
     }
 

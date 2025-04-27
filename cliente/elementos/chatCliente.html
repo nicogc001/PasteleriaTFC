@@ -3,7 +3,8 @@
 <div id="chat-panel-cliente" class="chat-oculto">
   <div class="chat-cabecera">¿Necesitas ayuda?</div>
   <div id="chat-mensajes-cliente" class="chat-mensajes"></div>
-  <input type="text" id="chat-input-cliente" placeholder="Escribe tu mensaje..." onkeydown="enviarMensajeCliente(event)" disabled>
+  <input type="text" id="chat-input-cliente" placeholder="Escribe tu mensaje..." onkeydown="enviarMensajeCliente(event)"
+    disabled>
 </div>
 
 <style>
@@ -86,40 +87,35 @@
 
 
   async function cargarMensajes() {
-    if (!chatId) return;
+    if (!chatActual) return;
 
     try {
-      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatId}/mensajes`, {
+      const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-
-      if (!res.ok) {
-        const error = await res.json();
-        console.error("❌ Error al obtener mensajes:", error);
-        return;
-      }
-
       const mensajes = await res.json();
 
       if (!Array.isArray(mensajes)) {
-        console.error("❌ La respuesta no es una lista de mensajes:", mensajes);
+        console.error("La respuesta no es una lista de mensajes:", mensajes);
         return;
       }
 
       if (JSON.stringify(mensajes) !== JSON.stringify(mensajesAnteriores)) {
         mensajesAnteriores = mensajes;
-        const contenedor = document.getElementById("chat-mensajes-cliente");
+        const contenedor = document.getElementById("mensajes-chat");
         contenedor.innerHTML = "";
         mensajes.forEach(msg => {
-          mostrarMensaje(msg.contenido, msg.de === usuarioId ? "derecha" : "izquierda");
+          mostrarMensaje(msg.contenido, msg.de === usuarioId);
         });
       }
     } catch (err) {
-      console.error("❌ Error inesperado al cargar mensajes:", err);
+      console.error("sError al obtener mensajes:", err);
     }
   }
+
+
 
 
   // Obtener chat y empezar polling
