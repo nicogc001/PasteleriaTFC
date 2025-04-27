@@ -42,14 +42,15 @@
     box-shadow: 0 0 10px #0003;
     flex-direction: column;
     z-index: 999;
+    display: none; /* 👈 INICIAL: oculto */
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
     transition: all 0.3s ease;
-    display: flex;
   }
 
   #chat-panel-cliente.abierto {
+    display: flex; /* 👈 AL ABRIR: flex */
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
@@ -85,34 +86,9 @@
 
 <script>
   const token = localStorage.getItem("token");
+  const usuarioId = token ? JSON.parse(atob(token.split('.')[1])).id : null;
   let chatActual = null;
   let mensajesAnteriores = [];
-
-  if (!token) {
-    window.location.href = '/login.html';
-  }
-
-  function decodeToken(token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload;
-    } catch {
-      return null;
-    }
-  }
-
-  function validarToken() {
-    const data = decodeToken(token);
-    if (!data || Date.now() >= data.exp * 1000) {
-      console.warn("Token expirado. Redirigiendo...");
-      localStorage.removeItem("token");
-      window.location.href = '/login.html';
-    }
-    return data;
-  }
-
-  const payload = validarToken();
-  const usuarioId = payload.id;
 
   function mostrarMensaje(texto, soyYo) {
     const contenedor = document.getElementById("chat-mensajes-cliente");
@@ -138,17 +114,7 @@
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (res.status === 401) {
-        console.warn("Token expirado en petición. Redirigiendo...");
-        localStorage.removeItem("token");
-        window.location.href = '/login.html';
-        return;
-      }
-
-      if (!res.ok) {
-        console.error("❌ Error al cargar mensajes:", await res.text());
-        return;
-      }
+      if (!res.ok) return;
 
       const mensajes = await res.json();
       if (!Array.isArray(mensajes)) return;
@@ -167,50 +133,42 @@
   }
 
   async function iniciarChatCliente() {
+    if (!token) return; // No token, no continuar
+
     try {
       const res = await fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (res.status === 401) {
-        console.warn("Token expirado en iniciarChat. Redirigiendo...");
-        localStorage.removeItem("token");
-        window.location.href = '/login.html';
-        return;
-      }
-
-      if (!res.ok) {
-        console.error("❌ Error al iniciar chat:", await res.text());
-        return;
-      }
+      if (!res.ok) return;
 
       const chats = await res.json();
       if (chats.length > 0) {
         chatActual = chats[0].id;
-        mensajesAnteriores = [];
-
         const input = document.getElementById("chat-input-cliente");
-        input.disabled = false;
+        if (input) {
+          input.disabled = false;
 
-        window.enviarMensajeCliente = async function (e) {
-          if (e.key !== "Enter") return;
-          const contenido = input.value.trim();
-          if (!contenido || !chatActual) return;
+          window.enviarMensajeCliente = async function (e) {
+            if (e.key !== "Enter") return;
+            const contenido = input.value.trim();
+            if (!contenido || !chatActual) return;
 
-          mostrarMensaje(contenido, true);
+            mostrarMensaje(contenido, true);
 
-          await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ contenido, paraId: null })
-          });
+            await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ contenido, paraId: null })
+            });
 
-          input.value = "";
-          setTimeout(cargarMensajes, 300);
-        };
+            input.value = "";
+            setTimeout(cargarMensajes, 300);
+          };
+        }
 
         cargarMensajes();
         setInterval(cargarMensajes, 5000);
