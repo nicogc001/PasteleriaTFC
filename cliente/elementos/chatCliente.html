@@ -22,7 +22,12 @@
     cursor: pointer;
     box-shadow: 0 0 10px #0003;
     z-index: 999;
+    transition: transform 0.3s ease;
   }
+  #chat-boton:hover {
+    transform: scale(1.1);
+  }
+
   #chat-panel-cliente {
     position: fixed;
     bottom: 80px;
@@ -37,9 +42,14 @@
     display: none;
     flex-direction: column;
     z-index: 999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
   #chat-panel-cliente.abierto {
     display: flex;
+    opacity: 1;
+    transform: translateY(0);
   }
   .chat-cabecera {
     background: #d43b2b;
@@ -75,13 +85,20 @@
     const burbuja = document.createElement("div");
     burbuja.textContent = texto;
     burbuja.style.margin = "5px 0";
-    burbuja.style.textAlign = soyYo ? "right" : "left";
+    burbuja.style.padding = "8px";
+    burbuja.style.borderRadius = "10px";
+    burbuja.style.maxWidth = "70%";
+    burbuja.style.wordBreak = "break-word";
+    burbuja.style.background = soyYo ? "#d43b2b" : "#f1f1f1";
+    burbuja.style.color = soyYo ? "white" : "black";
+    burbuja.style.alignSelf = soyYo ? "flex-end" : "flex-start";
     contenedor.appendChild(burbuja);
     contenedor.scrollTop = contenedor.scrollHeight;
   }
 
   async function cargarMensajes() {
     if (!chatActual) return;
+
     try {
       const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatActual}/mensajes`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -94,9 +111,8 @@
       }
 
       const mensajes = await res.json();
-
       if (!Array.isArray(mensajes)) {
-        console.error("❌ Respuesta no es una lista de mensajes:", mensajes);
+        console.error("❌ Respuesta inesperada:", mensajes);
         return;
       }
 
@@ -121,14 +137,13 @@
 
       if (!res.ok) {
         const error = await res.json();
-        console.error("❌ Error al obtener/crear chat:", error);
+        console.error("❌ Error al iniciar chat:", error);
         return;
       }
 
       const chats = await res.json();
       if (chats.length > 0) {
         chatActual = chats[0].id;
-
         const input = document.getElementById("chat-input-cliente");
         if (input) {
           input.disabled = false;
@@ -158,14 +173,17 @@
         setInterval(cargarMensajes, 5000);
       }
     } catch (err) {
-      console.error("❌ Error inesperado al iniciar el chat:", err);
+      console.error("❌ Error inesperado al iniciar chat:", err);
     }
   }
 
-  // Mostrar/ocultar el panel flotante
-  document.getElementById("chat-boton").addEventListener("click", () => {
-    document.getElementById("chat-panel-cliente").classList.toggle("abierto");
-  });
+  document.addEventListener('DOMContentLoaded', () => {
+    const boton = document.getElementById("chat-boton");
+    boton.addEventListener("click", () => {
+      const panel = document.getElementById("chat-panel-cliente");
+      panel.classList.toggle("abierto");
+    });
 
-  iniciarChatCliente();
+    iniciarChatCliente();
+  });
 </script>
