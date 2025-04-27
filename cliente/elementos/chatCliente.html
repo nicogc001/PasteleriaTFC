@@ -29,6 +29,7 @@
     transform: scale(1.1);
   }
 
+  /* Estilo oculto inicial */
   #chat-panel-cliente {
     position: fixed;
     bottom: 80px;
@@ -41,17 +42,15 @@
     box-shadow: 0 0 10px #0003;
     flex-direction: column;
     z-index: 999;
+    display: none;
     opacity: 0;
-    visibility: hidden;
     transform: translateY(20px);
     transition: all 0.3s ease;
-    display: none;
   }
 
   #chat-panel-cliente.abierto {
     display: flex;
     opacity: 1;
-    visibility: visible;
     transform: translateY(0);
   }
 
@@ -80,6 +79,19 @@
     width: 100%;
     border-top: 1px solid #eee;
     outline: none;
+  }
+
+  /* Efecto vibrar */
+  @keyframes vibrar {
+    0% { transform: translate(0px, 0px); }
+    25% { transform: translate(2px, -2px); }
+    50% { transform: translate(-2px, 2px); }
+    75% { transform: translate(2px, 2px); }
+    100% { transform: translate(0px, 0px); }
+  }
+
+  #chat-boton.vibrar {
+    animation: vibrar 0.4s linear 2;
   }
 </style>
 
@@ -125,6 +137,13 @@
         mensajes.forEach(msg => {
           mostrarMensaje(msg.contenido, msg.de === usuarioId);
         });
+
+        // Vibrar botón si el panel está cerrado
+        if (!document.getElementById("chat-panel-cliente").classList.contains('abierto')) {
+          const boton = document.getElementById("chat-boton");
+          boton.classList.add('vibrar');
+          setTimeout(() => boton.classList.remove('vibrar'), 1000);
+        }
       }
     } catch (err) {
       console.error("❌ Error inesperado al cargar mensajes:", err);
