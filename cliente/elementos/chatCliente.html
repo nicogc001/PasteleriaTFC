@@ -1,11 +1,14 @@
+<!-- Botón flotante -->
 <div id="chat-boton">💬</div>
 
-<div id="chat-panel-cliente" class="cerrado">
+<!-- Panel de chat -->
+<div id="chat-panel-cliente">
   <div class="chat-cabecera">¿Necesitas ayuda?</div>
   <div id="chat-mensajes-cliente" class="chat-mensajes"></div>
   <input type="text" id="chat-input-cliente" placeholder="Escribe tu mensaje..." onkeydown="enviarMensajeCliente(event)" disabled>
 </div>
 
+<!-- Estilos -->
 <style>
   #chat-boton {
     position: fixed;
@@ -24,11 +27,9 @@
     z-index: 999;
     transition: transform 0.3s ease;
   }
-
   #chat-boton:hover {
     transform: scale(1.1);
   }
-
   #chat-panel-cliente {
     position: fixed;
     bottom: 80px;
@@ -41,20 +42,17 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 10px #0003;
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
     transition: all 0.3s ease;
     z-index: 999;
   }
-
   #chat-panel-cliente.abierto {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
   }
-
   .chat-cabecera {
     background: #d43b2b;
     color: white;
@@ -62,7 +60,6 @@
     font-weight: bold;
     text-align: center;
   }
-
   .chat-mensajes {
     flex: 1;
     padding: 10px;
@@ -72,36 +69,39 @@
     flex-direction: column;
     gap: 5px;
   }
-
   #chat-input-cliente {
     border: none;
     padding: 10px;
-    width: 100%;
     border-top: 1px solid #eee;
+    width: 100%;
     outline: none;
   }
 </style>
 
+<!-- Lógica del chat -->
 <script>
-  const token = localStorage.getItem("token");
-
-  // Validar token
-  if (!token) {
-    window.location.href = "/login.html";
-  } else {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const now = Math.floor(Date.now() / 1000);
-
-    if (payload.exp < now) {
-      console.warn("⚠️ Token expirado, redirigiendo a login");
-      localStorage.removeItem("token");
-      window.location.href = "/login.html";
-    }
-  }
-
-  const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
+  let token = localStorage.getItem("token");
   let chatActual = null;
   let mensajesAnteriores = [];
+  let usuarioId = null;
+
+  function verificarToken() {
+    if (!token) {
+      console.warn("⚠️ No hay token, redirigiendo...");
+      window.location.href = "/login.html";
+      return false;
+    }
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp < now) {
+      console.warn("⚠️ Token expirado, redirigiendo...");
+      localStorage.removeItem("token");
+      window.location.href = "/login.html";
+      return false;
+    }
+    usuarioId = payload.id;
+    return true;
+  }
 
   function mostrarMensaje(texto, soyYo) {
     const contenedor = document.getElementById("chat-mensajes-cliente");
@@ -121,14 +121,11 @@
 
   async function cargarMensajes() {
     if (!chatActual) return;
-
     try {
       const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatActual}/mensajes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
       if (!res.ok) return;
-
       const mensajes = await res.json();
       if (!Array.isArray(mensajes)) return;
 
@@ -141,7 +138,7 @@
         });
       }
     } catch (err) {
-      console.error("❌ Error inesperado al cargar mensajes:", err);
+      console.error("❌ Error al cargar mensajes:", err);
     }
   }
 
@@ -150,16 +147,13 @@
       const res = await fetch("https://pasteleriatfc-back-igmg.onrender.com/api/chats/mis-chats", {
         headers: { Authorization: `Bearer ${token}` }
       });
-
       if (!res.ok) return;
-
       const chats = await res.json();
       if (chats.length > 0) {
         chatActual = chats[0].id;
         const input = document.getElementById("chat-input-cliente");
         if (input) {
           input.disabled = false;
-
           window.enviarMensajeCliente = async function (e) {
             if (e.key !== "Enter") return;
             const contenido = input.value.trim();
@@ -180,9 +174,10 @@
             setTimeout(cargarMensajes, 300);
           };
         }
-
         cargarMensajes();
-        setInterval(cargarMensajes, 5000);
+        setInterval(() => {
+          if (verificarToken()) cargarMensajes();
+        }, 5000);
       }
     } catch (err) {
       console.error("❌ Error inesperado al iniciar chat:", err);
@@ -190,12 +185,13 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    const boton = document.getElementById("chat-boton");
-    boton.addEventListener("click", () => {
+    if (verificarToken()) {
+      const boton = document.getElementById("chat-boton");
       const panel = document.getElementById("chat-panel-cliente");
-      panel.classList.toggle("abierto");
-    });
-
-    iniciarChatCliente();
+      boton.addEventListener("click", () => {
+        panel.classList.toggle("abierto");
+      });
+      iniciarChatCliente();
+    }
   });
 </script>
