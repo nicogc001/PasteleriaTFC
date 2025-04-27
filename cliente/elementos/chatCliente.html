@@ -1,14 +1,11 @@
-<!-- BOTÓN flotante -->
 <div id="chat-boton">💬</div>
 
-<!-- PANEL de chat flotante -->
 <div id="chat-panel-cliente">
   <div class="chat-cabecera">¿Necesitas ayuda?</div>
   <div id="chat-mensajes-cliente" class="chat-mensajes"></div>
   <input type="text" id="chat-input-cliente" placeholder="Escribe tu mensaje..." onkeydown="enviarMensajeCliente(event)" disabled>
 </div>
 
-<!-- ESTILOS -->
 <style>
   #chat-boton {
     position: fixed;
@@ -27,6 +24,7 @@
     z-index: 999;
     transition: transform 0.3s ease;
   }
+
   #chat-boton:hover {
     transform: scale(1.1);
   }
@@ -43,12 +41,12 @@
     overflow: hidden;
     box-shadow: 0 0 10px #0003;
     flex-direction: column;
-    display: flex;
     z-index: 999;
     opacity: 0;
     visibility: hidden;
     transform: translateY(20px);
     transition: all 0.3s ease;
+    display: flex;
   }
 
   #chat-panel-cliente.abierto {
@@ -85,10 +83,16 @@
   }
 </style>
 
-<!-- SCRIPT -->
 <script>
   const token = localStorage.getItem("token");
-  const usuarioId = JSON.parse(atob(token.split('.')[1])).id;
+
+  if (!token) {
+    alert('Debes iniciar sesión.');
+    window.location.href = '/login.html';
+  }
+
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  const usuarioId = payload.id;
   let chatActual = null;
   let mensajesAnteriores = [];
 
@@ -116,7 +120,10 @@
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (!res.ok) return;
+      if (!res.ok) {
+        console.error("❌ Error al cargar mensajes:", await res.text());
+        return;
+      }
 
       const mensajes = await res.json();
       if (!Array.isArray(mensajes)) return;
@@ -140,41 +147,44 @@
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (!res.ok) return;
+      if (!res.ok) {
+        console.error("❌ Error al iniciar chat:", await res.text());
+        return;
+      }
 
       const chats = await res.json();
       if (chats.length > 0) {
         chatActual = chats[0].id;
+        mensajesAnteriores = []; // Limpiar para no mezclar chats
+
         const input = document.getElementById("chat-input-cliente");
-        if (input) {
-          input.disabled = false;
+        input.disabled = false;
 
-          window.enviarMensajeCliente = async function (e) {
-            if (e.key !== "Enter") return;
-            const contenido = input.value.trim();
-            if (!contenido || !chatActual) return;
+        window.enviarMensajeCliente = async function (e) {
+          if (e.key !== "Enter") return;
+          const contenido = input.value.trim();
+          if (!contenido || !chatActual) return;
 
-            mostrarMensaje(contenido, true);
+          mostrarMensaje(contenido, true);
 
-            await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ contenido, paraId: null })
-            });
+          await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/${chatActual}/mensajes`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ contenido, paraId: null })
+          });
 
-            input.value = "";
-            setTimeout(cargarMensajes, 300);
-          };
-        }
+          input.value = "";
+          setTimeout(cargarMensajes, 300);
+        };
 
         cargarMensajes();
         setInterval(cargarMensajes, 5000);
       }
     } catch (err) {
-      console.error("❌ Error inesperado al iniciar chat:", err);
+      console.error("❌ Error al iniciar chat:", err);
     }
   }
 
