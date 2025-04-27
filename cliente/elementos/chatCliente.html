@@ -85,16 +85,34 @@
 
 <script>
   const token = localStorage.getItem("token");
+  let chatActual = null;
+  let mensajesAnteriores = [];
 
   if (!token) {
-    alert('Debes iniciar sesión.');
     window.location.href = '/login.html';
   }
 
-  const payload = JSON.parse(atob(token.split('.')[1]));
+  function decodeToken(token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload;
+    } catch {
+      return null;
+    }
+  }
+
+  function validarToken() {
+    const data = decodeToken(token);
+    if (!data || Date.now() >= data.exp * 1000) {
+      console.warn("Token expirado. Redirigiendo...");
+      localStorage.removeItem("token");
+      window.location.href = '/login.html';
+    }
+    return data;
+  }
+
+  const payload = validarToken();
   const usuarioId = payload.id;
-  let chatActual = null;
-  let mensajesAnteriores = [];
 
   function mostrarMensaje(texto, soyYo) {
     const contenedor = document.getElementById("chat-mensajes-cliente");
@@ -119,6 +137,13 @@
       const res = await fetch(`https://pasteleriatfc-back-igmg.onrender.com/api/chats/cliente/${chatActual}/mensajes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      if (res.status === 401) {
+        console.warn("Token expirado en petición. Redirigiendo...");
+        localStorage.removeItem("token");
+        window.location.href = '/login.html';
+        return;
+      }
 
       if (!res.ok) {
         console.error("❌ Error al cargar mensajes:", await res.text());
@@ -147,6 +172,13 @@
         headers: { Authorization: `Bearer ${token}` }
       });
 
+      if (res.status === 401) {
+        console.warn("Token expirado en iniciarChat. Redirigiendo...");
+        localStorage.removeItem("token");
+        window.location.href = '/login.html';
+        return;
+      }
+
       if (!res.ok) {
         console.error("❌ Error al iniciar chat:", await res.text());
         return;
@@ -155,7 +187,7 @@
       const chats = await res.json();
       if (chats.length > 0) {
         chatActual = chats[0].id;
-        mensajesAnteriores = []; // Limpiar para no mezclar chats
+        mensajesAnteriores = [];
 
         const input = document.getElementById("chat-input-cliente");
         input.disabled = false;
@@ -184,7 +216,7 @@
         setInterval(cargarMensajes, 5000);
       }
     } catch (err) {
-      console.error("❌ Error al iniciar chat:", err);
+      console.error("❌ Error inesperado al iniciar chat:", err);
     }
   }
 
