@@ -11,60 +11,62 @@
     <style>
         /* Colores pastel en tabla del carrito */
         #cart thead th {
-          background-color: #fff0db; /* crema pastel */
-          color: #5e3c1f;
+            background-color: #fff0db;
+            /* crema pastel */
+            color: #5e3c1f;
         }
-      
+
         #cart tbody tr:nth-child(even) {
-          background-color: #fffaf2; /* beige claro */
+            background-color: #fffaf2;
+            /* beige claro */
         }
-      
+
         #cart tbody tr:nth-child(odd) {
-          background-color: #fffbf7;
+            background-color: #fffbf7;
         }
-      
+
         #cart tfoot tr {
-          background-color: #ffe9cc;
+            background-color: #ffe9cc;
         }
-      
+
         #cart td,
         #cart th {
-          border-color: #ffd6b5 !important;
+            border-color: #ffd6b5 !important;
         }
-      </style>
-      
+    </style>
+
 </head>
 
 <body>
     <header>
+        <!-- NAVBAR -->
         <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
             <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent">
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/iconoCaballo.png" height="50" alt="Logo" loading="lazy" />
+                </a>
+                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarContent"
+                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo" loading="lazy" />
-                    </a>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
                         <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
                         <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bollería</a></li>
-                        <li class="nav-item"><a class="nav-link" href="productos/salado.html">Repostería Salada</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/salado.html">Salado</a></li>
                         <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
                     </ul>
-                </div>
-                <div class="d-flex align-items-center">
-                    <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
-                    <div class="dropdown">
-                        <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="login.html" id="navbarDropdownMenuAvatar" role="button">
-                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="User Avatar" loading="lazy" />
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                            <li><a class="dropdown-item" href="#">My profile</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
-                        </ul>
+                    <div class="d-flex align-items-center">
+                        <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
+                        <div class="dropdown">
+                            <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="login.html"
+                                id="navbarDropdownMenuAvatar" role="button">
+                                <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle"
+                                    height="25" alt="User Avatar" loading="lazy" />
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -105,15 +107,16 @@
                                 <div class="col-md-4" id="direccionContainer" style="display: none;">
                                     <label for="direccionId" class="form-label">Seleccionar dirección de entrega</label>
                                     <select id="direccionId" class="form-select" required>
-                                      <option value="">Selecciona una dirección...</option>
+                                        <option value="">Selecciona una dirección...</option>
                                     </select>
-                                  </div>
-                                  
+                                </div>
+
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td><a href="#" class="btn btn-warning" onclick="goBack()"><i class="fa fa-angle-left"></i> Seguir Comprando</a></td>
+                        <td><a href="#" class="btn btn-warning" onclick="goBack()"><i class="fa fa-angle-left"></i>
+                                Seguir Comprando</a></td>
                         <td colspan="2"></td>
                         <td class="text-center"><strong>Total: <span id="cart-total">$0.00</span></strong></td>
                         <td><button id="buy-btn" class="btn btn-success">Comprar</button></td>
@@ -143,34 +146,34 @@
     <!-- Modal para agregar/modificar dirección -->
     <div class="modal fade" id="modalDireccion" tabindex="-1" aria-labelledby="modalDireccionLabel" aria-hidden="true">
         <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="modalDireccionLabel">Dirección</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDireccionLabel">Dirección</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="inputCalle" class="form-control mb-2" placeholder="Calle" />
+                    <input type="text" id="inputCP" class="form-control mb-2" placeholder="Código Postal" />
+                    <input type="text" id="inputProvincia" class="form-control mb-2" placeholder="Provincia" />
+                    <input type="text" id="inputLocalidad" class="form-control mb-2" placeholder="Localidad" />
+                    <textarea id="inputNotas" class="form-control mb-2" placeholder="Notas (opcional)"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="guardarDireccion()">Guardar</button>
+                </div>
             </div>
-            <div class="modal-body">
-            <input type="text" id="inputCalle" class="form-control mb-2" placeholder="Calle" />
-            <input type="text" id="inputCP" class="form-control mb-2" placeholder="Código Postal" />
-            <input type="text" id="inputProvincia" class="form-control mb-2" placeholder="Provincia" />
-            <input type="text" id="inputLocalidad" class="form-control mb-2" placeholder="Localidad" />
-            <textarea id="inputNotas" class="form-control mb-2" placeholder="Notas (opcional)"></textarea>
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-success" onclick="guardarDireccion()">Guardar</button>
-            </div>
-        </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
     <script>
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
         function loadCart() {
             const cartTableBody = document.querySelector('#cart tbody');
             cartTableBody.innerHTML = '';
             let total = 0;
-    
+
             cart.forEach((product, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -183,58 +186,58 @@
                 cartTableBody.appendChild(row);
                 total += product.subtotal;
             });
-    
+
             document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
         }
-    
+
         async function saveOrder() {
-        const token = localStorage.getItem('token');
-        if (!token) return (window.location.href = 'login.html');
-        if (cart.length === 0) return alert("Tu carrito está vacío.");
+            const token = localStorage.getItem('token');
+            if (!token) return (window.location.href = 'login.html');
+            if (cart.length === 0) return alert("Tu carrito está vacío.");
 
-        const tipoEntrega = document.getElementById('tipoEntrega').value;
-        const tienda = tipoEntrega === 'recoger' ? document.getElementById('tienda').value : null;
-        const direccionId = tipoEntrega === 'enviar' ? document.getElementById('direccionId').value : null;
+            const tipoEntrega = document.getElementById('tipoEntrega').value;
+            const tienda = tipoEntrega === 'recoger' ? document.getElementById('tienda').value : null;
+            const direccionId = tipoEntrega === 'enviar' ? document.getElementById('direccionId').value : null;
 
-        const pedidoInfo = JSON.parse(localStorage.getItem('pedido'));
-        const fechaEntrega = pedidoInfo?.fecha;
-        if (!fechaEntrega) return alert("No se ha seleccionado la fecha del pedido.");
+            const pedidoInfo = JSON.parse(localStorage.getItem('pedido'));
+            const fechaEntrega = pedidoInfo?.fecha;
+            if (!fechaEntrega) return alert("No se ha seleccionado la fecha del pedido.");
 
-        if (tipoEntrega === 'enviar' && !direccionId) {
-            return alert("Debes seleccionar una dirección de entrega.");
-        }
-
-        const items = cart.map(p => ({ productoId: p.id, cantidad: p.quantity }));
-
-        try {
-            const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({ items, tipoEntrega, tienda, fechaEntrega, direccionId }),
-            credentials: 'include'
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
-
-            if (data.advertencias && data.advertencias.length > 0) {
-            alert("✅ Pedido realizado con advertencias:\n\n" + data.advertencias.join('\n'));
-            } else {
-            alert("✅ Pedido realizado correctamente.");
+            if (tipoEntrega === 'enviar' && !direccionId) {
+                return alert("Debes seleccionar una dirección de entrega.");
             }
 
-            localStorage.removeItem('cart');
-            window.location.href = "cliente/pedidos.html";
-        } catch (error) {
-            console.error('❌ Error al enviar pedido:', error);
-            alert("Error al crear el pedido.");
+            const items = cart.map(p => ({ productoId: p.id, cantidad: p.quantity }));
+
+            try {
+                const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/pedidos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ items, tipoEntrega, tienda, fechaEntrega, direccionId }),
+                    credentials: 'include'
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.error || 'Error creando el pedido');
+
+                if (data.advertencias && data.advertencias.length > 0) {
+                    alert("✅ Pedido realizado con advertencias:\n\n" + data.advertencias.join('\n'));
+                } else {
+                    alert("✅ Pedido realizado correctamente.");
+                }
+
+                localStorage.removeItem('cart');
+                window.location.href = "cliente/pedidos.html";
+            } catch (error) {
+                console.error('❌ Error al enviar pedido:', error);
+                alert("Error al crear el pedido.");
+            }
         }
-        }
-    
+
         function recalculateTotals() {
             let total = 0;
             document.querySelectorAll('#cart tbody tr').forEach(row => {
@@ -250,55 +253,55 @@
             localStorage.setItem('cart', JSON.stringify(cart));
             document.querySelector('#cart-total').textContent = `$${total.toFixed(2)}`;
         }
-    
+
         function removeProduct(e) {
             const index = parseInt(e.target.closest('.remove-product').dataset.index, 10);
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             loadCart();
         }
-    
+
         document.addEventListener('DOMContentLoaded', () => {
-        loadCart();
+            loadCart();
 
-        document.querySelector('#buy-btn').addEventListener('click', saveOrder);
+            document.querySelector('#buy-btn').addEventListener('click', saveOrder);
 
-        document.querySelector('#cart').addEventListener('input', e => {
-            if (e.target.classList.contains('quantity-input')) {
-            recalculateTotals();
-            }
-        });
-
-        document.querySelector('#cart').addEventListener('click', e => {
-            if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) {
-            removeProduct(e);
-            }
-        });
-
-        document.getElementById('tipoEntrega').addEventListener('change', async e => {
-            const tipo = e.target.value;
-
-            // Mostrar tienda o direcciones según el tipo de entrega
-            document.getElementById('tiendaContainer').style.display = tipo === 'recoger' ? 'block' : 'none';
-            document.getElementById('direccionContainer').style.display = tipo === 'enviar' ? 'block' : 'none';
-
-            if (tipo === 'enviar') {
-                const tieneDirecciones = await cargarDirecciones();
-                if (!tieneDirecciones) {
-                    console.log("No hay direcciones, se abrió el modal.");
+            document.querySelector('#cart').addEventListener('input', e => {
+                if (e.target.classList.contains('quantity-input')) {
+                    recalculateTotals();
                 }
+            });
+
+            document.querySelector('#cart').addEventListener('click', e => {
+                if (e.target.classList.contains('remove-product') || e.target.closest('.remove-product')) {
+                    removeProduct(e);
+                }
+            });
+
+            document.getElementById('tipoEntrega').addEventListener('change', async e => {
+                const tipo = e.target.value;
+
+                // Mostrar tienda o direcciones según el tipo de entrega
+                document.getElementById('tiendaContainer').style.display = tipo === 'recoger' ? 'block' : 'none';
+                document.getElementById('direccionContainer').style.display = tipo === 'enviar' ? 'block' : 'none';
+
+                if (tipo === 'enviar') {
+                    const tieneDirecciones = await cargarDirecciones();
+                    if (!tieneDirecciones) {
+                        console.log("No hay direcciones, se abrió el modal.");
+                    }
+                }
+
+            });
+
+            // Llamada inicial por si ya hay valor seleccionado
+            const tipoInicial = document.getElementById('tipoEntrega').value;
+            if (tipoInicial === 'enviar') {
+                document.getElementById('direccionContainer').style.display = 'block';
+                cargarDirecciones();
+            } else {
+                document.getElementById('tiendaContainer').style.display = 'block';
             }
-
-        });
-
-        // Llamada inicial por si ya hay valor seleccionado
-        const tipoInicial = document.getElementById('tipoEntrega').value;
-        if (tipoInicial === 'enviar') {
-            document.getElementById('direccionContainer').style.display = 'block';
-            cargarDirecciones();
-        } else {
-            document.getElementById('tiendaContainer').style.display = 'block';
-        }
         });
 
         async function cargarDirecciones() {
@@ -307,7 +310,7 @@
 
             try {
                 const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
 
                 if (!res.ok) throw new Error("No se pudieron obtener las direcciones");
@@ -315,18 +318,18 @@
                 const direcciones = await res.json();
 
                 if (direcciones.length === 0) {
-                console.warn("⚠️ No hay direcciones guardadas, abriendo modal...");
-                const modal = new bootstrap.Modal(document.getElementById('modalDireccion'));
-                modal.show();
-                return false;
+                    console.warn("⚠️ No hay direcciones guardadas, abriendo modal...");
+                    const modal = new bootstrap.Modal(document.getElementById('modalDireccion'));
+                    modal.show();
+                    return false;
                 }
 
                 // Si hay direcciones, las insertamos en el select
                 direcciones.forEach(d => {
-                const option = document.createElement('option');
-                option.value = d.id;
-                option.textContent = `${d.calle}, ${d.cp}, ${d.provincia}`;
-                direccionSelect.appendChild(option);
+                    const option = document.createElement('option');
+                    option.value = d.id;
+                    option.textContent = `${d.calle}, ${d.cp}, ${d.provincia}`;
+                    direccionSelect.appendChild(option);
                 });
 
                 return true;
@@ -352,13 +355,13 @@
 
             try {
                 const res = await fetch('https://pasteleriatfc-back-igmg.onrender.com/api/direcciones', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(payload),
-                credentials: 'include'
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
                 });
 
                 if (!res.ok) throw new Error("Error guardando dirección");
@@ -383,7 +386,7 @@
             window.history.back();
         }
     </script>
-    
+
 </body>
 
 </html>
