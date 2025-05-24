@@ -16,6 +16,7 @@ app.use(express.json());
 // CORS: permitir solo orígenes específicos
 const allowedOrigins = [
   'https://pasteleriatfc.vercel.app',
+  'https://pasteleria-tfc-front.vercel.app',
   'http://localhost:5500'
 ];
 const vercelSubdomainRegex = /^https:\/\/[\w-]+-nicogc001s-projects\.vercel\.app$/;
