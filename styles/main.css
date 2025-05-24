@@ -106,19 +106,26 @@
     width: 100%;
     max-width: 400px;
     transition: background-color 0.3s ease;
-    white-space: normal; /* <-- aquí el cambio */
+    white-space: normal;
+    /* <-- aquí el cambio */
     line-height: 1.3;
-  }
-  
-  .btn-pedido:hover {
-    background-color: #ffb866 !important;  
+}
+
+.btn-pedido:hover {
+    background-color: #ffb866 !important;
     color: white !important;
-  }
-  
-  /* Responsive móvil */
-  @media (max-width: 576px) {
+}
+
+/* Responsive móvil */
+@media (max-width: 576px) {
     .btn-pedido {
-      font-size: 1.5rem;
-      padding: 1.4rem 2.2rem;
+        font-size: 1.5rem;
+        padding: 1.4rem 2.2rem;
     }
-  }
+}
+
+
+@AuraEnabled(cacheable=true)
+public static PedidoWrapper getResumenPedido(Id pedidoId) {
+    // Consulta y composición de datos para el resumen
+}

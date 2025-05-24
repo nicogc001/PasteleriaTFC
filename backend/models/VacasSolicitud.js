@@ -15,7 +15,7 @@ const VacasSolicitud = db.define('VacasSolicitud', {
     allowNull: false
   },
   estado: {
-    type: DataTypes.STRING, // ← ✅ CAMBIO TEMPORAL para evitar errores
+    type: DataTypes.STRING,
     defaultValue: 'pendiente'
   },
   motivo: {

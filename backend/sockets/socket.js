@@ -90,12 +90,12 @@ function iniciarSockets(server) {
         socket.emit("mensaje", mensaje);
 
       } catch (err) {
-        console.error("❌ Error al procesar mensaje:", err);
+        console.error("Error al procesar mensaje:", err);
       }
     });
 
     socket.on("disconnect", () => {
-      console.log(`🔴 Usuario desconectado: ${usuarioId}`);
+      console.log(`Usuario desconectado: ${usuarioId}`);
     });
   });
 }
