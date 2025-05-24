@@ -17,7 +17,7 @@ router.get('/mis-chats', verificarTokenCliente, async (req, res) => {
     let chat = await Chat.findOne({ where: { clienteId: req.user.id } });
 
     if (!chat) {
-      console.log("🆕 No existe chat, creando nuevo...");
+      console.log("No existe chat, creando nuevo...");
       chat = await Chat.create({
         clienteId: req.user.id,
         estado: 'abierto',
@@ -67,7 +67,7 @@ router.get('/abiertos', verificarTokenEmpleado, async (req, res) => {
       include: [{ association: 'cliente' }]
     });
 
-    console.log(`📡 Empleado ${req.user.id} cargó ${chats.length} chats abiertos`);
+    console.log(`Empleado ${req.user.id} cargó ${chats.length} chats abiertos`);
     res.json(chats);
   } catch (err) {
     console.error('Error al obtener chats abiertos:', err);

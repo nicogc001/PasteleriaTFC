@@ -42,7 +42,7 @@ Productos.hasMany(Ofertas, {
 
 Ofertas.belongsTo(Productos, {
   foreignKey: 'productoId',
-  as: 'producto' // ⚠️ esto permite acceder como oferta.producto
+  as: 'producto' // esto permite acceder como oferta.producto
 });
 
 module.exports = Ofertas;

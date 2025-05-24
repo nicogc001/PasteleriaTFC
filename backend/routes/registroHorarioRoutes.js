@@ -4,7 +4,7 @@ const RegistroHorario = require('../models/RegistroHorarios');
 const Usuario = require('../models/Usuario');
 const router = express.Router();
 
-// ✅ Registrar entrada
+// Registrar entrada
 router.post('/entrada', authMiddleware, async (req, res) => {
   try {
     const empleadoId = req.user.id;
@@ -23,12 +23,12 @@ router.post('/entrada', authMiddleware, async (req, res) => {
 
     res.status(201).json({ message: 'Entrada registrada correctamente', registro: nuevoRegistro });
   } catch (error) {
-    console.error('❌ Error al registrar entrada:', error);
+    console.error('Error al registrar entrada:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
-// ✅ Registrar salida
+// Registrar salida
 router.put('/salida', authMiddleware, async (req, res) => {
   try {
     const empleadoId = req.user.id;
@@ -47,12 +47,12 @@ router.put('/salida', authMiddleware, async (req, res) => {
 
     res.json({ message: 'Salida registrada correctamente', registro });
   } catch (error) {
-    console.error('❌ Error al registrar salida:', error);
+    console.error('Error al registrar salida:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
-// ✅ Obtener todos los horarios (admin)
+// Obtener todos los horarios (admin)
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const registros = await RegistroHorario.findAll({
@@ -71,12 +71,12 @@ router.get('/', authMiddleware, async (req, res) => {
 
     res.json(result);
   } catch (error) {
-    console.error('❌ Error al obtener horarios:', error);
+    console.error('Error al obtener horarios:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
-// ✅ Asignar horarios (admin)
+// Asignar horarios (admin)
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { usuarioId, tienda, fecha, entrada, salida } = req.body;
@@ -95,12 +95,12 @@ router.post('/', authMiddleware, async (req, res) => {
 
     res.status(201).json({ message: 'Horario asignado correctamente', horario: nuevoHorario });
   } catch (error) {
-    console.error('❌ Error al asignar horario:', error);
+    console.error('Error al asignar horario:', error);
     res.status(500).json({ error: 'Error al asignar horario' });
   }
 });
 
-// ✅ Actualizar horario completo (admin) — incluye tienda
+// Actualizar horario completo (admin) — incluye tienda
 router.put('/:id', authMiddleware, async (req, res) => {
     try {
       const { id } = req.params;
@@ -135,40 +135,13 @@ router.put('/:id', authMiddleware, async (req, res) => {
   
       res.json({ message: 'Horario actualizado correctamente', horario });
     } catch (error) {
-      console.error('❌ Error al actualizar horario:', error.message);
+      console.error('Error al actualizar horario:', error.message);
       res.status(500).json({ error: 'Error en el servidor', detalle: error.message });
     }
   });
   
-  
-/*
-// ✅ Actualizar solo horas (empleado)
-router.put('/:id', authMiddleware, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { horaEntrada, horaSalida } = req.body;
 
-    const horario = await RegistroHorario.findByPk(id);
-    if (!horario) {
-      return res.status(404).json({ error: 'Horario no encontrado' });
-    }
-
-    if (horario.empleadoId !== req.user.id && req.user.rol !== 'administrador') {
-      return res.status(403).json({ error: 'No autorizado para modificar este horario' });
-    }
-
-    horario.horaEntrada = horaEntrada;
-    horario.horaSalida = horaSalida;
-    await horario.save();
-
-    res.json({ message: 'Horario actualizado correctamente', horario });
-  } catch (error) {
-    console.error('❌ Error al actualizar horario (empleado):', error);
-    res.status(500).json({ error: 'Error en el servidor' });
-  }
-});*/
-
-// ✅ Eliminar horario (admin)
+// Eliminar horario (admin)
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
@@ -181,12 +154,12 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await horario.destroy();
     res.json({ message: 'Horario eliminado correctamente' });
   } catch (error) {
-    console.error('❌ Error al eliminar horario:', error);
+    console.error('Error al eliminar horario:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
 
-// ✅ Obtener horarios del usuario autenticado
+// Obtener horarios del usuario autenticado
 router.get('/mis-horarios', authMiddleware, async (req, res) => {
   try {
     const registros = await RegistroHorario.findAll({
@@ -205,7 +178,7 @@ router.post('/manual', authMiddleware, async (req, res) => {
     const { fecha, horaEntrada, horaSalida, tienda } = req.body;
     const empleadoId = req.user.id;
   
-    console.log('🔍 Registro manual recibido:', { empleadoId, fecha, horaEntrada, horaSalida });
+    console.log('Registro manual recibido:', { empleadoId, fecha, horaEntrada, horaSalida });
   
     try {
       if (!fecha || !horaEntrada || !horaSalida || !tienda) {
@@ -232,7 +205,7 @@ router.post('/manual', authMiddleware, async (req, res) => {
       res.status(201).json({ message: 'Registro creado correctamente', registro: nuevo });
   
     } catch (error) {
-      console.error('❌ Error en registro manual:', error.message);
+      console.error('Error en registro manual:', error.message);
       res.status(500).json({ error: 'Error en el servidor', detalles: error.message });
     }
   });

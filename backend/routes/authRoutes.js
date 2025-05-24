@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken'); // ✅ Asegurar que está importado
+const jwt = require('jsonwebtoken'); 
 const Usuario = require('../models/Usuario');
 const router = express.Router();
 

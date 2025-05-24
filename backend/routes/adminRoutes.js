@@ -36,12 +36,12 @@ router.get('/resumen', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Error en /admin/resumen:', error);
+    console.error('Error en /admin/resumen:', error);
     res.status(500).json({ error: 'Error obteniendo resumen' });
   }
 });
 
-// ✅ GET /api/admin/usuarios → Solo admins
+// GET /api/admin/usuarios → Solo admins
 router.get('/usuarios', authMiddleware, async (req, res) => {
   try {
     if (req.user.rol !== 'administrador') {
@@ -54,7 +54,7 @@ router.get('/usuarios', authMiddleware, async (req, res) => {
 
     res.json(usuarios);
   } catch (err) {
-    console.error('❌ Error en /admin/usuarios:', err);
+    console.error('Error en /admin/usuarios:', err);
     res.status(500).json({ error: 'Error al obtener usuarios' });
   }
 });

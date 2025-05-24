@@ -159,7 +159,6 @@
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (!res.ok) throw new Error('No se pudo aprobar');
-                alert('Solicitud aprobada');
                 cargarPendientes();
                 cargarCalendario();
             } catch (err) {

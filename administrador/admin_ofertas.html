@@ -204,7 +204,6 @@
 
             function editarOferta(id) {
                 alert(`Abrir modal para editar oferta ${id}`);
-                // Aquí puedes construir un modal dinámico o redireccionar a una página de edición
             }
 
             document.addEventListener('DOMContentLoaded', () => {
@@ -231,7 +230,6 @@
                             body: JSON.stringify(payload)
                         });
                         if (!res.ok) throw new Error();
-                        alert('Oferta creada correctamente');
                         document.getElementById('formCrearOferta').reset();
                     } catch (err) {
                         alert('Error al crear la oferta');
@@ -427,7 +425,6 @@
 
                     if (!res.ok) throw new Error('Error al actualizar la oferta');
 
-                    alert('✅ Oferta actualizada correctamente');
                     location.reload();
                 } catch (err) {
                     console.error('Error al actualizar oferta:', err);

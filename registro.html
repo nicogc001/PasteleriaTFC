@@ -69,17 +69,17 @@
                 if (!response.ok) {
                     const error = await response.json();
                     if (error.error && error.error.includes('ya está registrado')) {
-                        alert('❌ Este correo ya está registrado.');
+                        alert('Este correo ya está registrado.');
                     } else {
                         throw new Error(error.error || 'Error en el registro');
                     }
                 }
       
-                alert('✅ Registro exitoso. Ahora puedes iniciar sesión.');
+                alert('Registro correcto. Ahora puedes iniciar sesión.');
                 window.location.href = 'login.html';
               } catch (error) {
                 console.error(error);
-                alert('❌ Error registrando usuario: ' + error.message);
+                alert('Error registrando usuario: ' + error.message);
               }
             });
           }

@@ -33,7 +33,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
     res.json(facturas);
   } catch (err) {
-    console.error('❌ Error obteniendo facturas:', err);
+    console.error('Error obteniendo facturas:', err);
     res.status(500).json({ error: 'Error al obtener las facturas' });
   }
 });

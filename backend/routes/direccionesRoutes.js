@@ -3,7 +3,7 @@ const router = express.Router();
 const { Direccion } = require('../models');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// 🔐 Obtener todas las direcciones del usuario autenticado
+// Obtener todas las direcciones del usuario autenticado
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const direcciones = await Direccion.findAll({
@@ -11,12 +11,12 @@ router.get('/', authMiddleware, async (req, res) => {
     });
     res.json(direcciones);
   } catch (error) {
-    console.error("❌ Error al obtener direcciones:", error);
+    console.error("Error al obtener direcciones:", error);
     res.status(500).json({ error: 'Error al obtener direcciones' });
   }
 });
 
-// ➕ Crear nueva dirección
+// Crear nueva dirección
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const { calle, cp, provincia, localidad, notas } = req.body;
@@ -35,7 +35,7 @@ router.post('/', authMiddleware, async (req, res) => {
 
     res.status(201).json(direccion);
   } catch (error) {
-    console.error("❌ Error al crear dirección:", error);
+    console.error("Error al crear dirección:", error);
     res.status(500).json({ error: 'Error al crear dirección' });
   }
 });
@@ -65,12 +65,12 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
     res.json(direccion);
   } catch (error) {
-    console.error("❌ Error al actualizar dirección:", error);
+    console.error("Error al actualizar dirección:", error);
     res.status(500).json({ error: 'Error al actualizar dirección' });
   }
 });
 
-// ❌ Eliminar dirección
+// Eliminar dirección
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,7 +83,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     await direccion.destroy();
     res.json({ message: 'Dirección eliminada correctamente' });
   } catch (error) {
-    console.error("❌ Error al eliminar dirección:", error);
+    console.error("Error al eliminar dirección:", error);
     res.status(500).json({ error: 'Error al eliminar dirección' });
   }
 });

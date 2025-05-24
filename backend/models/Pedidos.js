@@ -76,7 +76,7 @@ const Pedido = db.define('Pedido', {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
-      model: Direccion, // ✔️ Usamos el modelo importado
+      model: Direccion, // Usamos el modelo importado
       key: 'id'
     }
   }

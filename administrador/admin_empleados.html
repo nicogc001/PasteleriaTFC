@@ -227,13 +227,12 @@
           throw new Error(data?.msg || 'Error al crear empleado');
         }
 
-        alert('✅ Empleado creado');
+        alert('Empleado registrado');
         formNuevoEmpleado.reset();
         mdb.Modal.getInstance(modalNuevoEmpleado).hide();
         cargarEmpleados();
       } catch (error) {
         console.error('Excepción al crear empleado:', error);
-        alert('No se pudo crear el empleado');
       }
     });
 
@@ -264,7 +263,6 @@
           body: JSON.stringify(editado)
         });
         if (!res.ok) throw new Error();
-        alert('Empleado actualizado');
         mdb.Modal.getInstance(modalEditarEmpleado).hide();
         cargarEmpleados();
       } catch {

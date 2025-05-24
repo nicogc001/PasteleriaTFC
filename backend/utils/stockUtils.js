@@ -27,12 +27,12 @@ async function actualizarStockConHistorial(productoId, nuevoStock) {
         // La fecha se guarda automáticamente gracias al defaultValue en el modelo
       });
 
-      console.log('✅ Stock actualizado y registrado en historial');
+      console.log('Stock actualizado y registrado en historial');
     } else {
-      console.log('ℹ️ El stock no cambió, no se registró historial');
+      console.log('El stock no cambió, no se registró historial');
     }
   } catch (error) {
-    console.error('❌ Error al actualizar stock con historial:', error.message);
+    console.error('Error al actualizar stock con historial:', error.message);
     throw error;
   }
 }

@@ -9,7 +9,7 @@ const buscarEmpleadoDisponible = require('../utils/buscarEmpleadoDisponible');
 const { Op } = require('sequelize');
 
 // Obtener pedidos asignados al empleado autenticado
-const RegistroHorarios = require('../models/RegistroHorarios'); // asegúrate de importarlo
+const RegistroHorarios = require('../models/RegistroHorarios'); 
 
 router.get('/asignados', authMiddleware, async (req, res) => {
   try {
@@ -185,7 +185,7 @@ router.post('/', authMiddleware, async (req, res) => {
     for (const item of items) {
       const producto = await Productos.findByPk(item.productoId);
       if (!producto) return res.status(404).json({ error: `Producto con ID ${item.productoId} no encontrado` });
-      if (esParaHoy && producto.stock < item.cantidad) advertencias.push(`⚠️ Stock bajo de ${producto.nombre}. Solo hay ${producto.stock} unidades disponibles.`);
+      if (esParaHoy && producto.stock < item.cantidad) advertencias.push(`Stock bajo de ${producto.nombre}. Solo hay ${producto.stock} unidades disponibles.`);
       if (producto.stock < item.cantidad) return res.status(400).json({ error: `No hay suficiente stock de ${producto.nombre}` });
 
       total += producto.precio * item.cantidad;
@@ -226,7 +226,7 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// 🔐 Aprobar pedido (empleado o administrador)
+// Aprobar pedido (empleado o administrador)
 router.put('/:id/aprobar', authMiddleware, async (req, res) => {
   try {
     const pedido = await Pedidos.findByPk(req.params.id);
@@ -239,9 +239,9 @@ router.put('/:id/aprobar', authMiddleware, async (req, res) => {
     if (esSegundoAprobador && !pedido.aprobadoPorAdmin) pedido.aprobadoPorAdmin = true;
     if (pedido.aprobadoPorEmpleado && (pedido.segundoAprobadorId === null || pedido.aprobadoPorAdmin)) pedido.estado = 'confirmado';
     await pedido.save();
-    res.json({ message: '✅ Pedido aprobado', pedido });
+    res.json({ message: 'Pedido aprobado', pedido });
   } catch (err) {
-    console.error('❌ Error aprobando pedido:', err);
+    console.error('Error aprobando pedido:', err);
     res.status(500).json({ error: 'Error al aprobar el pedido' });
   }
 });
@@ -255,7 +255,7 @@ router.put('/:id/estado', authMiddleware, async (req, res) => {
     await pedido.save();
     res.json({ message: 'Estado actualizado correctamente', pedido });
   } catch (err) {
-    console.error('❌ Error actualizando estado:', err);
+    console.error('Error actualizando estado:', err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
 });
@@ -276,7 +276,7 @@ router.put('/:id/confirmar', authMiddleware, async (req, res) => {
     await enviarFacturaEmail(pedido.Usuario.email, rutaFactura);
     res.json({ message: 'Pedido confirmado, factura generada y enviada', factura: rutaFactura });
   } catch (err) {
-    console.error('❌ Error confirmando pedido:', err);
+    console.error('Error confirmando pedido:', err);
     res.status(500).json({ error: 'Error al confirmar pedido o enviar factura' });
   }
 });
@@ -314,12 +314,12 @@ router.get('/:id', authMiddleware, async (req, res) => {
       productos
     });
   } catch (err) {
-    console.error('❌ Error al obtener detalle del pedido:', err);
+    console.error('Error al obtener detalle del pedido:', err);
     res.status(500).json({ error: 'Error al obtener el detalle del pedido' });
   }
 });
 
-// 🔸 Marcar pedido como preparado (para empleados)
+// Marcar pedido como preparado (para empleados)
 router.put('/:id/preparar', authMiddleware, async (req, res) => {
   try {
     const pedido = await Pedidos.findByPk(req.params.id);
@@ -372,7 +372,7 @@ router.get('/mis-pedidos', authMiddleware, async (req, res) => {
 
     res.json(resultado);
   } catch (err) {
-    console.error('❌ Error al obtener mis pedidos:', err);
+    console.error('Error al obtener mis pedidos:', err);
     res.status(500).json({ error: 'Error al obtener tus pedidos' });
   }
 });
@@ -396,7 +396,7 @@ router.get('/todos', authMiddleware, async (req, res) => {
     });
 
     console.log('Total pedidos encontrados:', pedidos.length);
-    console.log('IDs:', pedidos.map(p => p.id)); // ✔️ Confirmar IDs válidos
+    console.log('IDs:', pedidos.map(p => p.id)); // Confirmar IDs válidos
 
     const resultado = pedidos.map(p => {
       try {
@@ -412,7 +412,7 @@ router.get('/todos', authMiddleware, async (req, res) => {
           fechaEntrega: p.fechaEntrega || null
         };
       } catch (err) {
-        console.error(`❌ Error al procesar pedido ID ${p.id}:`, err.message);
+        console.error(`Error al procesar pedido ID ${p.id}:`, err.message);
         return null;
       }
     }).filter(Boolean); // elimina elementos null

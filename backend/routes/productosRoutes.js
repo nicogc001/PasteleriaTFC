@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
             producto: nuevoProducto
         });
     } catch (error) {
-        console.error('❌ Error al crear producto:', error);
+        console.error('Error al crear producto:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
@@ -45,13 +45,13 @@ router.get('/', async (req, res) => {
 
         res.json(productos);
     } catch (error) {
-        console.error('❌ Error al obtener productos:', error);
+        console.error('Error al obtener productos:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
 
 // Actualizar stock de un producto
-const HistorialStock = require('../models/HistorialStock'); // 👈 Asegúrate de importar esto también
+const HistorialStock = require('../models/HistorialStock'); 
 
 // Actualizar stock de un producto y registrar historial
 router.put('/:id', async (req, res) => {
@@ -87,7 +87,7 @@ router.put('/:id', async (req, res) => {
         }
 
     } catch (error) {
-        console.error('❌ Error al actualizar stock:', error);
+        console.error('Error al actualizar stock:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
@@ -113,7 +113,7 @@ router.get('/:id/historial', async (req, res) => {
         historial
       });
     } catch (error) {
-      console.error('❌ Error al obtener historial:', error);
+      console.error('Error al obtener historial:', error);
       res.status(500).json({ error: 'Error en el servidor' });
     }
   });
@@ -129,7 +129,7 @@ router.get('/:id', async (req, res) => {
         }
         res.json(producto);
     } catch (error) {
-        console.error('❌ Error al obtener producto por ID:', error);
+        console.error('Error al obtener producto por ID:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
@@ -150,7 +150,7 @@ router.delete('/:id', async (req, res) => {
 
         res.json({ message: 'Producto eliminado correctamente' });
     } catch (error) {
-        console.error('❌ Error al eliminar producto:', error);
+        console.error('Error al eliminar producto:', error);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });

@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     });
     res.json(tartas);
   } catch (error) {
-    console.error('❌ Error al obtener tartas:', error);
+    console.error('Error al obtener tartas:', error);
     res.status(500).json({ error: 'Error al obtener tartas' });
   }
 });

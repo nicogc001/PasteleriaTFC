@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 const Ofertas = require('../models/Ofertas');
 const Productos = require('../models/Productos');
 const Usuario = require('../models/Usuario');
-const OfertasCliente = require('../models/OfertasCliente'); // ✅ Añadir esta línea
+const OfertasCliente = require('../models/OfertasCliente'); 
 
 /**
  * GET /api/ofertas
@@ -70,7 +70,7 @@ router.get('/cliente/:id', async (req, res) => {
 
         res.json(todas);
     } catch (err) {
-        console.error('❌ Error al obtener ofertas del cliente:', err);
+        console.error('Error al obtener ofertas del cliente:', err);
         res.status(500).json({ error: 'Error al obtener ofertas del cliente' });
     }
 });
@@ -108,9 +108,9 @@ router.delete('/:id', async (req, res) => {
         await OfertasCliente.destroy({ where: { ofertaId: id } }); // eliminar relaciones
         const borradas = await Ofertas.destroy({ where: { id } }); // eliminar oferta
         if (borradas === 0) return res.status(404).json({ error: 'Oferta no encontrada' });
-        res.json({ msg: '✅ Oferta eliminada correctamente' });
+        res.json({ msg: 'Oferta eliminada correctamente' });
     } catch (err) {
-        console.error('❌ Error al eliminar oferta:', err);
+        console.error('Error al eliminar oferta:', err);
         res.status(500).json({ error: 'Error al eliminar la oferta' });
     }
 });
@@ -129,9 +129,9 @@ router.put('/:id', async (req, res) => {
         oferta.fechaFin = fechaFin ?? oferta.fechaFin;
 
         await oferta.save();
-        res.json({ msg: '✅ Oferta actualizada correctamente', oferta });
+        res.json({ msg: 'Oferta actualizada correctamente', oferta });
     } catch (err) {
-        console.error('❌ Error al actualizar oferta:', err);
+        console.error('Error al actualizar oferta:', err);
         res.status(500).json({ error: 'Error al actualizar la oferta' });
     }
 });
