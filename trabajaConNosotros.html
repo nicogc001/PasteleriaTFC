@@ -13,84 +13,42 @@
 
 <body>
     <header>
-        <!-- Navbar -->
+        <!-- NAVBAR -->
         <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
             <div class="container-fluid">
-                <!-- Toggle button -->
-                <button data-mdb-collapse-init class="navbar-toggler" type="button"
-                    data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/iconoCaballo.png" height="50" alt="Logo" loading="lazy" />
+                </a>
+                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarContent"
+                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <i class="fas fa-bars"></i>
                 </button>
 
-                <!-- Collapsible wrapper -->
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Navbar brand -->
-                    <a class="navbar-brand mt-2 mt-lg-0" href="index.html">
-                        <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15"
-                            alt="MDB Logo" loading="lazy" />
-                    </a>
-                    <!-- Left links -->
+                <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.html">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="pasteleria.html">Pastelería</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="bolleria.html">Bollería</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="salado.html">Repostería Salada</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="tartas.html">Tartas</a>
-                        </li>
-                        <li class="nav-item"></li>
-                        <a class="nav-link" href="trabajaConNosotros.html">Trabaja con nostros</a>
-                        </li>
-                        <li class="nav-item"></li>
-                        <a class="nav-link" href="DondeEstamos.html">Donde estamos</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/pasteleria.html">Pastelería</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/bolleria.html">Bollería</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/salado.html">Salado</a></li>
+                        <li class="nav-item"><a class="nav-link" href="productos/tartas.html">Tartas</a></li>
                     </ul>
-                </div>
-
-                <!-- Right elements -->
-                <div class="d-flex align-items-center">
-                    <!-- Icon -->
-                    <a class="link-secondary me-3" href="#">
-                        <i class="fas fa-shopping-cart"></i>
-                    </a>
-
-                    <!-- Avatar -->
-                    <div class="dropdown">
-                        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow"
-                            href="login.html" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-                            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle"
-                                height="25" alt="User Avatar" loading="lazy" />
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-                            <li>
-                                <a class="dropdown-item" href="#">My profile</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Settings</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Logout</a>
-                            </li>
-                        </ul>
+                    <div class="d-flex align-items-center">
+                        <a class="link-secondary me-3" href="carrito.html"><i class="fas fa-shopping-cart"></i></a>
+                        <div class="dropdown">
+                            <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="login.html"
+                                id="navbarDropdownMenuAvatar" role="button">
+                                <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle"
+                                    height="25" alt="User Avatar" loading="lazy" />
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </nav>
 
         <!-- Background image -->
-        <div class="p-5 text-center bg-image" style="
-                background-image: url('https://mdbcdn.b-cdn.net/img/new/slides/044.webp');
-                height: 300px;
-            ">
+        <div class="p-5 text-center bg-image"
+            style="background-image: url('img/trabajaConNosotros.jpg'); height: 300px; background-size: cover; background-position: center;">
             <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <div class="text-white">
@@ -132,43 +90,28 @@
         </div>
     </main>
 
-    <footer class="text-center bg-body-tertiary">
-        <div class="container pt-4">
-            <section class="mb-4">
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="#" role="button">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="#" role="button">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="#" role="button">
-                    <i class="fab fa-google"></i>
-                </a>
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="#" role="button">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="#" role="button">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="#" role="button">
-                    <i class="fab fa-github"></i>
-                </a>
-            </section>
+    <footer class="text-center text-lg-start bg-body-tertiary text-muted mt-5">
+        <div class="container text-center text-md-start mt-5">
+            <div class="row">
+                <div class="col-md-4 col-lg-3 mx-auto mb-4">
+                    <h6 class="text-uppercase fw-bold mb-4">Contacto</h6>
+                    <p><i class="fas fa-home me-3"></i>c/ Jose Sanchez Rubio, 2, Torrelodones</p>
+                    <p><i class="fas fa-envelope me-3"></i> contacto@caballogoloso.com</p>
+                    <p><i class="fas fa-phone me-3"></i>91 859 67 11</p>
+                </div>
+            </div>
         </div>
-
-        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
-            © 2020 Copyright:
-            <a class="text-body" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+        <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2025 Copyright:
+            <a class="text-reset fw-bold" href="#">Pastelería El Caballo Goloso</a>
         </div>
     </footer>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
     <script>
         const form = document.getElementById('form-empleo');
         const estado = document.getElementById('estado-envio');
 
-        // URL del backend (local o render)
         const API_URL = window.location.hostname.includes('localhost')
             ? 'http://localhost:4000/api/empleo'
             : 'https://pasteleriatfc-back-igmg.onrender.com/api/empleo';
@@ -203,7 +146,5 @@
             }
         });
     </script>
-
-
 
 </html>
