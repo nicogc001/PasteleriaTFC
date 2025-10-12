@@ -9,6 +9,7 @@ router.get('/api/test-email', async (req, res) => {
       to: 'test@example.com',
       subject: 'Prueba Mailtrap desde Render ✅',
       html: '<h2>Hola!</h2><p>Esto es una prueba 🍰</p>',
+      html: '<h2>Hola!</h2><p>Esto es una prueba 🍰 prueba de envio prueba de envio...</p>',
     });
     res.json({ ok: true, msg: 'Correo enviado correctamente ✅' });
   } catch (e) {
