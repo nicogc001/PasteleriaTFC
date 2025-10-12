@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pasteleria-tfc-front.vercel.app/sitemap.xml
