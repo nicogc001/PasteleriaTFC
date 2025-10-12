@@ -1,183 +1,288 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bollería</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
     <link href="../styles/main.css" rel="stylesheet" />
-</head>
+    <meta
+      name="description"
+      content="Bollería artesanal recién horneada: croissants, napolitanas y más. Compra online con entrega rápida."
+    />
+    <meta property="og:title" content="Bollería | Pastelería Online" />
+    <meta
+      property="og:description"
+      content="Bollería artesanal recién horneada. Compra online."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:image"
+      content="https://media.scoolinary.app/images/2023/07/294_Bachour_banner2.jpg"
+    />
+    <link
+      rel="canonical"
+      href="https://pasteleria-tfc-front.vercel.app/productos/bolleria.html"
+    />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  </head>
 
-<body>
+  <body>
     <!-- Fragmentos comunes -->
     <div id="header-productos"></div>
     <div id="barra-tienda"></div>
 
     <!-- Contenido de productos -->
     <main class="container mt-5">
-        <h2 class="text-center mb-4">Bollería recién horneada</h2>
-        <div class="row" id="productos-container"></div>
+      <h2 class="text-center mb-4">Bollería recién horneada</h2>
+      <div class="row" id="productos-container"></div>
     </main>
 
     <div id="footer-productos"></div>
 
-
+    <!-- Banner de Cookies: se inyecta dinámicamente para reutilizar en todas las páginas -->
     <script>
-        async function cargarFragmento(id, archivo) {
-            try {
-                const res = await fetch(`elementos/${archivo}`);
-                if (!res.ok) throw new Error(`No se pudo cargar ${archivo}`);
-                const html = await res.text();
-                document.getElementById(id).innerHTML = html;
-
-                // Una vez se cargue el header, actualizamos su contenido dinámico
-                if (id === 'header-productos') actualizarTituloCategoria();
-            } catch (err) {
-                console.error(err);
-            }
+      // Inserta el banner desde /cookies/cookie-banner.html y construye el panel
+      (function insertCookieBanner() {
+        function buildCookiePanel() {
+          var panel = document.querySelector(".cc-panel");
+          if (!panel) return;
+          panel.innerHTML = `
+          <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:8px;">
+            <label style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" checked disabled />
+              <span>Necesarias (siempre activas)</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;">
+              <input id="cc-analytics" type="checkbox" />
+              <span>Analíticas</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;">
+              <input id="cc-marketing" type="checkbox" />
+              <span>Marketing</span>
+            </label>
+            <button id="cc-save" style="margin-left:auto;background:#fff;color:#111;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;">Guardar preferencias</button>
+          </div>
+        `;
         }
 
-        function actualizarTituloCategoria() {
-            const TITULOS = {
-                bolleria: [
-                    'Bollería',
-                    'Esponjosos y deliciosos bollos recién horneados',
-                    'https://media.scoolinary.app/images/2023/07/294_Bachour_banner2.jpg'
-                ],
-                pasteleria: [
-                    'Pastelería',
-                    'Delicias dulces con arte y sabor',
-                    'https://cdn.pixabay.com/photo/2016/03/05/19/02/cake-1236322_960_720.jpg'
-                ],
-                salado: [
-                    'Repostería Salada',
-                    'Empanadas, hojaldres y más',
-                    'https://okdiario.com/img/2019/10/08/empanada-gallega-de-atun.jpg'
-                ],
-                tartas: [
-                    'Tartas',
-                    'Capas de sabor para cada ocasión',
-                    'https://upload.wikimedia.org/wikipedia/commons/f/fb/Cake_with_berries.jpg'
-                ],
-                pastas: [
-                    'Pastas',
-                    'Pequeños placeres artesanales',
-                    'https://images.hola.com/imagenes/cocina/recetas/20220718214435/pastas-de-te-caseras-receta/1-133-42/pastas-de-te-adobe-m.jpg'
-                ],
-                cafeteria: [
-                    'Cafetería',
-                    'Café, infusiones y algo más',
-                    'https://img.freepik.com/foto-gratis/vista-superior-cafe-cafe-caliente-hojas_23-2148430856.jpg'
-                ],
-                novedades: [
-                    'Novedades',
-                    'Lo más reciente de nuestra cocina',
-                    'https://cdn-icons-png.flaticon.com/512/1828/1828817.png'
-                ]
-            };
-
-            const archivo = location.pathname.split('/').pop().replace('.html', '');
-            const info = TITULOS[archivo];
-
-            if (info) {
-                const [titulo, descripcion, fondo] = info;
-                const tituloElem = document.getElementById('titulo-categoria');
-                const descElem = document.getElementById('descripcion-categoria');
-                const banner = document.querySelector('.bg-image');
-
-                if (tituloElem) tituloElem.textContent = titulo;
-                if (descElem) descElem.textContent = descripcion;
-                if (banner) banner.style.backgroundImage = `url('${fondo}')`;
-            }
-        }
-
-        // Llamamos a los fragmentos cuando cargue la página
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarFragmento('header-productos', 'headerProductos.html');
-            cargarFragmento('barra-tienda', 'barraTienda.html');
-            cargarFragmento('footer-productos', 'footerProductos.html');
-        });
+        fetch("/cookies/cookie-banner.html")
+          .then((r) => (r.ok ? r.text() : Promise.reject("cookie-banner")))
+          .then((html) => {
+            document.body.insertAdjacentHTML("beforeend", html);
+            buildCookiePanel(); // ← IMPORTANTE: construir el panel aquí
+          })
+          .catch(console.error);
+      })();
     </script>
 
+    <!-- Script de consentimiento: debe cargarse ANTES de analíticas/marketing -->
+    <script src="/cookies/cookie-consent.js" defer></script>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
     <script>
-        const API_URL = 'https://pasteleriatfc-back-igmg.onrender.com/api/productos?categoria=bolleria';
-        const container = document.getElementById('productos-container');
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      async function cargarFragmento(id, archivo) {
+        try {
+          const res = await fetch(`elementos/${archivo}`);
+          if (!res.ok) throw new Error(`No se pudo cargar ${archivo}`);
+          const html = await res.text();
+          document.getElementById(id).innerHTML = html;
 
-        async function loadProductos() {
-            try {
-                const res = await fetch(API_URL);
-                if (!res.ok) throw new Error("Error al cargar productos");
-                const productos = await res.json();
-                renderProductos(productos);
-            } catch (err) {
-                console.error(err);
-                container.innerHTML = '<p class="text-danger">No se pudieron cargar los productos.</p>';
-            }
+          // Una vez se cargue el header, actualizamos su contenido dinámico
+          if (id === "header-productos") actualizarTituloCategoria();
+        } catch (err) {
+          console.error(err);
         }
+      }
 
-        function renderProductos(productos) {
-            container.innerHTML = '';
-            productos.forEach(p => {
-                const col = document.createElement('div');
-                col.className = 'col-md-3';
-                col.innerHTML = `
-                    <div class="card text-center mb-4">
-                        <div class="bg-image hover-overlay">
-                        <img src="${p.imagen}" class="card-img-top" alt="${p.nombre}" />
-                        <a href="producto.html" class="view-product" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}" data-image="${p.imagen}" data-description="${p.descripcion}">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-                        </a>
-                        </div>
-                        <div class="card-body">
-                        <h5 class="card-title">${p.nombre}</h5>
-                        <p class="card-text fw-bold">${p.precio} €</p>
-                        <button class="btn btn-primary add-to-cart" data-id="${p.id}" data-name="${p.nombre}" data-price="${p.precio}">Añadir al carrito</button>
-                        </div>
-                    </div>
-                    `;
-                container.appendChild(col);
-            });
+      function actualizarTituloCategoria() {
+        const TITULOS = {
+          bolleria: [
+            "Bollería",
+            "Esponjosos y deliciosos bollos recién horneados",
+            "https://media.scoolinary.app/images/2023/07/294_Bachour_banner2.jpg",
+          ],
+          pasteleria: [
+            "Pastelería",
+            "Delicias dulces con arte y sabor",
+            "https://cdn.pixabay.com/photo/2016/03/05/19/02/cake-1236322_960_720.jpg",
+          ],
+          salado: [
+            "Repostería Salada",
+            "Empanadas, hojaldres y más",
+            "https://okdiario.com/img/2019/10/08/empanada-gallega-de-atun.jpg",
+          ],
+          tartas: [
+            "Tartas",
+            "Capas de sabor para cada ocasión",
+            "https://upload.wikimedia.org/wikipedia/commons/f/fb/Cake_with_berries.jpg",
+          ],
+          pastas: [
+            "Pastas",
+            "Pequeños placeres artesanales",
+            "https://images.hola.com/imagenes/cocina/recetas/20220718214435/pastas-de-te-caseras-receta/1-133-42/pastas-de-te-adobe-m.jpg",
+          ],
+          cafeteria: [
+            "Cafetería",
+            "Café, infusiones y algo más",
+            "https://img.freepik.com/foto-gratis/vista-superior-cafe-cafe-caliente-hojas_23-2148430856.jpg",
+          ],
+          novedades: [
+            "Novedades",
+            "Lo más reciente de nuestra cocina",
+            "https://cdn-icons-png.flaticon.com/512/1828/1828817.png",
+          ],
+        };
+
+        const archivo = location.pathname.split("/").pop().replace(".html", "");
+        const info = TITULOS[archivo];
+
+        if (info) {
+          const [titulo, descripcion, fondo] = info;
+          const tituloElem = document.getElementById("titulo-categoria");
+          const descElem = document.getElementById("descripcion-categoria");
+          const banner = document.querySelector(".bg-image");
+
+          if (tituloElem) tituloElem.textContent = titulo;
+          if (descElem) descElem.textContent = descripcion;
+          if (banner) banner.style.backgroundImage = `url('${fondo}')`;
         }
+      }
 
-        function addToCart(id, name, price) {
-            const existing = cart.find(item => item.id === id);
-            if (existing) {
-                existing.quantity++;
-                existing.subtotal = existing.quantity * price;
-            } else {
-                cart.push({ id, name, price, quantity: 1, subtotal: price });
-            }
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('add-to-cart')) {
-                const id = e.target.dataset.id;
-                const name = e.target.dataset.name;
-                const price = parseFloat(e.target.dataset.price);
-                addToCart(id, name, price);
-            }
-            if (e.target.closest('.view-product')) {
-                const link = e.target.closest('.view-product');
-                e.preventDefault();
-                const product = {
-                    name: link.dataset.name,
-                    price: link.dataset.price,
-                    image: link.dataset.image,
-                    description: link.dataset.description
-                };
-                localStorage.setItem('selectedProduct', JSON.stringify(product));
-                window.location.href = link.href;
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', loadProductos);
+      // Llamamos a los fragmentos cuando cargue la página
+      document.addEventListener("DOMContentLoaded", () => {
+        cargarFragmento("header-productos", "headerProductos.html");
+        cargarFragmento("barra-tienda", "barraTienda.html");
+        cargarFragmento("footer-productos", "footerProductos.html");
+      });
     </script>
-</body>
 
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
+    ></script>
+    <script>
+      const API_URL =
+        "https://pasteleriatfc-back-igmg.onrender.com/api/productos?categoria=bolleria";
+      const container = document.getElementById("productos-container");
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      async function loadProductos() {
+        try {
+          const res = await fetch(API_URL);
+          if (!res.ok) throw new Error("Error al cargar productos");
+          const productos = await res.json();
+          renderProductos(productos);
+        } catch (err) {
+          console.error(err);
+          container.innerHTML =
+            '<p class="text-danger">No se pudieron cargar los productos.</p>';
+        }
+      }
+
+      const fmtEUR = new Intl.NumberFormat("es-ES", {
+        style: "currency",
+        currency: "EUR",
+      });
+
+      function renderProductos(productos) {
+        container.innerHTML = "";
+
+        if (!Array.isArray(productos) || productos.length === 0) {
+          container.innerHTML = `
+              <div class="col-12 text-center">
+                <p class="text-muted mb-1">No hay productos disponibles en esta categoría ahora mismo.</p>
+                <a class="btn btn-outline-primary" href="/productos/novedades.html">Ver novedades</a>
+              </div>`;
+          return;
+        }
+
+        productos.forEach((p) => {
+          const precio = Number(p.precio) || 0;
+          const col = document.createElement("div");
+          col.className = "col-12 col-sm-6 col-md-4 col-lg-3";
+
+          col.innerHTML = `
+              <div class="card text-center mb-4 h-100">
+                <div class="bg-image hover-overlay">
+                  <img loading="lazy" src="${
+                    p.imagen
+                  }" class="card-img-top" alt="${p.nombre || "Producto"}" />
+                  <a href="producto.html" class="view-product" data-id="${
+                    p.id
+                  }" data-name="${
+            p.nombre
+          }" data-price="${precio}" data-image="${
+            p.imagen
+          }" data-description="${p.descripcion || ""}">
+                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                  </a>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">${p.nombre}</h5>
+                  <p class="card-text fw-bold mb-3">${fmtEUR.format(precio)}</p>
+                  <button class="btn btn-primary mt-auto add-to-cart" data-id="${
+                    p.id
+                  }" data-name="${
+            p.nombre
+          }" data-price="${precio}" aria-label="Añadir ${p.nombre} al carrito">
+                    Añadir al carrito
+                  </button>
+                </div>
+              </div>
+            `;
+          container.appendChild(col);
+        });
+      }
+
+      function addToCart(id, name, price) {
+        const numericId = Number(id);
+        const numericPrice = Number(price) || 0;
+
+        const existing = cart.find((item) => item.id === numericId);
+        if (existing) {
+          existing.quantity++;
+          existing.subtotal = existing.quantity * numericPrice;
+        } else {
+          cart.push({
+            id: numericId,
+            name,
+            price: numericPrice,
+            quantity: 1,
+            subtotal: numericPrice,
+          });
+        }
+        localStorage.setItem("cart", JSON.stringify(cart));
+      }
+
+      document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("add-to-cart")) {
+          const id = e.target.dataset.id;
+          const name = e.target.dataset.name;
+          const price = parseFloat(e.target.dataset.price);
+          addToCart(id, name, price);
+        }
+        if (e.target.closest(".view-product")) {
+          const link = e.target.closest(".view-product");
+          e.preventDefault();
+          const product = {
+            name: link.dataset.name,
+            price: link.dataset.price,
+            image: link.dataset.image,
+            description: link.dataset.description,
+          };
+          localStorage.setItem("selectedProduct", JSON.stringify(product));
+          window.location.href = link.href;
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", loadProductos);
+    </script>
+  </body>
 </html>

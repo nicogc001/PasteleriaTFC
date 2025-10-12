@@ -1,0 +1,124 @@
+<!-- Componente de Cookies RGPD -->
+<div id="cookie-banner" class="cc-banner"
+  style="position:fixed;left:0;right:0;bottom:0;background:#111;color:#fff;padding:16px;z-index:9999;display:none;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;">
+  <div class="cc-content" style="max-width:1000px;margin:0 auto;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+    <div style="flex:1 1 500px;">
+      <strong>Usamos cookies</strong> para mejorar tu experiencia, analizar el tráfico y mostrar contenidos personalizados.
+      Consulta nuestra
+      <a href="/legal/politica-cookies" style="color:#7dd3fc;text-decoration:underline;">Política de Cookies</a> y
+      <a href="/legal/privacidad" style="color:#7dd3fc;text-decoration:underline;">Privacidad</a>.
+      <button id="cc-config" style="margin-left:8px;background:transparent;border:1px solid #666;color:#fff;padding:6px 10px;border-radius:6px;cursor:pointer;">
+        Configurar
+      </button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button id="cc-accept-all"
+        style="background:#22c55e;border:none;color:#111;font-weight:600;padding:8px 14px;border-radius:8px;cursor:pointer;">
+        Aceptar todas
+      </button>
+    </div>
+  </div>
+
+  <!-- Panel de configuración -->
+  <div class="cc-panel" style="width:100%;display:none;border-top:1px dashed #444;padding-top:12px;margin-top:8px;">
+    <div style="display:flex;gap:24px;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" checked disabled />
+        <span>Necesarias (siempre activas)</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input id="cc-analytics" type="checkbox" />
+        <span>Analíticas</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input id="cc-marketing" type="checkbox" />
+        <span>Marketing</span>
+      </label>
+      <button id="cc-save"
+        style="margin-left:auto;background:#fff;color:#111;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;">
+        Guardar preferencias
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const KEY = "cookie-consent-v1";
+
+    const CookieConsent = {
+      get() {
+        try { return JSON.parse(localStorage.getItem(KEY)) || null; }
+        catch { return null; }
+      },
+      set(consent) {
+        localStorage.setItem(KEY, JSON.stringify(consent));
+      },
+      apply(consent) {
+        if (!consent) return;
+        if (consent.analytics) CookieConsent.loadAnalytics();
+        if (consent.marketing) CookieConsent.loadMarketing();
+      },
+      loadAnalytics() {
+        // Aquí puedes añadir GTM o GA4:
+        // const s = document.createElement("script");
+        // s.src = "https://www.googletagmanager.com/gtag/js?id=G-XXXXXX";
+        // document.head.appendChild(s);
+      },
+      loadMarketing() {
+        // Ejemplo: Pixel de Facebook
+        // ...
+      }
+    };
+
+    function hideBanner() {
+      document.getElementById("cookie-banner").style.display = "none";
+    }
+
+    function showBanner() {
+      document.getElementById("cookie-banner").style.display = "block";
+    }
+
+    function wireUI() {
+      const btnAcceptAll = document.getElementById("cc-accept-all");
+      const btnSave = document.getElementById("cc-save");
+      const btnConfig = document.getElementById("cc-config");
+      const chkAnalytics = document.getElementById("cc-analytics");
+      const chkMarketing = document.getElementById("cc-marketing");
+      const panel = document.querySelector(".cc-panel");
+
+      btnAcceptAll.addEventListener("click", () => {
+        const consent = { necessary: true, analytics: true, marketing: true, ts: Date.now() };
+        CookieConsent.set(consent);
+        CookieConsent.apply(consent);
+        hideBanner();
+      });
+
+      btnSave.addEventListener("click", () => {
+        const consent = {
+          necessary: true,
+          analytics: chkAnalytics.checked,
+          marketing: chkMarketing.checked,
+          ts: Date.now()
+        };
+        CookieConsent.set(consent);
+        CookieConsent.apply(consent);
+        hideBanner();
+      });
+
+      btnConfig.addEventListener("click", () => {
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const consent = CookieConsent.get();
+      if (consent) {
+        CookieConsent.apply(consent);
+      } else {
+        showBanner();
+      }
+      wireUI();
+    });
+  })();
+</script>
