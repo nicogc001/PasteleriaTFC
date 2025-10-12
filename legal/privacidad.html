@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidad</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="../styles/main.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- Fragmentos comunes -->
+  <div id="header-productos"></div>
+  <div id="barra-tienda"></div>
+
+  <!-- Contenido -->
+  <main class="container mt-5">
+    <h1 class="text-center mb-4">Política de Privacidad</h1>
+    <p>En <strong>El Caballo Goloso</strong> nos comprometemos a proteger tus datos personales y tu privacidad.</p>
+
+    <h2>Responsable del tratamiento</h2>
+    <p><strong>El Caballo Goloso</strong><br>
+      c/ Jose Sanchez Rubio, 2, Torrelodones (Madrid)<br>
+      Email: <a href="mailto:contacto@caballogoloso.com">contacto@caballogoloso.com</a>
+    </p>
+
+    <h2>Datos recogidos</h2>
+    <ul>
+      <li>Datos de contacto (nombre, teléfono, email).</li>
+      <li>Datos de pedidos y dirección de entrega.</li>
+      <li>Datos de navegación (cookies, IP, dispositivo, navegador).</li>
+    </ul>
+
+    <h2>Finalidades</h2>
+    <ul>
+      <li>Gestionar tus compras, envíos y pagos.</li>
+      <li>Atender tus solicitudes y consultas.</li>
+      <li>Enviar información comercial, si lo has autorizado.</li>
+      <li>Cumplir obligaciones legales y fiscales.</li>
+    </ul>
+
+    <h2>Derechos</h2>
+    <p>Puedes ejercer tus derechos de acceso, rectificación, supresión, limitación, oposición y portabilidad enviando un correo a <a href="mailto:contacto@caballogoloso.com">contacto@caballogoloso.com</a>.</p>
+
+    <p class="mt-4 text-muted">Última actualización: febrero 2025</p>
+  </main>
+
+  <div id="footer-productos"></div>
+
+  <!-- Fragmentos -->
+  <script>
+    async function cargarFragmento(id, archivo) {
+      const res = await fetch(`../productos/elementos/${archivo}`);
+      const html = await res.text();
+      document.getElementById(id).innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarFragmento('header-productos', 'headerProductos.html');
+      cargarFragmento('barra-tienda', 'barraTienda.html');
+      cargarFragmento('footer-productos', 'footerProductos.html');
+    });
+  </script>
+</body>
+</html>

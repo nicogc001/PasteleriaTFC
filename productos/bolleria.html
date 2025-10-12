@@ -47,44 +47,45 @@
 
     <div id="footer-productos"></div>
 
-    <!-- Banner de Cookies: se inyecta dinámicamente para reutilizar en todas las páginas -->
-    <script>
-      // Inserta el banner desde /cookies/cookie-banner.html y construye el panel
-      (function insertCookieBanner() {
-        function buildCookiePanel() {
-          var panel = document.querySelector(".cc-panel");
-          if (!panel) return;
-          panel.innerHTML = `
-          <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:8px;">
-            <label style="display:flex;align-items:center;gap:8px;">
-              <input type="checkbox" checked disabled />
-              <span>Necesarias (siempre activas)</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;">
-              <input id="cc-analytics" type="checkbox" />
-              <span>Analíticas</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:8px;">
-              <input id="cc-marketing" type="checkbox" />
-              <span>Marketing</span>
-            </label>
-            <button id="cc-save" style="margin-left:auto;background:#fff;color:#111;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;">Guardar preferencias</button>
-          </div>
-        `;
-        }
+<!-- Componente Cookies -->
+<div id="componente-cookies"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      // Detecta si estás en /productos/*.html
+      const enProductos = location.pathname.includes("/productos/");
+      const rutaHtml = enProductos ? "elementos/cookies.html" : "productos/elementos/cookies.html";
+      const rutaJs   = enProductos ? "elementos/cookies.js"   : "productos/elementos/cookies.js";
 
-        fetch("/cookies/cookie-banner.html")
-          .then((r) => (r.ok ? r.text() : Promise.reject("cookie-banner")))
-          .then((html) => {
-            document.body.insertAdjacentHTML("beforeend", html);
-            buildCookiePanel(); // ← IMPORTANTE: construir el panel aquí
-          })
-          .catch(console.error);
-      })();
-    </script>
+      const cont = document.getElementById("componente-cookies");
+      const res = await fetch(rutaHtml);
+      if (!res.ok) throw new Error("No se pudo cargar cookies.html");
+      cont.innerHTML = await res.text();
 
-    <!-- Script de consentimiento: debe cargarse ANTES de analíticas/marketing -->
-    <script src="/cookies/cookie-consent.js" defer></script>
+      // Evita cargar el JS dos veces
+      if (!window.__cookiesLoaded) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = rutaJs;
+          s.defer = true;
+          s.onload = resolve;
+          s.onerror = () => reject(new Error("No se pudo cargar cookies.js"));
+          document.body.appendChild(s);
+        });
+        window.__cookiesLoaded = true;
+      }
+
+      // Muy importante: inicializar después de insertar el HTML y cargar el JS
+      if (typeof window.initCookieBanner === "function") {
+        window.initCookieBanner();
+      } else {
+        console.error("initCookieBanner no está disponible.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  });
+</script>
 
     <script>
       async function cargarFragmento(id, archivo) {

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Cookies</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+  <link href="../styles/main.css" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- Fragmentos comunes -->
+  <div id="header-productos"></div>
+  <div id="barra-tienda"></div>
+
+  <!-- Contenido -->
+  <main class="container mt-5">
+    <h1 class="text-center mb-4">Política de Cookies</h1>
+    <p>En <strong>El Caballo Goloso</strong> utilizamos cookies propias y de terceros para mejorar la experiencia de navegación,
+      analizar el tráfico y mostrarte contenido personalizado.</p>
+
+    <h2>¿Qué son las cookies?</h2>
+    <p>Las cookies son pequeños archivos que se almacenan en tu dispositivo cuando visitas una web. Permiten reconocer tu
+      navegador y mejorar la experiencia del usuario.</p>
+
+    <h2>Tipos de cookies utilizadas</h2>
+    <ul>
+      <li><strong>Necesarias:</strong> Permiten el funcionamiento básico del sitio.</li>
+      <li><strong>Analíticas:</strong> Nos ayudan a entender cómo navegas por la web (Google Analytics, etc.).</li>
+      <li><strong>Marketing:</strong> Permiten ofrecerte contenido y anuncios adaptados a tus intereses.</li>
+    </ul>
+
+    <h2>Gestión del consentimiento</h2>
+    <p>Puedes modificar tus preferencias en cualquier momento pulsando este enlace:</p>
+    <p><a href="#" onclick="window.openCookieSettings?.(); return false;">Cambiar preferencias de cookies</a></p>
+
+    <h2>Configuración desde el navegador</h2>
+    <p>Puedes bloquear o eliminar las cookies en las opciones de tu navegador:</p>
+    <ul>
+      <li><a href="https://support.google.com/chrome/answer/95647" target="_blank">Google Chrome</a></li>
+      <li><a href="https://support.mozilla.org/es/kb/Borrar%20cookies" target="_blank">Mozilla Firefox</a></li>
+      <li><a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank">Safari</a></li>
+    </ul>
+
+    <p class="mt-4 text-muted">Última actualización: febrero 2025</p>
+  </main>
+
+  <div id="footer-productos"></div>
+
+  <!-- Fragmentos -->
+  <script>
+    async function cargarFragmento(id, archivo) {
+      const res = await fetch(`../productos/elementos/${archivo}`);
+      const html = await res.text();
+      document.getElementById(id).innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarFragmento('header-productos', 'headerProductos.html');
+      cargarFragmento('barra-tienda', 'barraTienda.html');
+      cargarFragmento('footer-productos', 'footerProductos.html');
+    });
+  </script>
+</body>
+</html>

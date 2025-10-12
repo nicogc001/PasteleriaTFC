@@ -30,25 +30,38 @@
 <div id="componente-cookies"></div>
 <script>
   document.addEventListener("DOMContentLoaded", async () => {
-    // Ajusta la ruta según el nivel de la página
-    // Si estás en /productos/*.html → "elementos/cookies.html"
-    // Si estás en /index.html → "productos/elementos/cookies.html"
-    const rutaHtml = location.pathname.includes("/productos/")
-      ? "elementos/cookies.html"
-      : "productos/elementos/cookies.html";
+    try {
+      // Detecta si estás en /productos/*.html
+      const enProductos = location.pathname.includes("/productos/");
+      const rutaHtml = enProductos ? "elementos/cookies.html" : "productos/elementos/cookies.html";
+      const rutaJs   = enProductos ? "elementos/cookies.js"   : "productos/elementos/cookies.js";
 
-    const cont = document.getElementById("componente-cookies");
-    cont.innerHTML = await (await fetch(rutaHtml)).text();
+      const cont = document.getElementById("componente-cookies");
+      const res = await fetch(rutaHtml);
+      if (!res.ok) throw new Error("No se pudo cargar cookies.html");
+      cont.innerHTML = await res.text();
 
-    // Carga el JS solo una vez
-    if (!window.__cookiesLoaded) {
-      const s = document.createElement('script');
-      s.defer = true;
-      s.src = location.pathname.includes("/productos/")
-        ? "elementos/cookies.js"
-        : "productos/elementos/cookies.js";
-      document.body.appendChild(s);
-      window.__cookiesLoaded = true;
+      // Evita cargar el JS dos veces
+      if (!window.__cookiesLoaded) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = rutaJs;
+          s.defer = true;
+          s.onload = resolve;
+          s.onerror = () => reject(new Error("No se pudo cargar cookies.js"));
+          document.body.appendChild(s);
+        });
+        window.__cookiesLoaded = true;
+      }
+
+      // Muy importante: inicializar después de insertar el HTML y cargar el JS
+      if (typeof window.initCookieBanner === "function") {
+        window.initCookieBanner();
+      } else {
+        console.error("initCookieBanner no está disponible.");
+      }
+    } catch (e) {
+      console.error(e);
     }
   });
 </script>
