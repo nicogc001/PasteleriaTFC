@@ -8,6 +8,8 @@ const path = require('path');
 const { syncDB } = require('./models');
 const db = require('./config/db');
 
+const { verifyMailer } = require("./lib/mailer"); //Email
+verifyMailer(); 
 dotenv.config();
 
 const app = express();
@@ -33,7 +35,7 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization','x-test-token']
 };
 
 app.use(cors(corsOptions));
@@ -65,6 +67,8 @@ app.use('/api/ofertas', require('./routes/ofertasRoutes'));
 app.use('/api/vacaciones', require('./routes/vacacionesRoutes'));
 app.use('/api/chats', require('./routes/chatRoutes'));
 app.use('/api/empleo', require('./routes/empleoRoutes'));
+app.use("/api/dev", require("./routes/devRoutes"));
+
 
 // Tareas programadas
 require('./jobs/facturacionDiaria');
