@@ -16,6 +16,9 @@
         style="background:#22c55e;border:none;color:#111;font-weight:600;padding:8px 14px;border-radius:8px;cursor:pointer;">
         Aceptar todas
       </button>
+      <button id="cc-reject-all" style="background:#ef4444;border:none;color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;">
+        Rechazar no necesarias
+      </button>
     </div>
   </div>
 
@@ -41,84 +44,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  (function () {
-    const KEY = "cookie-consent-v1";
-
-    const CookieConsent = {
-      get() {
-        try { return JSON.parse(localStorage.getItem(KEY)) || null; }
-        catch { return null; }
-      },
-      set(consent) {
-        localStorage.setItem(KEY, JSON.stringify(consent));
-      },
-      apply(consent) {
-        if (!consent) return;
-        if (consent.analytics) CookieConsent.loadAnalytics();
-        if (consent.marketing) CookieConsent.loadMarketing();
-      },
-      loadAnalytics() {
-        // Aquí puedes añadir GTM o GA4:
-        // const s = document.createElement("script");
-        // s.src = "https://www.googletagmanager.com/gtag/js?id=G-XXXXXX";
-        // document.head.appendChild(s);
-      },
-      loadMarketing() {
-        // Ejemplo: Pixel de Facebook
-        // ...
-      }
-    };
-
-    function hideBanner() {
-      document.getElementById("cookie-banner").style.display = "none";
-    }
-
-    function showBanner() {
-      document.getElementById("cookie-banner").style.display = "block";
-    }
-
-    function wireUI() {
-      const btnAcceptAll = document.getElementById("cc-accept-all");
-      const btnSave = document.getElementById("cc-save");
-      const btnConfig = document.getElementById("cc-config");
-      const chkAnalytics = document.getElementById("cc-analytics");
-      const chkMarketing = document.getElementById("cc-marketing");
-      const panel = document.querySelector(".cc-panel");
-
-      btnAcceptAll.addEventListener("click", () => {
-        const consent = { necessary: true, analytics: true, marketing: true, ts: Date.now() };
-        CookieConsent.set(consent);
-        CookieConsent.apply(consent);
-        hideBanner();
-      });
-
-      btnSave.addEventListener("click", () => {
-        const consent = {
-          necessary: true,
-          analytics: chkAnalytics.checked,
-          marketing: chkMarketing.checked,
-          ts: Date.now()
-        };
-        CookieConsent.set(consent);
-        CookieConsent.apply(consent);
-        hideBanner();
-      });
-
-      btnConfig.addEventListener("click", () => {
-        panel.style.display = panel.style.display === "none" ? "block" : "none";
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const consent = CookieConsent.get();
-      if (consent) {
-        CookieConsent.apply(consent);
-      } else {
-        showBanner();
-      }
-      wireUI();
-    });
-  })();
-</script>

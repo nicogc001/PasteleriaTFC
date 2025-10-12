@@ -28,7 +28,34 @@
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+<!-- Componente Cookies -->
+<div id="componente-cookies"></div>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    // Ajusta la ruta según el nivel de la página
+    // Si estás en /productos/*.html → "elementos/cookies.html"
+    // Si estás en /index.html → "productos/elementos/cookies.html"
+    const rutaHtml = location.pathname.includes("/productos/")
+      ? "elementos/cookies.html"
+      : "productos/elementos/cookies.html";
 
+    const cont = document.getElementById("componente-cookies");
+    cont.innerHTML = await (await fetch(rutaHtml)).text();
+
+    // Carga el JS solo una vez
+    if (!window.__cookiesLoaded) {
+      const s = document.createElement('script');
+      s.defer = true;
+      s.src = location.pathname.includes("/productos/")
+        ? "elementos/cookies.js"
+        : "productos/elementos/cookies.js";
+      document.body.appendChild(s);
+      window.__cookiesLoaded = true;
+    }
+  });
+</script>
+
+  
   <!-- Fragmentos + Banner dinámico -->
   <script>
     async function cargarFragmento(id, archivo) {
