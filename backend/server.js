@@ -8,6 +8,10 @@ const path = require('path');
 const { syncDB } = require('./models');
 const db = require('./config/db');
 
+const testEmailRoute = require('./routes/testEmail');
+app.use(testEmailRoute);
+
+
 const { verifyMailer } = require("./lib/mailer"); //Email
 verifyMailer(); 
 dotenv.config();
