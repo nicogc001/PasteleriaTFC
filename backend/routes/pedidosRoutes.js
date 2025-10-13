@@ -1,12 +1,16 @@
+// backend/routes/pedidosRoutes.js
 const express = require('express');
 const router = express.Router();
 const { Pedidos, ProductosPedidos, Productos, Usuario } = require('../models');
-const authMiddleware = require('../middleware/authMiddleware');
 const { Direccion } = require('../models');
+const authMiddleware = require('../middleware/authMiddleware');
 const generarFacturaPDF = require('../utils/generarFacturaPDF');
 const enviarFacturaEmail = require('../utils/enviarFacturaEmail');
 const buscarEmpleadoDisponible = require('../utils/buscarEmpleadoDisponible');
 const { Op } = require('sequelize');
+
+// ✉️ Servicio de notificaciones por cambio de estado
+const { notifyPedidoEstado } = require('../services/pedidosNotifications');
 
 // Obtener pedidos asignados al empleado autenticado
 const RegistroHorarios = require('../models/RegistroHorarios'); 
@@ -21,11 +25,9 @@ router.get('/asignados', authMiddleware, async (req, res) => {
     const dentroDe7Dias = new Date();
     dentroDe7Dias.setDate(hoy.getDate() + 7);
 
-    // Convertir a string formato YYYY-MM-DD
     const desde = hoy.toISOString().split('T')[0];
     const hasta = dentroDe7Dias.toISOString().split('T')[0];
 
-    // Obtener horarios del empleado entre hoy y 7 días después
     const horarios = await RegistroHorarios.findAll({
       where: {
         empleadoId: req.user.id,
@@ -34,10 +36,8 @@ router.get('/asignados', authMiddleware, async (req, res) => {
     });
 
     const fechasTiendas = horarios.map(h => ({ fecha: h.fecha, tienda: h.tienda }));
-
     if (!fechasTiendas.length) return res.json([]);
 
-    // Obtener todos los pedidos cuya fecha y tienda coincidan con alguna asignación
     const pedidos = await Pedidos.findAll({
       where: {
         [Op.or]: fechasTiendas.map(({ fecha, tienda }) => ({
@@ -47,15 +47,15 @@ router.get('/asignados', authMiddleware, async (req, res) => {
       },
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        { model: Usuario, attributes: ['nombre', 'telefono'] }
+        { model: Usuario, as: 'cliente', attributes: ['nombre', 'telefono'] }
       ],
       order: [['fechaEntrega', 'ASC']]
     });
 
     const resultado = pedidos.map(p => ({
       id: p.id,
-      nombreCliente: p.Usuario?.nombre || 'Cliente',
-      telefonoCliente: p.Usuario?.telefono || 'N/D',
+      nombreCliente: p.cliente?.nombre || 'Cliente',
+      telefonoCliente: p.cliente?.telefono || 'N/D',
       productos: p.ProductosPedidos.map(pp => ({
         nombre: pp.Producto?.nombre || 'Desconocido',
         cantidad: pp.cantidad,
@@ -89,7 +89,7 @@ router.get('/pendientes-aprobacion', authMiddleware, async (req, res) => {
           { segundoAprobadorId: req.user.id }
         ]
       },
-      include: [{ model: Usuario, attributes: ['nombre', 'email'] }]
+      include: [{ model: Usuario, as: 'cliente', attributes: ['nombre', 'email'] }]
     });
 
     res.json(pedidos);
@@ -108,7 +108,7 @@ router.get('/', authMiddleware, async (req, res) => {
       where: esCliente ? { usuarioId: req.user.id } : {},
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        ...(esCliente ? [] : [{ model: Usuario, attributes: ['id', 'nombre', 'email'] }])
+        ...(esCliente ? [] : [{ model: Usuario, as: 'cliente', attributes: ['id', 'nombre', 'email'] }])
       ],
       order: [['fecha', 'DESC']]
     });
@@ -120,7 +120,6 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-
 // Vista de pedidos para el calendario del empleado (todos los pedidos)
 router.get('/empleado-vista', authMiddleware, async (req, res) => {
   try {
@@ -131,15 +130,15 @@ router.get('/empleado-vista', authMiddleware, async (req, res) => {
     const pedidos = await Pedidos.findAll({
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        { model: Usuario, attributes: ['nombre', 'telefono'] } 
+        { model: Usuario, as: 'cliente', attributes: ['nombre', 'telefono'] } 
       ],
       order: [['fechaEntrega', 'ASC']]
     });
 
     const resultado = pedidos.map(p => ({
       id: p.id,
-      nombreCliente: p.Usuario?.nombre || 'Cliente',
-      telefonoCliente: p.Usuario?.telefono || 'N/D', 
+      nombreCliente: p.cliente?.nombre || 'Cliente',
+      telefonoCliente: p.cliente?.telefono || 'N/D', 
       productos: Array.isArray(p.ProductosPedidos)
         ? p.ProductosPedidos.map(pp => ({
             nombre: pp?.Producto?.nombre || 'Desconocido'
@@ -155,7 +154,6 @@ router.get('/empleado-vista', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error al obtener pedidos para el empleado' });
   }
 });
-
 
 // Crear un nuevo pedido
 router.post('/', authMiddleware, async (req, res) => {
@@ -246,13 +244,27 @@ router.put('/:id/aprobar', authMiddleware, async (req, res) => {
   }
 });
 
-// Cambiar estado del pedido
+// Cambiar estado del pedido (✉️ notifica al cliente)
 router.put('/:id/estado', authMiddleware, async (req, res) => {
   try {
-    const pedido = await Pedidos.findByPk(req.params.id);
+    const { estado: nuevoEstado, comentario } = req.body;
+
+    const pedido = await Pedidos.findByPk(req.params.id, {
+      include: [
+        { model: Usuario, as: 'cliente', attributes: ['id','nombre','email'] },
+        { model: ProductosPedidos, include: [Productos] } // opcional, para email con detalle
+      ]
+    });
     if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
-    pedido.estado = req.body.estado;
+
+    const prevEstado = pedido.estado;
+    pedido.estado = nuevoEstado;
     await pedido.save();
+
+    // Dispara email sin bloquear la respuesta
+    notifyPedidoEstado({ pedido, prevEstado, nuevoEstado, comentario })
+      .catch(e => console.error('notifyPedidoEstado:', e.message));
+
     res.json({ message: 'Estado actualizado correctamente', pedido });
   } catch (err) {
     console.error('Error actualizando estado:', err);
@@ -266,14 +278,17 @@ router.put('/:id/confirmar', authMiddleware, async (req, res) => {
     const { metodoPago } = req.body;
     const pedido = await Pedidos.findOne({
       where: { id: req.params.id, usuarioId: req.user.id },
-      include: [{ model: ProductosPedidos, include: [Productos] }, { model: Usuario }]
+      include: [{ model: ProductosPedidos, include: [Productos] }, { model: Usuario, as: 'cliente' }]
     });
     if (!pedido) return res.status(404).json({ error: 'Pedido no encontrado' });
+
     pedido.estado = 'confirmado';
     pedido.metodoPago = metodoPago || 'N/A';
     await pedido.save();
+
     const rutaFactura = await generarFacturaPDF(pedido);
-    await enviarFacturaEmail(pedido.Usuario.email, rutaFactura);
+    await enviarFacturaEmail(pedido.cliente.email, rutaFactura);
+
     res.json({ message: 'Pedido confirmado, factura generada y enviada', factura: rutaFactura });
   } catch (err) {
     console.error('Error confirmando pedido:', err);
@@ -349,10 +364,7 @@ router.get('/mis-pedidos', authMiddleware, async (req, res) => {
     const pedidos = await Pedidos.findAll({
       where: { usuarioId: req.user.id },
       include: [
-        {
-          model: ProductosPedidos,
-          include: [Productos]
-        }
+        { model: ProductosPedidos, include: [Productos] }
       ],
       order: [['fecha', 'DESC']]
     });
@@ -380,29 +392,23 @@ router.get('/mis-pedidos', authMiddleware, async (req, res) => {
 // Obtener todos los pedidos (solo visualización)
 router.get('/todos', authMiddleware, async (req, res) => {
   try {
-    console.log('Usuario autenticado:', req.user);
-
     if (req.user.rol !== 'empleado') {
-      console.log('No tiene rol de empleado');
       return res.status(403).json({ error: 'Acceso denegado: solo empleados' });
     }
 
     const pedidos = await Pedidos.findAll({
       include: [
         { model: ProductosPedidos, include: [Productos] },
-        { model: Usuario, attributes: ['nombre', 'telefono'] }
+        { model: Usuario, as: 'cliente', attributes: ['nombre', 'telefono'] }
       ],
       order: [['fechaEntrega', 'ASC']]
     });
-
-    console.log('Total pedidos encontrados:', pedidos.length);
-    console.log('IDs:', pedidos.map(p => p.id)); // Confirmar IDs válidos
 
     const resultado = pedidos.map(p => {
       try {
         return {
           id: p.id,
-          nombreCliente: p.Usuario?.nombre || 'Cliente',
+          nombreCliente: p.cliente?.nombre || 'Cliente',
           productos: Array.isArray(p.ProductosPedidos)
             ? p.ProductosPedidos.map(pp => ({
                 nombre: pp?.Producto?.nombre || 'Desconocido'
@@ -415,12 +421,9 @@ router.get('/todos', authMiddleware, async (req, res) => {
         console.error(`Error al procesar pedido ID ${p.id}:`, err.message);
         return null;
       }
-    }).filter(Boolean); // elimina elementos null
+    }).filter(Boolean);
 
-    // Devuelve como objeto con clave `pedidos`, para que el frontend lo lea bien
     res.json({ pedidos: resultado });
-
-
   } catch (err) {
     console.error('Error general al obtener pedidos:', err.message);
     res.status(500).json({ error: 'Error al obtener pedidos', detalle: err.message });
@@ -459,7 +462,7 @@ router.post('/crear-por-empleado', authMiddleware, async (req, res) => {
       total,
       tipoEntrega,
       tienda: tipoEntrega === 'recoger' ? tienda : null,
-      metodoPago: 'empleado', // o 'interno'
+      metodoPago: 'empleado',
       fechaEntrega,
       notas
     });
@@ -476,6 +479,5 @@ router.post('/crear-por-empleado', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Error al crear pedido por empleado' });
   }
 });
-
 
 module.exports = router;

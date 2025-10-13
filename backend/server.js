@@ -84,6 +84,7 @@ app.use("/api/dev", require("./routes/devRoutes"));
 
 // 8) Tareas programadas
 require("./jobs/facturacionDiaria");
+require('./jobs/postEntregaResenas');
 
 // 9) Raíz y manejo de errores
 app.get("/", (req, res) => res.send("Backend funcionando correctamente"));
