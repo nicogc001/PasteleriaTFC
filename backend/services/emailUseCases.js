@@ -1,23 +1,27 @@
 // backend/services/emailUseCases.js
-const { sendMail } = require('../lib/mailer'); // o sendEmail, según tu export
-const { orderStatusEmail, offerActivatedEmail, passwordResetEmail } = require('./templates');
+const { sendEmail } = require('../lib/mailer'); // usa el nombre real exportado por mailer.js
+const { orderStatusEmail, offerActivatedEmail, passwordResetEmail, reviewRequestEmail } = require('./templates');
 
-const euro = (n) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(n || 0);
+const euro = (n) =>
+  new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(Number(n || 0));
 
+/**
+ * Email: cambio de estado de pedido
+ */
 async function sendOrderStatusEmail({ user, pedido, prevEstado, nuevoEstado, comentario }) {
-  const items = (pedido.ProductosPedidos || pedido.items || []).map(pp => {
-    const precio = Number(pp.Producto?.precio || pp.precio || 0);
-    const cantidad = Number(pp.cantidad || 0);
+  // Normaliza items desde include (ProductosPedidos) o pedido.items
+  const items = (pedido.ProductosPedidos || pedido.items || []).map((pp) => {
+    const precio = Number(pp?.Producto?.precio ?? pp?.precio ?? 0);
+    const cantidad = Number(pp?.cantidad ?? 0);
     const subtotal = precio * cantidad;
     return {
-      nombre: pp.Producto?.nombre || pp.nombre || 'Producto',
+      nombre: pp?.Producto?.nombre || pp?.nombre || 'Producto',
       cantidad,
       precio: euro(precio),
-      subtotal: euro(subtotal)
+      subtotal: euro(subtotal),
+      subtotalRaw: subtotal
     };
   });
-
-  const total = euro(Number(pedido.total || items.reduce((s, i) => s + (Number(i.subtotalRaw) || 0), 0)));
 
   const { html, text } = orderStatusEmail({
     nombre: user.nombre || user.email,
@@ -27,31 +31,67 @@ async function sendOrderStatusEmail({ user, pedido, prevEstado, nuevoEstado, com
     comentario,
     fecha: new Date().toLocaleString('es-ES'),
     items,
-    total: euro(Number(pedido.total || 0)),
+    total: euro(pedido.total ?? items.reduce((s, i) => s + Number(i.subtotalRaw || 0), 0)),
     tipoEntrega: pedido.tipoEntrega,
     tienda: pedido.tienda,
-    fechaEntrega: pedido.fechaEntrega ? new Date(pedido.fechaEntrega).toLocaleDateString('es-ES') : undefined,
-    direccion: pedido.direccion || undefined, // si la añades en el include
+    fechaEntrega: pedido.fechaEntrega
+      ? new Date(pedido.fechaEntrega).toLocaleDateString('es-ES')
+      : undefined,
+    // direccion: si en el futuro la incluyes en el include, pásala aquí
     ctaUrl: `${process.env.APP_BASE_URL || 'https://pasteleriatfc.vercel.app'}/cliente/pedidos/${pedido.id}`
   });
 
-  return sendMail({
+  return sendEmail({
     to: user.email,
     subject: `Tu pedido ${pedido.codigo ? '#' + pedido.codigo : '#' + pedido.id}: ${nuevoEstado}`,
-    html, text
+    html,
+    text
   });
 }
 
-module.exports = {
-  sendOrderStatusEmail,
-  // y si usas las demás:
-  // sendOfferActivatedEmail: (...) => { const { html, text } = offerActivatedEmail(...); return sendMail({ ... }); },
-  // sendPasswordResetEmail: (...) => { const { html, text } = passwordResetEmail(...); return sendMail({ ... }); },
-};
+/**
+ * Email: oferta activada (opcional)
+ */
+async function sendOfferActivatedEmail({ user, oferta }) {
+  const { html, text } = offerActivatedEmail({
+    nombre: user.nombre || user.email,
+    titulo: oferta.titulo,
+    descripcion: oferta.descripcion,
+    validaHasta: oferta.finVigencia
+      ? new Date(oferta.finVigencia).toLocaleDateString('es-ES')
+      : 'pronto',
+    ctaUrl: oferta.url || `${process.env.APP_BASE_URL || ''}/ofertas`
+  });
 
-const { sendMail } = require('../lib/mailer'); // o sendEmail si así lo exportas
-const { reviewRequestEmail } = require('./templates');
+  return sendEmail({
+    to: user.email,
+    subject: `Nueva oferta para ti: ${oferta.titulo}`,
+    html,
+    text
+  });
+}
 
+/**
+ * Email: restablecer contraseña (opcional)
+ */
+async function sendPasswordResetEmail({ user, token }) {
+  const resetUrl = `${process.env.APP_BASE_URL || 'https://pasteleriatfc.vercel.app'}/reset-password?token=${token}`;
+  const { html, text } = passwordResetEmail({
+    nombre: user.nombre || user.email,
+    resetUrl
+  });
+
+  return sendEmail({
+    to: user.email,
+    subject: 'Restablecer contraseña',
+    html,
+    text
+  });
+}
+
+/**
+ * Email: solicitar reseña post-entrega (job)
+ */
 async function sendReviewRequestEmail({ user, pedido }) {
   const reviewUrl = `${process.env.APP_BASE_URL || 'https://pasteleriatfc.vercel.app'}/cliente/pedidos/${pedido.id}#reseña`;
   const { html, text } = reviewRequestEmail({
@@ -60,7 +100,7 @@ async function sendReviewRequestEmail({ user, pedido }) {
     reviewUrl
   });
 
-  return sendMail({
+  return sendEmail({
     to: user.email,
     subject: `¿Qué te pareció tu pedido ${pedido.codigo ? '#' + pedido.codigo : '#' + pedido.id}?`,
     html,
@@ -70,7 +110,7 @@ async function sendReviewRequestEmail({ user, pedido }) {
 
 module.exports = {
   sendOrderStatusEmail,
-  // ...otras funciones que ya tengas
-  sendReviewRequestEmail // 👈 exporta esto
+  sendOfferActivatedEmail,
+  sendPasswordResetEmail,
+  sendReviewRequestEmail
 };
-
