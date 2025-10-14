@@ -1,33 +1,65 @@
-// lib/mailer.js
-const nodemailer = require("nodemailer");
+// backend/lib/mailer.js
+const dotenv = require('dotenv');
+dotenv.config(); // garantiza .env cargado SIEMPRE aquí
 
-const mailer = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT || 2525),
-  secure: Number(process.env.SMTP_PORT) === 465, // true si TLS directo
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const nodemailer = require('nodemailer');
+
+let _mailer = null;
+function getMailer() {
+  if (!_mailer) {
+    const host = process.env.SMTP_HOST;
+    const port = Number(process.env.SMTP_PORT || 2525);
+    const secure = port === 465;
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+
+    if (!host || !user || !pass) {
+      console.error('❌ SMTP env incompletas:', {
+        host,
+        port,
+        secure,
+        user: user ? '***' : '(vacío)',
+        pass: pass ? '***' : '(vacío)',
+        from: process.env.SMTP_FROM || '(vacío)'
+      });
+    }
+
+    _mailer = nodemailer.createTransport({
+      host,
+      port,
+      secure,
+      auth: { user, pass },
+      logger: process.env.MAIL_DEBUG === 'true',
+      debug: process.env.MAIL_DEBUG === 'true'
+    });
+  }
+  return _mailer;
+}
 
 async function verifyMailer() {
   try {
-    await mailer.verify();
-    console.log("📧 SMTP (Mailtrap) conectado correctamente");
+    await getMailer().verify();
+    console.log(`📧 SMTP conectado: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT} (from=${process.env.SMTP_FROM})`);
   } catch (e) {
-    console.error("❌ Error SMTP:", e?.message || e);
+    console.error('❌ Error SMTP (verify):', e?.message || e);
   }
 }
 
 async function sendEmail({ to, subject, html, text }) {
-  return mailer.sendMail({
-    from: process.env.SMTP_FROM,
-    to,
-    subject,
-    text,
-    html,
-  });
+  const from = process.env.SMTP_FROM || '"El Caballo Goloso" <no-reply@caballogoloso.com>';
+  try {
+    const info = await getMailer().sendMail({ from, to, subject, text, html });
+    // Nodemailer suele devolver messageId
+    if (info?.messageId) {
+      console.log(`✉️  Enviado a ${to} :: ${subject} :: messageId=${info.messageId}`);
+    } else {
+      console.log(`✉️  Enviado a ${to} :: ${subject}`);
+    }
+    return info;
+  } catch (e) {
+    console.error(`❌ Error enviando a ${to} :: ${subject} ->`, e?.message || e);
+    throw e;
+  }
 }
 
-module.exports = { mailer, verifyMailer, sendEmail };
+module.exports = { verifyMailer, sendEmail };
