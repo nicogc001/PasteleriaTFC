@@ -41,7 +41,7 @@ const models = {
   VacasSolicitud,
   Chat,
   Mensaje,
-  EmailLog,
+  EmailLog
 };
 
 // Ejecuta associate() si algún modelo lo define
@@ -63,7 +63,7 @@ Carrito.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 Usuario.hasMany(Direccion, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
 Direccion.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
-// Usuario (cliente) ⇄ Pedidos  (alias 'cliente' en el belongsTo)
+// Usuario (cliente) ⇄ Pedidos  (alias 'cliente' en el belongsTo)  ⬅️ ÚNICA con alias 'cliente'
 Usuario.hasMany(Pedidos, { foreignKey: 'usuarioId', onDelete: 'CASCADE' });
 Pedidos.belongsTo(Usuario, { as: 'cliente', foreignKey: 'usuarioId' });
 
@@ -113,13 +113,13 @@ Ofertas.belongsToMany(Usuario, {
   through: OfertasCliente,
   foreignKey: 'ofertaId',
   otherKey: 'userId',
-  as: 'usuarios',
+  as: 'usuarios'
 });
 Usuario.belongsToMany(Ofertas, {
   through: OfertasCliente,
   foreignKey: 'userId',
   otherKey: 'ofertaId',
-  as: 'ofertas',
+  as: 'ofertas'
 });
 
 /* =========================
@@ -128,7 +128,7 @@ Usuario.belongsToMany(Ofertas, {
 const syncDB = async () => {
   try {
     await db.sync({ alter: true });
-    console.log('Base de datos sincronizada correctamente');
+  console.log('Base de datos sincronizada correctamente');
   } catch (error) {
     console.error('Error al sincronizar la base de datos:', error);
   }
@@ -140,5 +140,5 @@ const syncDB = async () => {
 module.exports = {
   db,
   syncDB,
-  ...models,
+  ...models
 };
