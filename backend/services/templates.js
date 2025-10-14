@@ -1,8 +1,8 @@
 // backend/services/templates.js
-const Handlebars = require("handlebars");
+const Handlebars = require('handlebars');
 
 // ===== Helpers útiles =====
-Handlebars.registerHelper("ifEq", function (a, b, opts) {
+Handlebars.registerHelper('ifEq', function (a, b, opts) {
   return a === b ? opts.fn(this) : opts.inverse(this);
 });
 
@@ -14,14 +14,6 @@ function render(template, data) {
 
 /**
  * Email: Cambio de estado de pedido con desglose
- * Espera un `data` con:
- * {
- *   nombre, pedidoCodigo, prevEstado, nuevoEstado, comentario, fecha,
- *   items: [{ nombre, cantidad, precio, subtotal }],
- *   total, tipoEntrega, tienda, fechaEntrega (dd/mm/aaaa),
- *   direccion: { linea1, ciudad, cp, provincia } (opcional),
- *   ctaUrl (opcional, enlace "Ver pedido")
- * }
  */
 function orderStatusEmail(data) {
   const html = `
@@ -132,23 +124,22 @@ function orderStatusEmail(data) {
   `;
 
   const text = `
-Tu pedido ${data.pedidoCodigo} ha cambiado de estado: ${data.prevEstado} -> ${
-    data.nuevoEstado
-  }
-${data.comentario ? "Nota: " + data.comentario + "\n" : ""}
+Tu pedido ${data.pedidoCodigo} ha cambiado de estado: ${data.prevEstado} -> ${data.nuevoEstado}
+${data.comentario ? 'Nota: ' + data.comentario + '\n' : ''}
 
 Resumen:
-${(data.items || [])
-  .map((i) => `- ${i.nombre} x${i.cantidad} = ${i.subtotal}`)
-  .join("\n")}
+${(data.items || []).map(i => `- ${i.nombre} x${i.cantidad} = ${i.subtotal}`).join('\n')}
 Total: ${data.total}
 
-${data.ctaUrl ? "Ver pedido: " + data.ctaUrl : ""}
+${data.ctaUrl ? 'Ver pedido: ' + data.ctaUrl : ''}
 `.trim();
 
   return { html: render(html, data), text };
 }
 
+/**
+ * Email: Solicitud de reseña tras la entrega
+ */
 function reviewRequestEmail(data) {
   const html = `
     <div style="background:#f8fafc;padding:24px 0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif">
@@ -171,18 +162,11 @@ function reviewRequestEmail(data) {
       </div>
     </div>`;
   const text = `¿Te ha gustado tu pedido ${data.pedidoCodigo}? Deja tu reseña: ${data.reviewUrl}`;
-  return { html, text };
+  return { html: render(html, data), text };
 }
 
-module.exports = {
-  orderStatusEmail,
-  offerActivatedEmail,
-  passwordResetEmail,
-  reviewRequestEmail, 
-};
-
 /**
- * (Opcional) Oferta activada — simple
+ * Email: Oferta activada
  */
 function offerActivatedEmail(data) {
   const html = `
@@ -191,16 +175,16 @@ function offerActivatedEmail(data) {
       <p>Hola {{nombre}}, hemos activado una oferta especial para ti:</p>
       <p><b>{{titulo}}</b></p>
       <p>{{descripcion}}</p>
-      <p>Válida hasta: <b>{{validaHasta}}</b></p>
-      <a href="{{ctaUrl}}">Ver oferta</a>
+      {{#if validaHasta}}<p>Válida hasta: <b>{{validaHasta}}</b></p>{{/if}}
+      {{#if ctaUrl}}<a href="{{ctaUrl}}">Ver oferta</a>{{/if}}
     </div>
   `;
-  const text = `Oferta: ${data.titulo} (válida hasta ${data.validaHasta})`;
+  const text = `Oferta: ${data.titulo}${data.validaHasta ? ' (válida hasta ' + data.validaHasta + ')' : ''}${data.ctaUrl ? '\n' + data.ctaUrl : ''}`;
   return { html: render(html, data), text };
 }
 
 /**
- * (Opcional) Restablecer contraseña
+ * Email: Restablecer contraseña
  */
 function passwordResetEmail(data) {
   const html = `
@@ -215,4 +199,10 @@ function passwordResetEmail(data) {
   return { html: render(html, data), text };
 }
 
-module.exports = { orderStatusEmail, offerActivatedEmail, passwordResetEmail };
+// ✅ Export único con TODAS las funciones
+module.exports = {
+  orderStatusEmail,
+  reviewRequestEmail,
+  offerActivatedEmail,
+  passwordResetEmail
+};
