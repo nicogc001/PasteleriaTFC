@@ -1,15 +1,13 @@
 // backend/services/pedidosNotifications.js
-const { sendOrderStatusEmail } = require('../services/emailUseCases');
+const { sendOrderStatusEmail } = require('./emailUseCases');
 
 async function notifyPedidoEstado({ pedido, prevEstado, nuevoEstado, comentario }) {
   try {
-    // Validar que haya email del cliente
     if (!pedido?.cliente?.email) {
       console.warn('⚠️ Pedido sin email de cliente, no se enviará notificación.');
-      return;
+      return false;
     }
 
-    // Enviar correo usando la plantilla de cambio de estado
     await sendOrderStatusEmail({
       user: {
         email: pedido.cliente.email,
@@ -22,8 +20,10 @@ async function notifyPedidoEstado({ pedido, prevEstado, nuevoEstado, comentario 
     });
 
     console.log(`📧 Email de cambio de estado enviado a ${pedido.cliente.email}`);
+    return true;
   } catch (e) {
     console.error('❌ Error enviando email de pedido:', e.message);
+    return false;
   }
 }
 

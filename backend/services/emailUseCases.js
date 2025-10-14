@@ -1,16 +1,29 @@
 // backend/services/emailUseCases.js
-const { sendEmail } = require('../lib/mailer'); // usa el nombre real exportado por mailer.js
 const { orderStatusEmail, offerActivatedEmail, passwordResetEmail, reviewRequestEmail } = require('./templates');
+const { sendAndLog } = require('./sendAndLog');
 
+// ---- helpers ----
 const euro = (n) =>
   new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(Number(n || 0));
 
-/**
- * Email: cambio de estado de pedido
- */
-async function sendOrderStatusEmail({ user, pedido, prevEstado, nuevoEstado, comentario }) {
-  // Normaliza items desde include (ProductosPedidos) o pedido.items
-  const items = (pedido.ProductosPedidos || pedido.items || []).map((pp) => {
+const SUBJECTS_ESTADO = {
+  pendiente_pago: 'pendiente de pago',
+  pendiente: 'pendiente',
+  confirmado: 'confirmado',
+  en_preparacion: 'en preparación',
+  enviado: 'enviado',
+  listo_para_recogida: 'listo para recogida',
+  en_reparto: 'en reparto',
+  entregado: 'entregado',
+  cancelado: 'cancelado'
+};
+
+const appBaseUrl = process.env.APP_BASE_URL || 'https://pasteleriatfc.vercel.app';
+
+// Normaliza items desde include (ProductosPedidos) o desde pedido.items
+function mapItems(pedido) {
+  const source = pedido?.ProductosPedidos || pedido?.items || [];
+  return source.map((pp) => {
     const precio = Number(pp?.Producto?.precio ?? pp?.precio ?? 0);
     const cantidad = Number(pp?.cantidad ?? 0);
     const subtotal = precio * cantidad;
@@ -22,36 +35,48 @@ async function sendOrderStatusEmail({ user, pedido, prevEstado, nuevoEstado, com
       subtotalRaw: subtotal
     };
   });
+}
+
+// =======================
+// 1) Cambio de estado
+// =======================
+async function sendOrderStatusEmail({ user, pedido, prevEstado, nuevoEstado, comentario }) {
+  const items = mapItems(pedido);
+  const subjectEstado = SUBJECTS_ESTADO[nuevoEstado] || nuevoEstado;
+  const pedidoCodigo = `#${pedido?.codigo || pedido?.id}`;
 
   const { html, text } = orderStatusEmail({
     nombre: user.nombre || user.email,
-    pedidoCodigo: `#${pedido.codigo || pedido.id}`,
+    pedidoCodigo,
     prevEstado,
-    nuevoEstado,
+    nuevoEstado: subjectEstado,
     comentario,
     fecha: new Date().toLocaleString('es-ES'),
     items,
-    total: euro(pedido.total ?? items.reduce((s, i) => s + Number(i.subtotalRaw || 0), 0)),
-    tipoEntrega: pedido.tipoEntrega,
-    tienda: pedido.tienda,
-    fechaEntrega: pedido.fechaEntrega
+    total: euro(pedido?.total ?? items.reduce((s, i) => s + Number(i.subtotalRaw || 0), 0)),
+    tipoEntrega: pedido?.tipoEntrega,
+    tienda: pedido?.tienda,
+    fechaEntrega: pedido?.fechaEntrega
       ? new Date(pedido.fechaEntrega).toLocaleDateString('es-ES')
       : undefined,
-    // direccion: si en el futuro la incluyes en el include, pásala aquí
-    ctaUrl: `${process.env.APP_BASE_URL || 'https://pasteleriatfc.vercel.app'}/cliente/pedidos/${pedido.id}`
+    // Si incluyes dirección en el include, puedes pasarla aquí:
+    // direccion: { linea1: ..., ciudad: ..., provincia: ..., cp: ... },
+    ctaUrl: `${appBaseUrl}/cliente/pedidos/${pedido?.id}`
   });
 
-  return sendEmail({
+  return sendAndLog({
+    tipo: 'pedido_estado',
+    entidadId: pedido.id,
     to: user.email,
-    subject: `Tu pedido ${pedido.codigo ? '#' + pedido.codigo : '#' + pedido.id}: ${nuevoEstado}`,
+    subject: `Tu pedido ${pedidoCodigo}: ${subjectEstado}`,
     html,
     text
   });
 }
 
-/**
- * Email: oferta activada (opcional)
- */
+// =======================
+// 2) Oferta activada
+// =======================
 async function sendOfferActivatedEmail({ user, oferta }) {
   const { html, text } = offerActivatedEmail({
     nombre: user.nombre || user.email,
@@ -60,10 +85,12 @@ async function sendOfferActivatedEmail({ user, oferta }) {
     validaHasta: oferta.finVigencia
       ? new Date(oferta.finVigencia).toLocaleDateString('es-ES')
       : 'pronto',
-    ctaUrl: oferta.url || `${process.env.APP_BASE_URL || ''}/ofertas`
+    ctaUrl: oferta.url || `${appBaseUrl}/ofertas`
   });
 
-  return sendEmail({
+  return sendAndLog({
+    tipo: 'oferta_activada',
+    entidadId: oferta.id,
     to: user.email,
     subject: `Nueva oferta para ti: ${oferta.titulo}`,
     html,
@@ -71,17 +98,19 @@ async function sendOfferActivatedEmail({ user, oferta }) {
   });
 }
 
-/**
- * Email: restablecer contraseña (opcional)
- */
+// =======================
+// 3) Restablecer contraseña
+// =======================
 async function sendPasswordResetEmail({ user, token }) {
-  const resetUrl = `${process.env.APP_BASE_URL || 'https://pasteleriatfc.vercel.app'}/reset-password?token=${token}`;
+  const resetUrl = `${appBaseUrl}/reset-password?token=${token}`;
   const { html, text } = passwordResetEmail({
     nombre: user.nombre || user.email,
     resetUrl
   });
 
-  return sendEmail({
+  return sendAndLog({
+    tipo: 'password_reset',
+    entidadId: user.id || 0,
     to: user.email,
     subject: 'Restablecer contraseña',
     html,
@@ -89,20 +118,24 @@ async function sendPasswordResetEmail({ user, token }) {
   });
 }
 
-/**
- * Email: solicitar reseña post-entrega (job)
- */
+// =======================
+// 4) Solicitud de reseña (job post-entrega)
+// =======================
 async function sendReviewRequestEmail({ user, pedido }) {
-  const reviewUrl = `${process.env.APP_BASE_URL || 'https://pasteleriatfc.vercel.app'}/cliente/pedidos/${pedido.id}#reseña`;
+  const pedidoCodigo = `#${pedido?.codigo || pedido?.id}`;
+  const reviewUrl = `${appBaseUrl}/cliente/pedidos/${pedido?.id}#reseña`;
+
   const { html, text } = reviewRequestEmail({
     nombre: user.nombre || user.email,
-    pedidoCodigo: `#${pedido.codigo || pedido.id}`,
+    pedidoCodigo,
     reviewUrl
   });
 
-  return sendEmail({
+  return sendAndLog({
+    tipo: 'review',
+    entidadId: pedido.id,
     to: user.email,
-    subject: `¿Qué te pareció tu pedido ${pedido.codigo ? '#' + pedido.codigo : '#' + pedido.id}?`,
+    subject: `¿Qué te pareció tu pedido ${pedidoCodigo}?`,
     html,
     text
   });
